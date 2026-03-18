@@ -448,7 +448,7 @@
             </table>
         </div>
 
-        <!-- 📊 NUEVO: Estadísticas Avanzadas de Ventas -->
+        <!-- 📊 Estadísticas Avanzadas de Ventas -->
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
             <div class="estadisticas-titulo">
                 📈 Estadísticas de Ventas
@@ -482,13 +482,31 @@
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
         
-        // Token y verificación
-        let token = localStorage.getItem('admin_token') || localStorage.getItem('token');
+        // ============================================
+        // TOKEN Y VERIFICACIÓN - CORREGIDO
+        // ============================================
+        let token = localStorage.getItem('token') || localStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
+
+        // DEBUG - Ver qué tenemos
+        console.log('🔍 DEBUG - Información de sesión:');
+        console.log('Token:', token ? token.substring(0, 20) + '...' : '❌ No hay token');
+        
+        try {
+            const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+            console.log('Usuario guardado:', usuario);
+            
+            if (usuario.role) {
+                console.log('Rol:', usuario.role);
+            }
+        } catch (e) {
+            console.log('❌ Error parseando usuario');
+        }
 
         // Verificar acceso
         function verificarAcceso() {
             if (!token) {
+                console.log('❌ No hay token - redirigiendo a login');
                 window.location.href = 'login.html';
                 return false;
             }
@@ -496,12 +514,15 @@
             try {
                 const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
                 if (usuario.role !== 'admin') {
+                    console.log('❌ Usuario no es admin - role:', usuario.role);
                     alert('⛔ Acceso denegado. No tenés permisos de administrador.');
                     window.location.href = 'index.html';
                     return false;
                 }
+                console.log('✅ Acceso verificado - Admin OK');
                 return true;
             } catch (error) {
+                console.log('❌ Error verificando acceso:', error);
                 window.location.href = 'login.html';
                 return false;
             }
@@ -511,6 +532,7 @@
         if (!verificarAcceso()) {
             // Redirige
         } else {
+            console.log('✅ Cargando datos del admin...');
             cargarDatos();
             cargarEstadisticasVentas();
             setInterval(cargarSolicitudes, 10000);
@@ -525,26 +547,33 @@
                 ]);
             } catch (error) {
                 console.error('Error cargando datos:', error);
-                if (error.message.includes('403')) {
-                    alert('⛔ Sesión expirada o sin permisos');
+                if (error.message.includes('403') || error.message.includes('401')) {
+                    console.log('❌ Error de autenticación - cerrando sesión');
+                    alert('⛔ Sesión expirada. Por favor, volvé a iniciar sesión.');
                     cerrarSesion();
                 }
             }
         }
 
-        // 📊 NUEVA FUNCIÓN: Cargar estadísticas de ventas
         async function cargarEstadisticasVentas() {
             try {
+                console.log('📊 Cargando estadísticas de ventas...');
                 const res = await fetch(`${API_URL}/admin/estadisticas-ventas`, {
                     headers: { 'Authorization': token }
                 });
 
-                if (!res.ok) throw new Error('Error al cargar estadísticas');
+                if (!res.ok) {
+                    if (res.status === 401 || res.status === 403) {
+                        throw new Error('No autorizado - sesión expirada');
+                    }
+                    throw new Error(`Error ${res.status}: ${res.statusText}`);
+                }
 
                 const data = await res.json();
+                console.log('✅ Estadísticas cargadas:', data);
                 mostrarEstadisticasVentas(data);
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error cargando estadísticas:', error);
                 document.getElementById('estadisticas-content').innerHTML = `
                     <div class="no-data">
                         ❌ Error al cargar estadísticas<br>
@@ -554,7 +583,6 @@
             }
         }
 
-        // 📊 NUEVA FUNCIÓN: Mostrar estadísticas de ventas
         function mostrarEstadisticasVentas(data) {
             const container = document.getElementById('estadisticas-content');
             
@@ -568,19 +596,16 @@
                 return;
             }
 
-            // Traducción de días
             const traduccionDias = {
                 'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles',
                 'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo'
             };
 
-            // Encontrar máximos para barras de progreso
             const maxComprasDia = Math.max(...data.por_dia.map(d => d.total_compras));
             const maxComprasHora = Math.max(...data.por_hora.map(h => h.total_compras));
 
             let html = '';
 
-            // Insights si existen
             if (data.insights) {
                 html += `
                     <div class="insights-box">
@@ -611,7 +636,7 @@
             data.por_dia.forEach(d => {
                 const porcentaje = (d.total_compras / maxComprasDia) * 100;
                 const diaEsp = d.dia_esp || d.dia;
-                const esPico = d.dia === data.insights.dia_pico ? 'dia-activo' : '';
+                const esPico = d.dia === data.insights?.dia_pico ? 'dia-activo' : '';
                 
                 html += `
                     <tr class="${esPico}">
@@ -652,7 +677,7 @@
 
             data.por_hora.forEach(h => {
                 const porcentaje = (h.total_compras / maxComprasHora) * 100;
-                const esPico = h.hora === data.insights.hora_pico ? 'hora-pico' : '';
+                const esPico = h.hora === data.insights?.hora_pico ? 'hora-pico' : '';
                 const horaFormateada = h.hora < 10 ? `0${h.hora}:00` : `${h.hora}:00`;
                 
                 html += `
@@ -699,18 +724,24 @@
             container.innerHTML = html;
         }
 
-        // Funciones existentes (sin cambios)
         async function cargarUsuarios() {
             try {
+                console.log('👥 Cargando usuarios...');
                 const res = await fetch(`${API_URL}/admin/usuarios`, {
                     headers: { 'Authorization': token }
                 });
 
                 if (res.status === 401 || res.status === 403) {
-                    throw new Error('403');
+                    throw new Error('401');
+                }
+
+                if (!res.ok) {
+                    throw new Error(`Error ${res.status}`);
                 }
 
                 const usuarios = await res.json();
+                console.log('✅ Usuarios cargados:', usuarios.length);
+                
                 const tbody = document.getElementById('usuarios-body');
                 tbody.innerHTML = '';
 
@@ -741,8 +772,8 @@
                     }
                 });
             } catch (error) {
-                console.error('Error cargando usuarios:', error);
-                if (error.message === '403') {
+                console.error('❌ Error cargando usuarios:', error);
+                if (error.message === '401') {
                     cerrarSesion();
                 }
             }
@@ -750,18 +781,25 @@
 
         async function cargarSolicitudes() {
             try {
+                console.log('📝 Cargando solicitudes...');
                 const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, {
                     headers: { 'Authorization': token }
                 });
 
                 if (res.status === 401 || res.status === 403) {
-                    throw new Error('403');
+                    throw new Error('401');
+                }
+
+                if (!res.ok) {
+                    throw new Error(`Error ${res.status}`);
                 }
 
                 const solicitudes = await res.json();
+                console.log('✅ Solicitudes cargadas:', solicitudes.length);
+                
                 const tbody = document.getElementById('solicitudes-body');
                 
-                if (solicitudes.length === 0) {
+                if (!solicitudes || solicitudes.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td></tr>';
                 } else {
                     tbody.innerHTML = '';
@@ -782,28 +820,40 @@
                     });
                 }
             } catch (error) {
-                console.error('Error cargando solicitudes:', error);
+                console.error('❌ Error cargando solicitudes:', error);
+                if (error.message === '401') {
+                    cerrarSesion();
+                }
             }
         }
 
         async function cargarEstadisticas() {
             try {
+                console.log('📊 Cargando estadísticas generales...');
                 const res = await fetch(`${API_URL}/admin/stats-tragamonedas`, {
                     headers: { 'Authorization': token }
                 });
 
                 if (res.status === 401 || res.status === 403) {
-                    throw new Error('403');
+                    throw new Error('401');
+                }
+
+                if (!res.ok) {
+                    throw new Error(`Error ${res.status}`);
                 }
 
                 const data = await res.json();
+                console.log('✅ Estadísticas cargadas:', data);
 
                 document.getElementById('total-usuarios').textContent = data.total_usuarios || 0;
                 document.getElementById('usuarios-activos').textContent = data.usuarios_activos || 0;
                 document.getElementById('fichas-totales').textContent = data.fichas_totales || 0;
                 document.getElementById('total-recargas').textContent = '₲ ' + (data.total_recargas || 0).toLocaleString();
             } catch (error) {
-                console.error('Error cargando estadísticas:', error);
+                console.error('❌ Error cargando estadísticas:', error);
+                if (error.message === '401') {
+                    cerrarSesion();
+                }
             }
         }
 
@@ -893,7 +943,7 @@
                 if (data.success) {
                     alert(`✅ Recarga aprobada: ${fichas} fichas`);
                     cargarDatos();
-                    cargarEstadisticasVentas(); // Actualizar estadísticas
+                    cargarEstadisticasVentas();
                 } else {
                     alert('Error: ' + (data.error || 'desconocido'));
                 }
@@ -952,6 +1002,7 @@
         }
 
         function cerrarSesion() {
+            console.log('🔓 Cerrando sesión...');
             localStorage.removeItem('admin_token');
             localStorage.removeItem('token');
             localStorage.removeItem('usuario');
