@@ -6,15 +6,14 @@ dotenv.config();
 
 const app = express();
 
-// Middlewares
-const cors = require('cors');
-
-// Permitir todos los orígenes (no recomendado para producción pero funciona)
+// ✅ Configuración de CORS (una sola vez)
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Middleware para JSON
 app.use(express.json());
 
 // Importar rutas
