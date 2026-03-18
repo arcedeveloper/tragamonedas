@@ -1,0 +1,29 @@
+# Archivos de entorno
+.env
+.env.local
+.env.production
+.env.development
+
+# Node modules
+node_modules/
+backend/node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Base de datos local (si tenés)
+*.sqlite
+*.db
+
+# Configuraciones sensibles
+config/local.js
+secrets.json
+
+# Carpeta de backend específica
+backend/.env
+backend/node_modules/
