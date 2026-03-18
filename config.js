@@ -1,1 +1,1 @@
-window.API_URL = 'https://tragamonedas-backend.onrender.com/api'; 
+window.API_URL = 'https://tragamonedas-jfjj.onrender.com/api';
