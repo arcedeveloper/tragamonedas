@@ -13,17 +13,18 @@ router.post('/solicitar', verificarToken, async (req, res) => {
             return res.status(400).json({ error: 'Fichas y monto requeridos' });
         }
 
-        const [result] = await db.query(
+        const result = await db.query(
             `INSERT INTO solicitudes_recarga 
              (usuario_id, fichas, monto) 
-             VALUES (?, ?, ?)`,
+             VALUES ($1, $2, $3)
+             RETURNING id`,
             [usuarioId, fichas, monto]
         );
 
         res.json({
             success: true,
             message: 'Solicitud enviada',
-            id: result.insertId
+            id: result.rows[0].id
         });
 
     } catch (error) {
@@ -35,14 +36,14 @@ router.post('/solicitar', verificarToken, async (req, res) => {
 // VER MIS SOLICITUDES
 router.get('/mis-solicitudes', verificarToken, async (req, res) => {
     try {
-        const [rows] = await db.query(
+        const result = await db.query(
             `SELECT * FROM solicitudes_recarga 
-             WHERE usuario_id = ? 
+             WHERE usuario_id = $1 
              ORDER BY fecha_solicitud DESC`,
             [req.usuario.id]
         );
 
-        res.json(rows);
+        res.json(result.rows);
 
     } catch (error) {
         console.error('Error:', error);

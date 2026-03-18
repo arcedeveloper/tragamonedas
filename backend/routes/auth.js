@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/database');
-const { verificarToken } = require('../middleware/auth');  // <--- ESTA ES LA LÍNEA QUE FALTA
+const { verificarToken } = require('../middleware/auth');
 
 // REGISTRO
 router.post('/register', async (req, res) => {
@@ -15,12 +15,12 @@ router.post('/register', async (req, res) => {
         }
 
         // Verificar si usuario existe
-        const [existing] = await db.query(
-            'SELECT id FROM usuarios WHERE usuario = ?',
+        const existing = await db.query(
+            'SELECT id FROM usuarios WHERE usuario = $1',
             [usuario]
         );
 
-        if (existing.length > 0) {
+        if (existing.rows.length > 0) {
             return res.status(400).json({ error: 'El usuario ya existe' });
         }
 
@@ -29,15 +29,15 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Insertar usuario
-        const [result] = await db.query(
-            'INSERT INTO usuarios (usuario, password, role, fichas) VALUES (?, ?, ?, ?)',
+        const result = await db.query(
+            'INSERT INTO usuarios (usuario, password, role, fichas) VALUES ($1, $2, $3, $4) RETURNING id',
             [usuario, hashedPassword, role, 0]
         );
 
         res.json({ 
             success: true, 
             message: 'Usuario registrado correctamente',
-            id: result.insertId 
+            id: result.rows[0].id 
         });
 
     } catch (error) {
@@ -56,16 +56,16 @@ router.post('/login', async (req, res) => {
         }
 
         // Buscar usuario
-        const [rows] = await db.query(
-            'SELECT * FROM usuarios WHERE usuario = ?',
+        const result = await db.query(
+            'SELECT * FROM usuarios WHERE usuario = $1',
             [usuario]
         );
 
-        if (rows.length === 0) {
+        if (result.rows.length === 0) {
             return res.status(400).json({ error: 'Usuario o contraseña incorrectos' });
         }
 
-        const user = rows[0];
+        const user = result.rows[0];
 
         // Verificar si está activo
         if (!user.activo) {
@@ -108,22 +108,22 @@ router.post('/login', async (req, res) => {
 // OBTENER DATOS DEL USUARIO
 router.get('/usuario', verificarToken, async (req, res) => {
     try {
-        const [rows] = await db.query(
+        const result = await db.query(
             `SELECT u.*, 
                     COUNT(DISTINCT h.id) as veces_jugadas,
-                    IFNULL(MAX(h.ganancia), 0) as mayor_premio
+                    COALESCE(MAX(h.ganancia), 0) as mayor_premio
              FROM usuarios u
              LEFT JOIN historial_juego h ON u.id = h.usuario_id
-             WHERE u.id = ?
+             WHERE u.id = $1
              GROUP BY u.id`,
             [req.usuario.id]
         );
 
-        if (rows.length === 0) {
+        if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
-        res.json({ usuario: rows[0] });
+        res.json({ usuario: result.rows[0] });
 
     } catch (error) {
         console.error('Error:', error);
