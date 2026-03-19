@@ -1034,6 +1034,17 @@
             window.location.href = 'login.html';
         }
 
+        // ============================================
+        // LÍMITE SECRETO (se sincroniza con el admin)
+        // ============================================
+        let LIMITE_SECRETO_POR_JUGADA = 50000; // Valor por defecto
+
+        // Cargar límite guardado
+        const limiteGuardado = localStorage.getItem('limite_secreto_admin');
+        if (limiteGuardado) {
+            LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
+        }
+
         // Crear partículas brillantes
         function crearParticulas() {
             const particulasDiv = document.getElementById('particulas');
@@ -1170,12 +1181,29 @@
             return simbolos[Math.floor(Math.random() * simbolos.length)];
         }
 
-        function calcularPremio(s1, s2, s3) {
+        // ============================================
+        // FUNCIÓN DE CÁLCULO DE PREMIOS CON LÍMITE SECRETO
+        // ============================================
+        function calcularPremio(s1, s2, s3, apuesta) {
             if (s1 === s2 && s2 === s3) {
                 const combinacion = s1 + s1 + s1;
-                return premios[combinacion] || 0;
+                const multiplicador = premios[combinacion] || 0;
+                let premio = apuesta * multiplicador;
+                
+                // APLICAR LÍMITE SECRETO (el jugador no lo sabe)
+                if (premio > LIMITE_SECRETO_POR_JUGADA) {
+                    premio = LIMITE_SECRETO_POR_JUGADA;
+                }
+                return premio;
+                
             } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-                return premios['2iguales'];
+                let premio = apuesta * premios['2iguales'];
+                
+                // También aplicar límite (por si acaso)
+                if (premio > LIMITE_SECRETO_POR_JUGADA) {
+                    premio = LIMITE_SECRETO_POR_JUGADA;
+                }
+                return premio;
             }
             return 0;
         }
@@ -1237,8 +1265,10 @@
                 reels[1].textContent = s2;
                 reels[2].textContent = s3;
                 
-                const multiplicador = calcularPremio(s1, s2, s3);
-                const ganancia = apuesta * multiplicador * (modoTurbo ? 3 : 1);
+                // Usar la nueva función con límite
+                const multiplicador = calcularPremio(s1, s2, s3, apuesta) / apuesta;
+                const ganancia = calcularPremio(s1, s2, s3, apuesta) * (modoTurbo ? 3 : 1);
+                
                 const resultadoDiv = document.getElementById('resultado');
                 
                 if (ganancia > 0) {
@@ -1257,7 +1287,8 @@
                     });
                     if (stats.historial.length > 10) stats.historial.pop();
                     
-                    resultadoDiv.textContent = `🎉 GANASTE ${ganancia} fichas! (x${multiplicador * (modoTurbo ? 3 : 1)})`;
+                    // El jugador ve el premio, pero no sabe que fue limitado
+                    resultadoDiv.textContent = `🎉 GANASTE ₲ ${formatoNumero(ganancia)}! (x${multiplicador})`;
                     resultadoDiv.classList.add('win');
                     
                     // EXPLOSIÓN DE CONFETTI para premios grandes
@@ -1415,6 +1446,10 @@
             localStorage.removeItem('token');
             localStorage.removeItem('usuario');
             window.location.href = 'login.html';
+        }
+
+        function formatoNumero(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
         // Inicializar
