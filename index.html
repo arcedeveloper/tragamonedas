@@ -112,7 +112,7 @@
             text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
         }
 
-        .fichas-display {
+        .saldo-display {
             background: linear-gradient(135deg, #2a3a4a, #1e2a3a);
             padding: 8px 20px;
             border-radius: 30px;
@@ -125,7 +125,7 @@
             box-shadow: 0 0 15px rgba(255,215,0,0.3);
         }
 
-        .fichas-display span {
+        .saldo-display span {
             color: gold;
             font-size: 24px;
             filter: drop-shadow(0 0 5px gold);
@@ -772,7 +772,7 @@
             box-shadow: 0 2px 0 #b7950b;
         }
 
-        .pack-fichas {
+        .pack-monto {
             font-size: 22px;
             font-weight: bold;
             margin-bottom: 3px;
@@ -869,30 +869,30 @@
     <!-- Modal de Recarga - AHORA CON SCROLL SUAVE -->
     <div class="modal-overlay" id="modal-recarga">
         <div class="modal-content">
-            <h2>💰 COMPRAR FICHAS</h2>
+            <h2>💰 COMPRAR SALDO</h2>
             
             <div class="pack-grid">
-                <div class="pack" onclick="seleccionarPack(20, 5000)">
-                    <div class="pack-fichas">20 🪙</div>
-                    <div class="pack-precio">₲ 5.000</div>
+                <div class="pack" onclick="seleccionarPack(5000, 5000)">
+                    <div class="pack-monto">₲ 5.000</div>
+                    <div class="pack-precio">💰 ₲ 5.000</div>
                     <div class="pack-descuento">Básico</div>
                 </div>
                 
-                <div class="pack" onclick="seleccionarPack(50, 10000)">
-                    <div class="pack-fichas">50 🪙</div>
-                    <div class="pack-precio">₲ 10.000</div>
+                <div class="pack" onclick="seleccionarPack(10000, 10000)">
+                    <div class="pack-monto">₲ 10.000</div>
+                    <div class="pack-precio">💰 ₲ 10.000</div>
                     <div class="pack-descuento">Popular</div>
                 </div>
                 
-                <div class="pack" onclick="seleccionarPack(120, 20000)">
-                    <div class="pack-fichas">120 🪙</div>
-                    <div class="pack-precio">₲ 20.000</div>
+                <div class="pack" onclick="seleccionarPack(20000, 20000)">
+                    <div class="pack-monto">₲ 20.000</div>
+                    <div class="pack-precio">💰 ₲ 20.000</div>
                     <div class="pack-descuento">+20% extra</div>
                 </div>
                 
-                <div class="pack" onclick="seleccionarPack(300, 50000)">
-                    <div class="pack-fichas">300 🪙</div>
-                    <div class="pack-precio">₲ 50.000</div>
+                <div class="pack" onclick="seleccionarPack(50000, 50000)">
+                    <div class="pack-monto">₲ 50.000</div>
+                    <div class="pack-precio">💰 ₲ 50.000</div>
                     <div class="pack-descuento">Super Pack</div>
                 </div>
             </div>
@@ -910,7 +910,7 @@
             </div>
 
             <button onclick="confirmarCompra()" class="btn-modal btn-comprar" id="btn-comprar" disabled>
-                ✅ CONFIRMAR COMPRA
+                ✅ SOLICITAR RECARGA
             </button>
             <button onclick="cerrarModal()" class="btn-modal btn-cerrar">
                 ❌ CANCELAR
@@ -922,9 +922,9 @@
     <div class="user-bar">
         <div class="user-info">
             <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
-            <div class="fichas-display">
-                <span>🪙</span>
-                <span id="fichas">0</span>
+            <div class="saldo-display">
+                <span>₲</span>
+                <span id="saldo">0</span>
             </div>
         </div>
         <div>
@@ -955,11 +955,11 @@
             </div>
 
             <div class="bet-control">
-                <button class="bet-btn" onclick="cambiarApuesta(-1)" id="btn-menos">-</button>
+                <button class="bet-btn" onclick="cambiarApuesta(-1000)" id="btn-menos">-</button>
                 <div class="bet-display">
-                    <span id="apuesta">1</span> <small>fichas</small>
+                    <span id="apuesta">1000</span> <small>₲</small>
                 </div>
-                <button class="bet-btn" onclick="cambiarApuesta(1)" id="btn-mas">+</button>
+                <button class="bet-btn" onclick="cambiarApuesta(1000)" id="btn-mas">+</button>
             </div>
 
             <!-- Modo Turbo -->
@@ -975,10 +975,10 @@
             </button>
 
             <div class="quick-bets">
-                <div class="quick-bet" onclick="setApuesta(5)">5 🪙</div>
-                <div class="quick-bet" onclick="setApuesta(10)">10 🪙</div>
-                <div class="quick-bet" onclick="setApuesta(25)">25 🪙</div>
-                <div class="quick-bet" onclick="setApuesta(50)">50 🪙</div>
+                <div class="quick-bet" onclick="setApuesta(5000)">₲ 5.000</div>
+                <div class="quick-bet" onclick="setApuesta(10000)">₲ 10.000</div>
+                <div class="quick-bet" onclick="setApuesta(25000)">₲ 25.000</div>
+                <div class="quick-bet" onclick="setApuesta(50000)">₲ 50.000</div>
             </div>
         </div>
 
@@ -1037,7 +1037,7 @@
         // ============================================
         // LÍMITE SECRETO (se sincroniza con el admin)
         // ============================================
-        let LIMITE_SECRETO_POR_JUGADA = 50000; // Valor por defecto
+        let LIMITE_SECRETO_POR_JUGADA = 50000; // ₲ 50.000 máximo por jugada
 
         // Cargar límite guardado
         const limiteGuardado = localStorage.getItem('limite_secreto_admin');
@@ -1061,8 +1061,8 @@
 
         // Estado del juego
         let usuarioActual = {};
-        let fichas = 0;
-        let apuesta = 1;
+        let saldo = 0; // Saldo en guaraníes
+        let apuesta = 1000; // Apuesta mínima ₲ 1.000
         let jugando = false;
         let packSeleccionado = null;
         let modoTurbo = false;
@@ -1098,10 +1098,11 @@
                 const data = await res.json();
                 
                 usuarioActual = data.usuario;
-                fichas = data.usuario.fichas || 0;
+                // Convertir fichas a guaraníes (1 ficha = ₲ 1.000)
+                saldo = (data.usuario.fichas || 0) * 1000;
                 
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
-                actualizarFichas();
+                actualizarSaldo();
                 
                 // Cargar estadísticas guardadas
                 const statsGuardadas = localStorage.getItem(`stats_${usuarioActual.id}`);
@@ -1114,8 +1115,8 @@
             }
         }
 
-        function actualizarFichas() {
-            document.getElementById('fichas').textContent = fichas;
+        function actualizarSaldo() {
+            document.getElementById('saldo').textContent = formatoNumero(saldo);
         }
 
         function toggleTurbo() {
@@ -1129,9 +1130,9 @@
                 turboMult.textContent = 'x3';
                 
                 // Ajustar apuesta si es muy alta para turbo
-                let maxApuestaTurbo = Math.min(30, Math.floor(fichas / 3));
+                let maxApuestaTurbo = Math.min(30000, Math.floor(saldo / 3));
                 if (apuesta > maxApuestaTurbo) {
-                    apuesta = maxApuestaTurbo;
+                    apuesta = Math.max(1000, Math.floor(maxApuestaTurbo / 1000) * 1000);
                     document.getElementById('apuesta').textContent = apuesta;
                 }
             } else {
@@ -1144,8 +1145,8 @@
         }
 
         function actualizarBotonesApuesta() {
-            let maxApuesta = modoTurbo ? Math.min(30, Math.floor(fichas / 3)) : 50;
-            document.getElementById('btn-menos').disabled = apuesta <= 1;
+            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
+            document.getElementById('btn-menos').disabled = apuesta <= 1000;
             document.getElementById('btn-mas').disabled = apuesta >= maxApuesta;
         }
 
@@ -1153,9 +1154,9 @@
             if (jugando) return;
             
             let nuevaApuesta = apuesta + delta;
-            let maxApuesta = modoTurbo ? Math.min(30, Math.floor(fichas / 3)) : 50;
+            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
             
-            if (nuevaApuesta >= 1 && nuevaApuesta <= maxApuesta) {
+            if (nuevaApuesta >= 1000 && nuevaApuesta <= maxApuesta) {
                 apuesta = nuevaApuesta;
                 document.getElementById('apuesta').textContent = apuesta;
             }
@@ -1165,15 +1166,14 @@
 
         function setApuesta(valor) {
             if (jugando) return;
-            let maxApuesta = modoTurbo ? Math.min(30, Math.floor(fichas / 3)) : 50;
-            let valorReal = modoTurbo ? Math.min(valor, 30) : valor;
+            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
             
-            if (valorReal <= fichas && valorReal <= maxApuesta) {
-                apuesta = valorReal;
+            if (valor <= saldo && valor <= maxApuesta) {
+                apuesta = valor;
                 document.getElementById('apuesta').textContent = apuesta;
                 actualizarBotonesApuesta();
             } else {
-                mostrarResultado('❌ No tenés suficientes fichas o excede el máximo para turbo', 'error');
+                mostrarResultado('❌ No tenés suficiente saldo o excede el máximo para turbo', 'error');
             }
         }
 
@@ -1213,8 +1213,8 @@
             
             let costoApuesta = modoTurbo ? apuesta * 3 : apuesta;
             
-            if (fichas < costoApuesta) {
-                mostrarResultado('❌ No tenés suficientes fichas. Recargá!', 'error');
+            if (saldo < costoApuesta) {
+                mostrarResultado('❌ No tenés suficiente saldo. Recargá!', 'error');
                 abrirModalRecarga();
                 return;
             }
@@ -1222,8 +1222,8 @@
             jugando = true;
             document.getElementById('btn-jugar').disabled = true;
             
-            fichas -= costoApuesta;
-            actualizarFichas();
+            saldo -= costoApuesta;
+            actualizarSaldo();
             
             const reels = [
                 document.getElementById('reel1'),
@@ -1265,14 +1265,13 @@
                 reels[1].textContent = s2;
                 reels[2].textContent = s3;
                 
-                // Usar la nueva función con límite
                 const multiplicador = calcularPremio(s1, s2, s3, apuesta) / apuesta;
                 const ganancia = calcularPremio(s1, s2, s3, apuesta) * (modoTurbo ? 3 : 1);
                 
                 const resultadoDiv = document.getElementById('resultado');
                 
                 if (ganancia > 0) {
-                    fichas += ganancia;
+                    saldo += ganancia;
                     
                     stats.jugadas++;
                     stats.gananciasTotales += ganancia;
@@ -1287,12 +1286,11 @@
                     });
                     if (stats.historial.length > 10) stats.historial.pop();
                     
-                    // El jugador ve el premio, pero no sabe que fue limitado
                     resultadoDiv.textContent = `🎉 GANASTE ₲ ${formatoNumero(ganancia)}! (x${multiplicador})`;
                     resultadoDiv.classList.add('win');
                     
                     // EXPLOSIÓN DE CONFETTI para premios grandes
-                    if (ganancia >= 200) {
+                    if (ganancia >= 200000) {
                         confetti({
                             particleCount: 200,
                             spread: 120,
@@ -1312,7 +1310,7 @@
                                 origin: { y: 0.5, x: 0.8 }
                             });
                         }, 200);
-                    } else if (ganancia >= 50) {
+                    } else if (ganancia >= 50000) {
                         confetti({
                             particleCount: 50,
                             spread: 70,
@@ -1325,7 +1323,7 @@
                     resultadoDiv.classList.remove('win');
                 }
                 
-                actualizarFichas();
+                actualizarSaldo();
                 actualizarEstadisticas();
                 guardarEstadisticas();
                 actualizarBotonesApuesta();
@@ -1347,8 +1345,8 @@
 
         function actualizarEstadisticas() {
             document.getElementById('total-jugadas').textContent = stats.jugadas;
-            document.getElementById('mayor-premio').textContent = stats.mayorPremio;
-            document.getElementById('ganancias').textContent = stats.gananciasTotales;
+            document.getElementById('mayor-premio').textContent = formatoNumero(stats.mayorPremio);
+            document.getElementById('ganancias').textContent = formatoNumero(stats.gananciasTotales);
             
             const retorno = stats.jugadas > 0 ? 
                 Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
@@ -1361,7 +1359,7 @@
                 historialDiv.innerHTML = stats.historial.map(h => `
                     <div class="history-item ${h.ganancia > 0 ? 'win' : ''}">
                         <span>${h.combinacion}</span>
-                        <span>${h.ganancia > 0 ? '+' + h.ganancia : '0'}</span>
+                        <span>${h.ganancia > 0 ? '+' + formatoNumero(h.ganancia) : '0'}</span>
                     </div>
                 `).join('');
             }
@@ -1372,7 +1370,7 @@
         }
 
         // ============================================
-        // FUNCIONES DEL MODAL - CORREGIDAS
+        // FUNCIONES DEL MODAL - CORREGIDAS (AHORA SÍ ENVÍA AL BACKEND)
         // ============================================
         function abrirModalRecarga() {
             packSeleccionado = null;
@@ -1390,8 +1388,8 @@
             }, 50);
         }
 
-        function seleccionarPack(fichas, precio) {
-            packSeleccionado = { fichas, precio };
+        function seleccionarPack(monto, precio) {
+            packSeleccionado = { monto, precio };
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
             document.getElementById('btn-comprar').disabled = false;
@@ -1422,24 +1420,61 @@
             }
         });
 
+        // ============================================
+        // FUNCIÓN CORREGIDA - AHORA SÍ ENVÍA LA SOLICITUD
+        // ============================================
         async function confirmarCompra() {
             if (!packSeleccionado) {
                 alert('Seleccioná un pack');
                 return;
             }
 
-            const mensaje = encodeURIComponent(
-                `💰 Solicitud de recarga:\n` +
-                `• Usuario: ${usuarioActual.usuario}\n` +
-                `• Pack: ${packSeleccionado.fichas} fichas\n` +
-                `• Monto: ₲ ${packSeleccionado.precio.toLocaleString()}\n\n` +
-                `Ya transferí, favor acreditar. Gracias!`
-            );
-            
-            window.open(`https://wa.me/595983775018?text=${mensaje}`, '_blank');
-            
-            alert('✅ Solicitud enviada. Te acreditaremos en minutos.');
-            cerrarModal();
+            const btn = document.getElementById('btn-comprar');
+            const textoOriginal = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = "⏳ Procesando...";
+
+            try {
+                // Convertir monto a fichas (₲ 1.000 = 1 ficha)
+                const fichas = Math.floor(packSeleccionado.monto / 1000);
+                
+                // Enviar solicitud al backend
+                const res = await fetch(`${API_URL}/recargas/solicitar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({
+                        fichas: fichas,
+                        monto: packSeleccionado.precio
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    // Opcional: abrir WhatsApp
+                    const mensaje = encodeURIComponent(
+                        `💰 Solicitud de recarga:\n` +
+                        `• Usuario: ${usuarioActual.usuario}\n` +
+                        `• Monto: ₲ ${formatoNumero(packSeleccionado.monto)}\n` +
+                        `• A pagar: ₲ ${formatoNumero(packSeleccionado.precio)}\n\n` +
+                        `Ya transferí, favor acreditar. Gracias!`
+                    );
+                    window.open(`https://wa.me/595983775018?text=${mensaje}`, '_blank');
+                    
+                    alert('✅ Solicitud enviada. Te acreditaremos en minutos.');
+                    cerrarModal();
+                } else {
+                    alert('Error: ' + (data.error || 'Error al enviar solicitud'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = textoOriginal;
+            }
         }
 
         function cerrarSesion() {
