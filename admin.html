@@ -375,6 +375,118 @@
             cursor: pointer;
             margin-top: 10px;
         }
+
+        /* ============================================
+           PANEL DE CONTROL DE LÍMITE (solo admin)
+           ============================================ */
+        .panel-limite {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 3px solid gold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .panel-limite h2 {
+            color: gold;
+            font-size: 28px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid gold;
+            padding-bottom: 10px;
+        }
+
+        .panel-limite h2 span {
+            font-size: 32px;
+        }
+
+        .limite-control {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .limite-input-group {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .limite-input-group label {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .limite-input-group input {
+            width: 100%;
+            padding: 15px;
+            font-size: 24px;
+            border: 2px solid gold;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            color: gold;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .limite-actual {
+            background: gold;
+            color: #1e3c72;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .limite-actual .valor {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .limite-actual small {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .btn-limite {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            border: 2px solid gold;
+        }
+
+        .btn-limite:hover {
+            background: #388E3C;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .info-seguridad {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid #ff4444;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: #ffaaaa;
+        }
+
+        .info-seguridad strong {
+            color: #ff8888;
+        }
     </style>
 </head>
 <body>
@@ -461,6 +573,39 @@
                 <div class="loading-stats">Cargando estadísticas...</div>
             </div>
         </div>
+
+        <!-- 🔒 PANEL DE CONTROL DE LÍMITE (solo visible para admin) -->
+        <div class="panel-limite">
+            <h2>
+                <span>🔒</span>
+                CONTROL DE LÍMITE DE PREMIOS (SOLO ADMIN)
+            </h2>
+            
+            <div class="limite-control">
+                <div class="limite-input-group">
+                    <label>💰 LÍMITE MÁXIMO POR JUGADA (₲):</label>
+                    <input type="number" id="limite-premios" value="50000" min="1000" max="1000000" step="1000">
+                    <button class="btn-limite" onclick="actualizarLimite()">
+                        🔒 ACTUALIZAR LÍMITE SECRETO
+                    </button>
+                </div>
+                
+                <div class="limite-actual">
+                    <div>LÍMITE ACTUAL</div>
+                    <div class="valor" id="limite-actual-valor">₲ 50.000</div>
+                    <small>Los jugadores NO ven este límite</small>
+                </div>
+            </div>
+            
+            <div class="info-seguridad">
+                <strong>⚠️ IMPORTANTE:</strong> Este límite se aplica a TODOS los jugadores. 
+                Si alguien gana un premio mayor, el juego le pagará automáticamente este monto 
+                y el jugador NO SE ENTERARÁ de que fue limitado. 
+                <br><br>
+                <strong>Ejemplo:</strong> Si el límite es ₲ 50.000 y alguien saca 🍒🍒🍒 con apuesta ₲ 10.000 
+                (debería ganar ₲ 500.000), el juego le mostrará "¡GANASTE ₲ 50.000!" y estará feliz.
+            </div>
+        </div>
     </div>
 
     <!-- Modal para agregar fichas -->
@@ -483,7 +628,7 @@
         const API_URL = window.API_URL || 'http://localhost:3000/api';
         
         // ============================================
-        // TOKEN Y VERIFICACIÓN - CORREGIDO
+        // TOKEN Y VERIFICACIÓN
         // ============================================
         let token = localStorage.getItem('token') || localStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
@@ -536,6 +681,36 @@
             cargarDatos();
             cargarEstadisticasVentas();
             setInterval(cargarSolicitudes, 10000);
+            
+            // Cargar límite guardado
+            const limiteGuardado = localStorage.getItem('limite_secreto_admin');
+            if (limiteGuardado) {
+                document.getElementById('limite-premios').value = limiteGuardado;
+                document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+            }
+        }
+
+        // Función para actualizar el límite secreto
+        function actualizarLimite() {
+            const nuevoLimite = parseInt(document.getElementById('limite-premios').value);
+            
+            if (nuevoLimite < 1000) {
+                alert('❌ El límite mínimo es ₲ 1.000');
+                return;
+            }
+            
+            // Guardar en localStorage (se sincroniza con el juego)
+            localStorage.setItem('limite_secreto_admin', nuevoLimite);
+            
+            // Actualizar display
+            document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(nuevoLimite);
+            
+            alert(`✅ Límite actualizado a ₲ ${formatoNumero(nuevoLimite)}\nLos jugadores NO verán este cambio.`);
+        }
+
+        // Función para formatear números
+        function formatoNumero(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
         async function cargarDatos() {
