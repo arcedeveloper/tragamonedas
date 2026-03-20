@@ -152,7 +152,12 @@
             margin-bottom: 30px;
         }
 
-        .fichas-cell {
+        .monedas-cell {
+            font-weight: bold;
+            color: #f39c12;
+        }
+
+        .guarani-cell {
             font-weight: bold;
             color: #4CAF50;
         }
@@ -489,6 +494,16 @@
         .info-seguridad strong {
             color: #ff8888;
         }
+
+        .icono-monedas {
+            color: #f39c12;
+            font-size: 16px;
+        }
+
+        .icono-guarani {
+            color: #4CAF50;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -507,15 +522,15 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="usuarios-activos">0</div>
-                <div>Usuarios con fichas</div>
+                <div>Usuarios con monedas</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="fichas-totales">0</div>
-                <div>Fichas en circulación</div>
+                <div>🪙 Monedas en circulación</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="total-recargas">0 ₲</div>
-                <div>Total Recargado</div>
+                <div>💰 Total Recargado (₲)</div>
             </div>
         </div>
 
@@ -526,8 +541,8 @@
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
-                        <th>Fichas (₲)</th>
-                        <th>Monto a Pagar</th>
+                        <th>🪙 Monedas</th>
+                        <th>💰 Monto a Pagar (₲)</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
                     </tr>
@@ -547,10 +562,10 @@
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
-                        <th>Saldo (₲)</th>
-                        <th>Total Recargado</th>
+                        <th>🪙 Monedas</th>
+                        <th>💰 Total Recargado (₲)</th>
                         <th>Veces Jugadas</th>
-                        <th>Mayor Premio</th>
+                        <th>🏆 Mayor Premio</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
@@ -580,7 +595,7 @@
             
             <div class="limite-control">
                 <div class="limite-input-group">
-                    <label>💰 LÍMITE MÁXIMO POR JUGADA (₲):</label>
+                    <label>💰 LÍMITE MÁXIMO POR JUGADA (🪙 monedas):</label>
                     <input type="number" id="limite-premios" value="50000" min="1000" max="1000000" step="1000">
                     <button class="btn-limite" onclick="actualizarLimite()">
                         💾 ACTUALIZAR LÍMITE
@@ -589,7 +604,8 @@
                 
                 <div class="limite-actual">
                     <div>LÍMITE ACTUAL</div>
-                    <div class="valor" id="limite-actual-valor">₲ 50.000</div>
+                    <div class="valor" id="limite-actual-valor">🪙 50.000</div>
+                    <small>Máximo de monedas que se puede ganar por jugada</small>
                 </div>
             </div>
         </div>
@@ -597,15 +613,15 @@
 
     <div id="modal-fichas" class="modal">
         <div class="modal-content">
-            <h3>💰 Agregar Fichas</h3>
+            <h3>🪙 Agregar Monedas</h3>
             <div class="input-group">
                 <label>Usuario: <span id="modal-usuario"></span></label>
             </div>
             <div class="input-group">
-                <label>Fichas a agregar (₲):</label>
+                <label>🪙 Monedas a agregar:</label>
                 <input type="number" id="fichas-agregar" min="1000" value="50000" step="1000">
             </div>
-            <button class="btn-modal" onclick="confirmarAgregarFichas()">Agregar</button>
+            <button class="btn-modal" onclick="confirmarAgregarFichas()">Agregar Monedas</button>
             <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">Cancelar</button>
         </div>
     </div>
@@ -673,7 +689,7 @@
                     if (data.limite) {
                         const limite = data.limite;
                         document.getElementById('limite-premios').value = limite;
-                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(limite);
+                        document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(limite);
                         console.log('✅ Límite cargado:', limite);
                     }
                 } else {
@@ -681,7 +697,7 @@
                     const limiteGuardado = localStorage.getItem('limite_secreto_admin');
                     if (limiteGuardado) {
                         document.getElementById('limite-premios').value = limiteGuardado;
-                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+                        document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
                     }
                 }
             } catch (error) {
@@ -689,7 +705,7 @@
                 const limiteGuardado = localStorage.getItem('limite_secreto_admin');
                 if (limiteGuardado) {
                     document.getElementById('limite-premios').value = limiteGuardado;
-                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+                    document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
                 }
             }
         }
@@ -698,12 +714,12 @@
             const nuevoLimite = parseInt(document.getElementById('limite-premios').value);
             
             if (nuevoLimite < 1000) {
-                alert('❌ El límite mínimo es ₲ 1.000');
+                alert('❌ El límite mínimo es 1.000 monedas');
                 return;
             }
             
             if (nuevoLimite > 1000000) {
-                alert('❌ El límite máximo es ₲ 1.000.000');
+                alert('❌ El límite máximo es 1.000.000 monedas');
                 return;
             }
             
@@ -726,8 +742,8 @@
                 
                 if (data.success) {
                     localStorage.setItem('limite_secreto_admin', nuevoLimite);
-                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(nuevoLimite);
-                    alert(`✅ LÍMITE ACTUALIZADO\n\nNuevo límite: ₲ ${formatoNumero(nuevoLimite)}\n\n✓ Guardado en el servidor\n✓ Los jugadores NO verán este cambio\n✓ El juego aplicará el nuevo límite automáticamente`);
+                    document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(nuevoLimite);
+                    alert(`✅ LÍMITE ACTUALIZADO\n\nNuevo límite: 🪙 ${formatoNumero(nuevoLimite)}\n\n✓ Guardado en el servidor\n✓ Los jugadores NO verán este cambio\n✓ El juego aplicará el nuevo límite automáticamente`);
                 } else {
                     alert('❌ Error al guardar: ' + (data.error || 'desconocido'));
                     await cargarLimiteDesdeBackend();
@@ -821,7 +837,7 @@
                     <h3>📅 Ventas por día de la semana</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                            <tr><th>Día</th><th>Recargas</th><th>Fichas</th><th>Monto</th></tr>
+                            <tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
                         </thead>
                         <tbody>
             `;
@@ -839,7 +855,7 @@
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${d.total_compras}</div>
                             </div>
                         </td>
-                        <td>${d.total_fichas}</td>
+                        <td>🪙 ${formatoNumero(d.total_fichas)}</td>
                         <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
                     </tr>
                 `;
@@ -856,7 +872,7 @@
                     <h3>⏰ Ventas por hora del día</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                            <tr><th>Hora</th><th>Recargas</th><th>Fichas</th><th>Monto</th></tr>
+                            <tr><th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
                         </thead>
                         <tbody>
             `;
@@ -875,7 +891,7 @@
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${h.total_compras}</div>
                             </div>
                         </td>
-                        <td>${h.total_fichas}</td>
+                        <td>🪙 ${formatoNumero(h.total_fichas)}</td>
                         <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
                     </tr>
                 `;
@@ -896,7 +912,7 @@
                         <div class="resumen-valor">${data.totales?.total_recargas || 0}</div>
                     </div>
                     <div class="resumen-item">
-                        <div class="resumen-label">Total Fichas</div>
+                        <div class="resumen-label">Total 🪙 Monedas</div>
                         <div class="resumen-valor">${formatoNumero(data.totales?.total_fichas || 0)}</div>
                     </div>
                     <div class="resumen-item">
@@ -938,18 +954,18 @@
                         tr.innerHTML = `
                             <td>${u.id}</td>
                             <td><strong>${u.usuario}</strong></td>
-                            <td class="fichas-cell">₲ ${formatoNumero(saldo)}</td>
-                            <td>₲ ${formatoNumero(Math.round(u.total_recargado || 0))}</td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(u.total_recargado || 0))}</td>
                             <td>${u.veces_jugadas || 0}</td>
-                            <td>₲ ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
+                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
                             <td>
                                 ${u.activo ? 
                                     '<span class="badge badge-active">Activo</span>' : 
                                     '<span class="badge badge-inactive">Bloqueado</span>'}
                             </td>
                             <td>
-                                <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar Fichas</button>
-                                <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar Fichas</button>
+                                <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar Monedas</button>
+                                <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar Monedas</button>
                                 ${u.activo ? 
                                     `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒 Bloquear</button>` :
                                     `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓 Activar</button>`}
@@ -995,8 +1011,8 @@
                         tr.innerHTML = `
                             <td>${s.id}</td>
                             <td><strong>${s.usuario}</strong></td>
-                            <td>₲ ${formatoNumero(s.fichas)}</td>
-                            <td>₲ ${formatoNumero(Math.round(s.monto))}</td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
                             <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
                             <td>
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
@@ -1034,7 +1050,7 @@
 
                 document.getElementById('total-usuarios').textContent = data.total_usuarios || 0;
                 document.getElementById('usuarios-activos').textContent = data.usuarios_activos || 0;
-                document.getElementById('fichas-totales').textContent = formatoNumero(data.fichas_totales || 0);
+                document.getElementById('fichas-totales').textContent = '🪙 ' + formatoNumero(data.fichas_totales || 0);
                 document.getElementById('total-recargas').textContent = '₲ ' + formatoNumero(Math.round(data.total_recargas || 0));
             } catch (error) {
                 console.error('❌ Error cargando estadísticas:', error);
@@ -1073,7 +1089,7 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    alert(`✅ ₲ ${formatoNumero(fichas)} agregados`);
+                    alert(`✅ 🪙 ${formatoNumero(fichas)} monedas agregadas`);
                     cerrarModal();
                     cargarDatos();
                 } else {
@@ -1085,7 +1101,7 @@
         }
 
         async function quitarFichas(userId) {
-            const cantidad = prompt('¿Cuánto saldo querés quitar (₲)?', '10000');
+            const cantidad = prompt('¿Cuántas monedas querés quitar?', '10000');
             if (!cantidad) return;
 
             try {
@@ -1104,7 +1120,7 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    alert(`✅ Saldo quitado`);
+                    alert(`✅ Monedas quitadas`);
                     cargarDatos();
                 } else {
                     alert('Error: ' + (data.error || 'desconocido'));
@@ -1128,7 +1144,7 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    alert(`✅ Recarga aprobada: ₲ ${formatoNumero(fichas)}`);
+                    alert(`✅ Recarga aprobada: 🪙 ${formatoNumero(fichas)} monedas`);
                     cargarDatos();
                     cargarEstadisticasVentas();
                 } else {
@@ -1205,7 +1221,7 @@
             console.log('✅ Cargando datos del admin...');
             cargarDatos();
             cargarEstadisticasVentas();
-            cargarLimiteDesdeBackend();  // Cargar límite desde backend
+            cargarLimiteDesdeBackend();
             setInterval(cargarSolicitudes, 5000);
         }
     </script>
