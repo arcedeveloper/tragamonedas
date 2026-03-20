@@ -47,48 +47,46 @@ router.get('/solicitudes-recarga', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
-
-// APROBAR RECARGA - VERSIÓN CON LOGS DETALLADOS
+// APROBAR RECARGA - VERSIÓN CORREGIDA
 router.post('/aprobar-recarga', async (req, res) => {
     const client = await db.connect();
     
     try {
-        console.log('📝 Aprobando solicitud:', req.body);
-        
         await client.query('BEGIN');
 
         const { solicitud_id } = req.body;
 
-        if (!solicitud_id) {
-            throw new Error('solicitud_id es requerido');
-        }
+        console.log('📝 Aprobando solicitud ID:', solicitud_id);
 
-        // Obtener datos de la solicitud
+        // 1. Obtener datos de la solicitud
         const solicitud = await client.query(
-            `SELECT * FROM solicitudes_recarga 
+            `SELECT id, usuario_id, fichas, monto, estado 
+             FROM solicitudes_recarga 
              WHERE id = $1 AND estado = 'pendiente' 
              FOR UPDATE`,
             [solicitud_id]
         );
-
-        console.log('📦 Solicitud encontrada:', solicitud.rows[0]);
 
         if (solicitud.rows.length === 0) {
             throw new Error('Solicitud no encontrada o ya procesada');
         }
 
         const solicitudData = solicitud.rows[0];
+        console.log('📦 Datos:', solicitudData);
 
-        // Validar que los valores sean números
-        const fichas = parseInt(solicitudData.fichas);
-        const monto = parseFloat(solicitudData.monto);
-        const usuarioId = parseInt(solicitudData.usuario_id);
+        // 2. Convertir a números correctamente
+        const fichas = Number(solicitudData.fichas);
+        const monto = Number(solicitudData.monto);
+        const usuarioId = Number(solicitudData.usuario_id);
 
+        // 3. Validar que no sean NaN
         if (isNaN(fichas) || isNaN(monto) || isNaN(usuarioId)) {
-            throw new Error('Datos inválidos en la solicitud');
+            throw new Error(`Datos inválidos: fichas=${fichas}, monto=${monto}, usuarioId=${usuarioId}`);
         }
 
-        // Actualizar solicitud
+        console.log(`💰 Agregando ${fichas} fichas a usuario ${usuarioId} (monto: ₲ ${monto})`);
+
+        // 4. Actualizar solicitud
         await client.query(
             `UPDATE solicitudes_recarga 
              SET estado = 'aprobada', fecha_resolucion = CURRENT_TIMESTAMP 
@@ -96,7 +94,7 @@ router.post('/aprobar-recarga', async (req, res) => {
             [solicitud_id]
         );
 
-        // Agregar fichas al usuario
+        // 5. Actualizar usuario - IMPORTANTE: total_recargado también es numeric
         await client.query(
             `UPDATE usuarios 
              SET fichas = fichas + $1, 
@@ -105,25 +103,26 @@ router.post('/aprobar-recarga', async (req, res) => {
             [fichas, monto, usuarioId]
         );
 
-        // Registrar transacción
+        // 6. Registrar transacción
         await client.query(
             `INSERT INTO transacciones 
              (usuario_id, tipo, fichas, descripcion) 
              VALUES ($1, 'recarga', $2, $3)`,
-            [usuarioId, fichas, 'Recarga aprobada']
+            [usuarioId, fichas, `Recarga de ₲ ${monto.toLocaleString()}`]
         );
 
         await client.query('COMMIT');
         
         console.log('✅ Recarga aprobada exitosamente');
-        res.json({ success: true });
+        res.json({ success: true, message: `Agregadas ${fichas} fichas` });
 
     } catch (error) {
         await client.query('ROLLBACK');
-        console.error('❌ Error en aprobar recarga:', error);
+        console.error('❌ Error en aprobar recarga:', error.message);
+        console.error('Stack:', error.stack);
         res.status(500).json({ 
             error: error.message,
-            details: error.stack 
+            details: error.stack
         });
     } finally {
         client.release();
