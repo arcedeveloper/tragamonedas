@@ -548,7 +548,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
-                        <th>Fichas</th>
+                        <th>Saldo (₲)</th>
                         <th>Total Recargado</th>
                         <th>Veces Jugadas</th>
                         <th>Mayor Premio</th>
@@ -633,6 +633,19 @@
         let token = localStorage.getItem('token') || localStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
 
+        // Función para formatear números en guaraníes (1.000, 10.000, 50.000)
+        function formatoNumero(num) {
+            if (num === null || num === undefined) return '0';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Función para formatear monto con 2 decimales (para montos de recarga)
+        function formatoMonto(num) {
+            if (num === null || num === undefined) return '0';
+            // Redondear a entero (sin decimales)
+            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
         // DEBUG - Ver qué tenemos
         console.log('🔍 DEBUG - Información de sesión:');
         console.log('Token:', token ? token.substring(0, 20) + '...' : '❌ No hay token');
@@ -706,11 +719,6 @@
             document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(nuevoLimite);
             
             alert(`✅ Límite actualizado a ₲ ${formatoNumero(nuevoLimite)}\nLos jugadores NO verán este cambio.`);
-        }
-
-        // Función para formatear números
-        function formatoNumero(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
         async function cargarDatos() {
@@ -823,7 +831,7 @@
                             </div>
                         </td>
                         <td>${d.total_fichas}</td>
-                        <td>₲ ${new Intl.NumberFormat('es-PY').format(d.total_monto)}</td>
+                        <td>₲ ${formatoMonto(d.total_monto)}</td>
                     </tr>
                 `;
             });
@@ -865,7 +873,7 @@
                             </div>
                         </td>
                         <td>${h.total_fichas}</td>
-                        <td>₲ ${new Intl.NumberFormat('es-PY').format(h.total_monto)}</td>
+                        <td>₲ ${formatoMonto(h.total_monto)}</td>
                     </tr>
                 `;
             });
@@ -891,7 +899,7 @@
                     </div>
                     <div class="resumen-item">
                         <div class="resumen-label">Total ₲</div>
-                        <div class="resumen-valor">₲ ${new Intl.NumberFormat('es-PY').format(data.totales?.total_monto || 0)}</div>
+                        <div class="resumen-valor">₲ ${formatoMonto(data.totales?.total_monto || 0)}</div>
                     </div>
                 </div>
             `;
@@ -922,14 +930,17 @@
 
                 usuarios.forEach(u => {
                     if (u.role !== 'admin') {
+                        // Convertir fichas a guaraníes (1 ficha = ₲ 1.000)
+                        const saldoGuarani = (u.fichas || 0) * 1000;
+                        
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>${u.id}</td>
                             <td><strong>${u.usuario}</strong></td>
-                            <td class="fichas-cell">${u.fichas || 0} 🪙</td>
-                            <td>₲ ${(u.total_recargado || 0).toLocaleString()}</td>
+                            <td class="fichas-cell">₲ ${formatoNumero(saldoGuarani)}</td>
+                            <td>₲ ${formatoMonto(u.total_recargado || 0)}</td>
                             <td>${u.veces_jugadas || 0}</td>
-                            <td>${u.mayor_premio || 0}</td>
+                            <td>₲ ${formatoNumero((u.mayor_premio || 0))}</td>
                             <td>
                                 ${u.activo ? 
                                     '<span class="badge badge-active">Activo</span>' : 
@@ -979,12 +990,15 @@
                 } else {
                     tbody.innerHTML = '';
                     solicitudes.forEach(s => {
+                        // Convertir fichas a guaraníes para mostrar (opcional)
+                        const montoGuarani = s.fichas * 1000;
+                        
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>${s.id}</td>
                             <td><strong>${s.usuario}</strong></td>
-                            <td>${s.fichas} 🪙</td>
-                            <td>₲ ${s.monto.toLocaleString()}</td>
+                            <td>${s.fichas} 🪙 (₲ ${formatoNumero(montoGuarani)})</td>
+                            <td>₲ ${formatoMonto(s.monto)}</td>
                             <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
                             <td>
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
@@ -1023,7 +1037,7 @@
                 document.getElementById('total-usuarios').textContent = data.total_usuarios || 0;
                 document.getElementById('usuarios-activos').textContent = data.usuarios_activos || 0;
                 document.getElementById('fichas-totales').textContent = data.fichas_totales || 0;
-                document.getElementById('total-recargas').textContent = '₲ ' + (data.total_recargas || 0).toLocaleString();
+                document.getElementById('total-recargas').textContent = '₲ ' + formatoMonto(data.total_recargas || 0);
             } catch (error) {
                 console.error('❌ Error cargando estadísticas:', error);
                 if (error.message === '401') {
@@ -1061,7 +1075,7 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    alert(`✅ ${fichas} fichas agregadas`);
+                    alert(`✅ ${fichas} fichas agregadas (₲ ${formatoNumero(fichas * 1000)})`);
                     cerrarModal();
                     cargarDatos();
                 } else {
@@ -1116,7 +1130,7 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    alert(`✅ Recarga aprobada: ${fichas} fichas`);
+                    alert(`✅ Recarga aprobada: ${fichas} fichas (₲ ${formatoNumero(fichas * 1000)})`);
                     cargarDatos();
                     cargarEstadisticasVentas();
                 } else {
