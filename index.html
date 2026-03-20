@@ -20,7 +20,6 @@
             overflow-x: hidden;
         }
 
-        /* Luces de fondo tipo casino */
         body::before {
             content: '';
             position: fixed;
@@ -44,7 +43,6 @@
             100% { opacity: 0.5; }
         }
 
-        /* Partículas brillantes */
         .particula {
             position: fixed;
             width: 2px;
@@ -62,7 +60,6 @@
             100% { opacity: 0; transform: translateY(-40px); }
         }
 
-        /* Barra superior estilo casino */
         .user-bar {
             max-width: 700px;
             margin: 0 auto 20px auto;
@@ -78,6 +75,8 @@
             position: relative;
             z-index: 10;
             backdrop-filter: blur(5px);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .user-bar::before {
@@ -166,7 +165,6 @@
             box-shadow: 0 0 20px #f44336;
         }
 
-        /* Contenedor principal */
         .game-container {
             max-width: 700px;
             margin: 0 auto;
@@ -198,7 +196,6 @@
             100% { opacity: 0.3; }
         }
 
-        /* Máquina tragamonedas - ESTILO VEGAS */
         .machine {
             background: linear-gradient(145deg, #2c3e50, #1a2632);
             border-radius: 60px;
@@ -213,7 +210,6 @@
             overflow: hidden;
         }
 
-        /* Luces LED alrededor de la máquina */
         .machine::before {
             content: '';
             position: absolute;
@@ -235,7 +231,6 @@
             100% { filter: hue-rotate(360deg); }
         }
 
-        /* Panel de luces superior */
         .machine-header {
             display: flex;
             justify-content: center;
@@ -265,7 +260,6 @@
             to { opacity: 1; transform: scale(1.2); }
         }
 
-        /* RODILLOS - EFECTO 3D REALISTA */
         .reels {
             display: flex;
             justify-content: center;
@@ -352,7 +346,6 @@
             100% { transform: rotateX(0deg) scale(1) rotate(0deg); }
         }
 
-        /* Control de apuesta - estilo casino */
         .bet-control {
             display: flex;
             justify-content: center;
@@ -404,7 +397,6 @@
             color: rgba(255,255,255,0.8);
         }
 
-        /* Botón JUGAR - ESPECTACULAR */
         .btn-play {
             width: 100%;
             padding: 25px;
@@ -457,7 +449,6 @@
             cursor: not-allowed;
         }
 
-        /* Botón MODO TURBO */
         .turbo-container {
             display: flex;
             align-items: center;
@@ -501,7 +492,6 @@
             font-weight: bold;
         }
 
-        /* Apuestas rápidas */
         .quick-bets {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -535,7 +525,6 @@
             box-shadow: 0 2px 0 #b7950b;
         }
 
-        /* Panel de premios - estilo LED */
         .prize-panel {
             background: linear-gradient(135deg, #1a2632, #2c3e50);
             border-radius: 30px;
@@ -584,7 +573,6 @@
             text-shadow: 0 0 10px gold;
         }
 
-        /* Resultado con efecto especial */
         .result-box {
             text-align: center;
             padding: 25px;
@@ -622,7 +610,6 @@
             to { transform: scale(1.1); }
         }
 
-        /* Estadísticas */
         .stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -652,7 +639,6 @@
             text-shadow: 0 0 10px gold;
         }
 
-        /* Historial */
         .history {
             margin-top: 20px;
             max-height: 200px;
@@ -682,9 +668,6 @@
             border-bottom: none;
         }
 
-        /* ============================================
-           MODAL DE RECARGA
-           ============================================ */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -838,7 +821,6 @@
             cursor: not-allowed;
         }
 
-        /* Scrollbar personalizado */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -857,16 +839,13 @@
             background: #f39c12;
         }
     </style>
-    <!-- Librería para confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
 </head>
 <body>
     <script src="config.js"></script>
 
-    <!-- Partículas brillantes -->
     <div id="particulas"></div>
 
-    <!-- Modal de Recarga - AHORA CON MONTOS REALES -->
     <div class="modal-overlay" id="modal-recarga">
         <div class="modal-content">
             <h2>💰 COMPRAR SALDO</h2>
@@ -918,7 +897,6 @@
         </div>
     </div>
 
-    <!-- Barra superior -->
     <div class="user-bar">
         <div class="user-info">
             <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
@@ -933,10 +911,8 @@
         </div>
     </div>
 
-    <!-- Juego -->
     <div class="game-container">
         <div class="machine">
-            <!-- Luces LED superiores -->
             <div class="machine-header">
                 <div class="led-light"></div>
                 <div class="led-light"></div>
@@ -962,7 +938,6 @@
                 <button class="bet-btn" onclick="cambiarApuesta(1000)" id="btn-mas">+</button>
             </div>
 
-            <!-- Modo Turbo -->
             <div class="turbo-container">
                 <button class="turbo-btn" id="turbo-btn" onclick="toggleTurbo()">
                     <span>⚡</span> MODO TURBO <span>⚡</span>
@@ -982,7 +957,6 @@
             </div>
         </div>
 
-        <!-- Panel de premios -->
         <div class="prize-panel">
             <h3>🏆 TABLA DE PREMIOS</h3>
             <div class="prize-table">
@@ -995,12 +969,10 @@
             </div>
         </div>
 
-        <!-- Resultado de la última jugada -->
         <div class="result-box" id="resultado">
             🎰 Listo para jugar
         </div>
 
-        <!-- Estadísticas -->
         <div class="stats">
             <div class="stat">
                 <div class="stat-label">Veces jugadas</div>
@@ -1020,7 +992,6 @@
             </div>
         </div>
 
-        <!-- Historial de últimos premios -->
         <div class="history" id="historial">
             <div class="history-item">Esperando jugadas...</div>
         </div>
@@ -1035,17 +1006,38 @@
         }
 
         // ============================================
-        // LÍMITE SECRETO (en guaraníes)
+        // LÍMITE SECRETO - Cargar desde backend
         // ============================================
-        let LIMITE_SECRETO_POR_JUGADA = 50000; // ₲ 50.000 máximo por jugada
+        let LIMITE_SECRETO_POR_JUGADA = 50000; // valor por defecto
 
-        // Cargar límite guardado
-        const limiteGuardado = localStorage.getItem('limite_secreto_admin');
-        if (limiteGuardado) {
-            LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
+        // Función para cargar el límite desde el backend
+        async function cargarLimiteSecreto() {
+            try {
+                console.log('🔒 Cargando límite secreto...');
+                const res = await fetch(`${API_URL}/admin/obtener-limite`, {
+                    headers: { 'Authorization': token }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.limite) {
+                        LIMITE_SECRETO_POR_JUGADA = data.limite;
+                        console.log('✅ Límite secreto cargado desde backend:', LIMITE_SECRETO_POR_JUGADA);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.log('⚠️ No se pudo cargar desde backend, usando localStorage');
+            }
+            
+            // Fallback a localStorage (solo si no se pudo conectar al backend)
+            const limiteGuardado = localStorage.getItem('limite_secreto_admin');
+            if (limiteGuardado) {
+                LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
+                console.log('🔒 Límite secreto desde localStorage:', LIMITE_SECRETO_POR_JUGADA);
+            }
         }
 
-        // Crear partículas brillantes
         function crearParticulas() {
             const particulasDiv = document.getElementById('particulas');
             for (let i = 0; i < 30; i++) {
@@ -1059,16 +1051,14 @@
         }
         crearParticulas();
 
-        // Estado del juego
         let usuarioActual = {};
-        let saldo = 0; // Saldo en guaraníes
-        let apuesta = 1000; // Apuesta mínima ₲ 1.000
+        let saldo = 0;
+        let apuesta = 1000;
         let jugando = false;
         let packSeleccionado = null;
         let modoTurbo = false;
         let turboMultiplicador = 1;
         
-        // Estadísticas
         let stats = {
             jugadas: 0,
             mayorPremio: 0,
@@ -1076,10 +1066,8 @@
             historial: []
         };
 
-        // Símbolos
         const simbolos = ['🍒', '💎', '7', '🍋', '🍊'];
         
-        // Multiplicadores de premio
         const premios = {
             '🍒🍒🍒': 50,
             '💎💎💎': 30,
@@ -1089,7 +1077,6 @@
             '2iguales': 1
         };
 
-        // Cargar datos del usuario
         async function cargarUsuario() {
             try {
                 const res = await fetch(`${API_URL}/usuario`, {
@@ -1098,13 +1085,14 @@
                 const data = await res.json();
                 
                 usuarioActual = data.usuario;
-                // AHORA: 1 ficha = ₲ 1 (directo)
                 saldo = data.usuario.fichas || 0;
                 
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
                 actualizarSaldo();
                 
-                // Cargar estadísticas guardadas
+                // 🔒 CARGAR LÍMITE SECRETO DESDE BACKEND
+                await cargarLimiteSecreto();
+                
                 const statsGuardadas = localStorage.getItem(`stats_${usuarioActual.id}`);
                 if (statsGuardadas) {
                     stats = JSON.parse(statsGuardadas);
@@ -1129,7 +1117,6 @@
                 turboMultiplicador = 3;
                 turboMult.textContent = 'x3';
                 
-                // Ajustar apuesta si es muy alta para turbo (máx 30.000)
                 let maxApuestaTurbo = Math.min(30000, Math.floor(saldo / 3));
                 if (apuesta > maxApuestaTurbo) {
                     apuesta = Math.max(1000, Math.floor(maxApuestaTurbo / 1000) * 1000);
@@ -1181,16 +1168,12 @@
             return simbolos[Math.floor(Math.random() * simbolos.length)];
         }
 
-        // ============================================
-        // FUNCIÓN DE CÁLCULO DE PREMIOS CON LÍMITE SECRETO
-        // ============================================
         function calcularPremio(s1, s2, s3, apuesta) {
             if (s1 === s2 && s2 === s3) {
                 const combinacion = s1 + s1 + s1;
                 const multiplicador = premios[combinacion] || 0;
                 let premio = apuesta * multiplicador;
                 
-                // APLICAR LÍMITE SECRETO (el jugador no lo sabe)
                 if (premio > LIMITE_SECRETO_POR_JUGADA) {
                     premio = LIMITE_SECRETO_POR_JUGADA;
                 }
@@ -1199,7 +1182,6 @@
             } else if (s1 === s2 || s2 === s3 || s1 === s3) {
                 let premio = apuesta * premios['2iguales'];
                 
-                // También aplicar límite (por si acaso)
                 if (premio > LIMITE_SECRETO_POR_JUGADA) {
                     premio = LIMITE_SECRETO_POR_JUGADA;
                 }
@@ -1243,7 +1225,6 @@
                 });
             }
             
-            // Pequeños confettis al girar
             confetti({
                 particleCount: 5,
                 spread: 30,
@@ -1289,7 +1270,6 @@
                     resultadoDiv.textContent = `🎉 GANASTE ₲ ${formatoNumero(ganancia)}! (x${multiplicador})`;
                     resultadoDiv.classList.add('win');
                     
-                    // EXPLOSIÓN DE CONFETTI para premios grandes
                     if (ganancia >= 200000) {
                         confetti({
                             particleCount: 200,
@@ -1369,20 +1349,14 @@
             localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats));
         }
 
-        // ============================================
-        // FUNCIONES DEL MODAL
-        // ============================================
         function abrirModalRecarga() {
             packSeleccionado = null;
             const modal = document.getElementById('modal-recarga');
             modal.style.display = 'flex';
             document.getElementById('btn-comprar').disabled = true;
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
-            
-            // Prevenir scroll del body
             document.body.style.overflow = 'hidden';
             
-            // Scroll al inicio del modal
             setTimeout(() => {
                 modal.scrollTop = 0;
             }, 50);
@@ -1399,7 +1373,6 @@
             const alias = "6018795";
             navigator.clipboard.writeText(alias);
             
-            // Feedback visual
             const btn = event.currentTarget;
             const textoOriginal = btn.textContent;
             btn.textContent = "✅ COPIADO!";
@@ -1413,16 +1386,12 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Cerrar modal haciendo click fuera
         document.getElementById('modal-recarga').addEventListener('click', function(e) {
             if (e.target === this) {
                 cerrarModal();
             }
         });
 
-        // ============================================
-        // FUNCIÓN DE CONFIRMAR COMPRA (AHORA 1 ficha = ₲ 1)
-        // ============================================
         async function confirmarCompra() {
             if (!packSeleccionado) {
                 alert('Seleccioná un pack');
@@ -1435,10 +1404,8 @@
             btn.textContent = "⏳ Procesando...";
 
             try {
-                // AHORA: 1 ficha = ₲ 1 (el monto es directo)
-                const fichas = packSeleccionado.monto; // El monto en guaraníes
+                const fichas = packSeleccionado.monto;
                 
-                // Enviar solicitud al backend
                 const res = await fetch(`${API_URL}/recargas/solicitar`, {
                     method: 'POST',
                     headers: {
@@ -1446,7 +1413,7 @@
                         'Authorization': token
                     },
                     body: JSON.stringify({
-                        fichas: fichas, // Directo en guaraníes
+                        fichas: fichas,
                         monto: packSeleccionado.precio
                     })
                 });
@@ -1454,7 +1421,6 @@
                 const data = await res.json();
 
                 if (data.success) {
-                    // Abrir WhatsApp
                     const mensaje = encodeURIComponent(
                         `💰 Solicitud de recarga:\n` +
                         `• Usuario: ${usuarioActual.usuario}\n` +
@@ -1487,7 +1453,6 @@
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        // Inicializar
         cargarUsuario();
     </script>
 </body>
