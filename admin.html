@@ -157,7 +157,6 @@
             color: #4CAF50;
         }
 
-        /* Estilos para estadísticas avanzadas */
         .estadisticas-avanzadas {
             background: white;
             border-radius: 15px;
@@ -376,9 +375,6 @@
             margin-top: 10px;
         }
 
-        /* ============================================
-           PANEL DE CONTROL DE LÍMITE (solo admin)
-           ============================================ */
         .panel-limite {
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             border-radius: 20px;
@@ -475,6 +471,12 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
+        .btn-limite:disabled {
+            opacity: 0.7;
+            transform: none;
+            cursor: not-allowed;
+        }
+
         .info-seguridad {
             background: rgba(255,255,255,0.05);
             border-left: 4px solid #ff4444;
@@ -498,7 +500,6 @@
             <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
         </div>
 
-        <!-- Estadísticas Generales -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-value" id="total-usuarios">0</div>
@@ -518,7 +519,6 @@
             </div>
         </div>
 
-        <!-- Solicitudes pendientes -->
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
             <table>
@@ -540,7 +540,6 @@
             </table>
         </div>
 
-        <!-- Usuarios -->
         <div class="table-container">
             <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
             <table>
@@ -560,7 +559,6 @@
             </table>
         </div>
 
-        <!-- 📊 Estadísticas Avanzadas de Ventas -->
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
             <div class="estadisticas-titulo">
                 📈 Estadísticas de Ventas
@@ -574,7 +572,6 @@
             </div>
         </div>
 
-        <!-- 🔒 PANEL DE CONTROL DE LÍMITE (solo visible para admin) -->
         <div class="panel-limite">
             <h2>
                 <span>🔒</span>
@@ -586,20 +583,19 @@
                     <label>💰 LÍMITE MÁXIMO POR JUGADA (₲):</label>
                     <input type="number" id="limite-premios" value="50000" min="1000" max="1000000" step="1000">
                     <button class="btn-limite" onclick="actualizarLimite()">
-                         ACTUALIZAR LÍMITE 
+                        💾 ACTUALIZAR LÍMITE
                     </button>
                 </div>
                 
                 <div class="limite-actual">
                     <div>LÍMITE ACTUAL</div>
                     <div class="valor" id="limite-actual-valor">₲ 50.000</div>
+                    <small>Secreto - Los jugadores no lo ven</small>
                 </div>
-            </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para agregar fichas -->
     <div id="modal-fichas" class="modal">
         <div class="modal-content">
             <h3>💰 Agregar Fichas</h3>
@@ -618,26 +614,20 @@
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
         
-        // ============================================
-        // TOKEN Y VERIFICACIÓN
-        // ============================================
         let token = localStorage.getItem('token') || localStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
 
-        // Función para formatear números en guaraníes (1.000, 10.000, 50.000)
         function formatoNumero(num) {
             if (num === null || num === undefined) return '0';
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        // DEBUG - Ver qué tenemos
         console.log('🔍 DEBUG - Información de sesión:');
         console.log('Token:', token ? token.substring(0, 20) + '...' : '❌ No hay token');
         
         try {
             const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
             console.log('Usuario guardado:', usuario);
-            
             if (usuario.role) {
                 console.log('Rol:', usuario.role);
             }
@@ -645,7 +635,6 @@
             console.log('❌ Error parseando usuario');
         }
 
-        // Verificar acceso
         function verificarAcceso() {
             if (!token) {
                 console.log('❌ No hay token - redirigiendo a login');
@@ -670,25 +659,43 @@
             }
         }
 
-        // Inicializar
-        if (!verificarAcceso()) {
-            // Redirige
-        } else {
-            console.log('✅ Cargando datos del admin...');
-            cargarDatos();
-            cargarEstadisticasVentas();
-            setInterval(cargarSolicitudes, 5000); // Actualizar cada 5 segundos
-            
-            // Cargar límite guardado
-            const limiteGuardado = localStorage.getItem('limite_secreto_admin');
-            if (limiteGuardado) {
-                document.getElementById('limite-premios').value = limiteGuardado;
-                document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+        // ============================================
+        // FUNCIONES DEL LÍMITE SECRETO
+        // ============================================
+        async function cargarLimiteDesdeBackend() {
+            try {
+                console.log('🔒 Cargando límite desde backend...');
+                const res = await fetch(`${API_URL}/admin/obtener-limite`, {
+                    headers: { 'Authorization': token }
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.limite) {
+                        const limite = data.limite;
+                        document.getElementById('limite-premios').value = limite;
+                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(limite);
+                        console.log('✅ Límite cargado:', limite);
+                    }
+                } else {
+                    console.log('⚠️ No se pudo cargar límite, usando localStorage');
+                    const limiteGuardado = localStorage.getItem('limite_secreto_admin');
+                    if (limiteGuardado) {
+                        document.getElementById('limite-premios').value = limiteGuardado;
+                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error cargando límite:', error);
+                const limiteGuardado = localStorage.getItem('limite_secreto_admin');
+                if (limiteGuardado) {
+                    document.getElementById('limite-premios').value = limiteGuardado;
+                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+                }
             }
         }
 
-        // Función para actualizar el límite secreto
-        function actualizarLimite() {
+        async function actualizarLimite() {
             const nuevoLimite = parseInt(document.getElementById('limite-premios').value);
             
             if (nuevoLimite < 1000) {
@@ -696,13 +703,44 @@
                 return;
             }
             
-            // Guardar en localStorage (se sincroniza con el juego)
-            localStorage.setItem('limite_secreto_admin', nuevoLimite);
+            if (nuevoLimite > 1000000) {
+                alert('❌ El límite máximo es ₲ 1.000.000');
+                return;
+            }
             
-            // Actualizar display
-            document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(nuevoLimite);
+            const btn = document.querySelector('.btn-limite');
+            const textoOriginal = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ GUARDANDO...';
             
-            alert(`✅ Límite actualizado a ₲ ${formatoNumero(nuevoLimite)}\nLos jugadores NO verán este cambio.`);
+            try {
+                const res = await fetch(`${API_URL}/admin/configurar-limite`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ limite: nuevoLimite })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    localStorage.setItem('limite_secreto_admin', nuevoLimite);
+                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(nuevoLimite);
+                    alert(`✅ LÍMITE ACTUALIZADO\n\nNuevo límite: ₲ ${formatoNumero(nuevoLimite)}\n\n✓ Guardado en el servidor\n✓ Los jugadores NO verán este cambio\n✓ El juego aplicará el nuevo límite automáticamente`);
+                } else {
+                    alert('❌ Error al guardar: ' + (data.error || 'desconocido'));
+                    await cargarLimiteDesdeBackend();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error de conexión al servidor. El límite NO se guardó.\n\nVerificá que el servidor esté funcionando.');
+                await cargarLimiteDesdeBackend();
+            } finally {
+                btn.disabled = false;
+                btn.textContent = textoOriginal;
+            }
         }
 
         async function cargarDatos() {
@@ -763,11 +801,6 @@
                 return;
             }
 
-            const traduccionDias = {
-                'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles',
-                'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo'
-            };
-
             const maxComprasDia = Math.max(...data.por_dia.map(d => d.total_compras));
             const maxComprasHora = Math.max(...data.por_hora.map(h => h.total_compras));
 
@@ -784,30 +817,23 @@
 
             html += '<div class="estadisticas-grid">';
             
-            // Tabla por día
             html += `
                 <div class="estadisticas-card">
                     <h3>📅 Ventas por día de la semana</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                            <tr>
-                                <th>Día</th>
-                                <th>Recargas</th>
-                                <th>Fichas</th>
-                                <th>Monto</th>
-                            </tr>
+                            <tr><th>Día</th><th>Recargas</th><th>Fichas</th><th>Monto</th></tr>
                         </thead>
                         <tbody>
             `;
 
             data.por_dia.forEach(d => {
                 const porcentaje = (d.total_compras / maxComprasDia) * 100;
-                const diaEsp = d.dia_esp || d.dia;
                 const esPico = d.dia === data.insights?.dia_pico ? 'dia-activo' : '';
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${diaEsp}</strong></td>
+                        <td><strong>${d.dia_esp}</strong></td>
                         <td>
                             ${d.total_compras}
                             <div class="barra-progreso-container">
@@ -826,25 +852,19 @@
                 </div>
             `;
 
-            // Tabla por hora
             html += `
                 <div class="estadisticas-card">
                     <h3>⏰ Ventas por hora del día</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                            <tr>
-                                <th>Hora</th>
-                                <th>Recargas</th>
-                                <th>Fichas</th>
-                                <th>Monto</th>
-                            </tr>
+                            <tr><th>Hora</th><th>Recargas</th><th>Fichas</th><th>Monto</th></tr>
                         </thead>
                         <tbody>
             `;
 
             data.por_hora.forEach(h => {
                 const porcentaje = (h.total_compras / maxComprasHora) * 100;
-                const esPico = h.hora === data.insights?.hora_pico ? 'hora-pico' : '';
+                const esPico = h.hora == data.insights?.hora_pico ? 'hora-pico' : '';
                 const horaFormateada = h.hora < 10 ? `0${h.hora}:00` : `${h.hora}:00`;
                 
                 html += `
@@ -870,7 +890,6 @@
 
             html += '</div>';
 
-            // Resumen de totales
             html += `
                 <div class="resumen-stats">
                     <div class="resumen-item">
@@ -914,7 +933,6 @@
 
                 usuarios.forEach(u => {
                     if (u.role !== 'admin') {
-                        // AHORA: 1 ficha = ₲ 1 (directo)
                         const saldo = u.fichas || 0;
                         
                         const tr = document.createElement('tr');
@@ -974,7 +992,6 @@
                 } else {
                     tbody.innerHTML = '';
                     solicitudes.forEach(s => {
-                        // AHORA: fichas ya son guaraníes directo
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>${s.id}</td>
@@ -1178,6 +1195,19 @@
             localStorage.removeItem('token');
             localStorage.removeItem('usuario');
             window.location.href = 'login.html';
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        if (!verificarAcceso()) {
+            // Redirige
+        } else {
+            console.log('✅ Cargando datos del admin...');
+            cargarDatos();
+            cargarEstadisticasVentas();
+            cargarLimiteDesdeBackend();  // Cargar límite desde backend
+            setInterval(cargarSolicitudes, 5000);
         }
     </script>
 </body>
