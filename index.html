@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎰 TRAGAMONEDAS PREMIUM</title>
+    <title>🎰 TRAGAMONEDAS PREMIUM - SLOT REAL</title>
     <style>
         * {
             margin: 0;
@@ -20,7 +20,6 @@
             overflow-x: hidden;
         }
 
-        /* Luces de fondo tipo casino */
         body::before {
             content: '';
             position: fixed;
@@ -44,27 +43,8 @@
             100% { opacity: 0.5; }
         }
 
-        /* Partículas brillantes */
-        .particula {
-            position: fixed;
-            width: 2px;
-            height: 2px;
-            background: gold;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
-            animation: brillar 3s infinite;
-        }
-
-        @keyframes brillar {
-            0% { opacity: 0; transform: translateY(0); }
-            50% { opacity: 1; transform: translateY(-20px); }
-            100% { opacity: 0; transform: translateY(-40px); }
-        }
-
-        /* Barra superior estilo casino */
         .user-bar {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto 20px auto;
             background: linear-gradient(135deg, #1e2a3a, #2a3a4a);
             padding: 15px 25px;
@@ -78,25 +58,8 @@
             position: relative;
             z-index: 10;
             backdrop-filter: blur(5px);
-        }
-
-        .user-bar::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 52px;
-            background: linear-gradient(45deg, gold, transparent, gold);
-            z-index: -1;
-            animation: bordeBrillante 3s infinite;
-        }
-
-        @keyframes bordeBrillante {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .user-info {
@@ -104,12 +67,6 @@
             align-items: center;
             gap: 20px;
             flex-wrap: wrap;
-        }
-
-        .user-name {
-            font-weight: bold;
-            font-size: 16px;
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
         }
 
         .saldo-display {
@@ -122,53 +79,37 @@
             font-size: 20px;
             font-weight: bold;
             border: 2px solid gold;
-            box-shadow: 0 0 15px rgba(255,215,0,0.3);
         }
 
-        .saldo-display span {
+        .saldo-display span:first-child {
             color: gold;
             font-size: 24px;
-            filter: drop-shadow(0 0 5px gold);
+        }
+
+        .btn-recargar, .logout-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            color: white;
         }
 
         .btn-recargar {
             background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
-        }
-
-        .btn-recargar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px #4CAF50;
         }
 
         .logout-btn {
             background: linear-gradient(135deg, #f44336, #d32f2f);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        .logout-btn:hover {
+        .btn-recargar:hover, .logout-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 20px #f44336;
         }
 
-        /* Contenedor principal */
         .game-container {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
             background: rgba(10, 15, 20, 0.8);
             backdrop-filter: blur(10px);
@@ -180,40 +121,16 @@
             z-index: 10;
         }
 
-        .game-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, transparent, gold, transparent);
-            border-radius: 50px 50px 0 0;
-            animation: barraSuperior 2s infinite;
-        }
-
-        @keyframes barraSuperior {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-
-        /* Máquina tragamonedas - ESTILO VEGAS */
         .machine {
             background: linear-gradient(145deg, #2c3e50, #1a2632);
             border-radius: 60px;
             padding: 40px 20px;
-            box-shadow: 
-                inset 0 -10px 0 #0f151c,
-                0 20px 40px rgba(0,0,0,0.8),
-                0 0 30px rgba(255,215,0,0.3);
+            box-shadow: inset 0 -10px 0 #0f151c, 0 20px 40px rgba(0,0,0,0.8);
             border: 4px solid #f1c40f;
             margin-bottom: 30px;
             position: relative;
-            overflow: hidden;
         }
 
-        /* Luces LED alrededor de la máquina */
         .machine::before {
             content: '';
             position: absolute;
@@ -221,9 +138,7 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(45deg, 
-                #ff0000, #ff8800, #ffff00, #00ff00, 
-                #0000ff, #4b0082, #8f00ff, #ff0000);
+            background: linear-gradient(45deg, #ff0000, #ff8800, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
             border-radius: 62px;
             z-index: -1;
             animation: ledGira 3s linear infinite;
@@ -235,124 +150,116 @@
             100% { filter: hue-rotate(360deg); }
         }
 
-        /* Panel de luces superior */
         .machine-header {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
         }
 
         .led-light {
-            width: 15px;
-            height: 15px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: red;
             box-shadow: 0 0 10px red;
             animation: parpadeoLED 0.5s infinite alternate;
         }
 
-        .led-light:nth-child(2) { background: blue; box-shadow: 0 0 10px blue; animation-delay: 0.1s; }
-        .led-light:nth-child(3) { background: green; box-shadow: 0 0 10px green; animation-delay: 0.2s; }
-        .led-light:nth-child(4) { background: yellow; box-shadow: 0 0 10px yellow; animation-delay: 0.3s; }
-        .led-light:nth-child(5) { background: purple; box-shadow: 0 0 10px purple; animation-delay: 0.4s; }
-        .led-light:nth-child(6) { background: cyan; box-shadow: 0 0 10px cyan; animation-delay: 0.5s; }
-        .led-light:nth-child(7) { background: orange; box-shadow: 0 0 10px orange; animation-delay: 0.6s; }
-        .led-light:nth-child(8) { background: pink; box-shadow: 0 0 10px pink; animation-delay: 0.7s; }
-
         @keyframes parpadeoLED {
             from { opacity: 0.3; transform: scale(0.8); }
             to { opacity: 1; transform: scale(1.2); }
         }
 
-        /* RODILLOS - EFECTO 3D REALISTA */
-        .reels {
+        /* ========== RODILLOS ESTILO SLOT REAL ========== */
+        .reels-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin: 30px 0;
             perspective: 1000px;
         }
 
+        .reel-wrapper {
+            width: 130px;
+            height: 160px;
+            background: #1a1a2e;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+            border: 3px solid gold;
+        }
+
         .reel {
-            width: 120px;
-            height: 140px;
-            background: linear-gradient(135deg, #f0f0f0, #d0d0d0);
-            border-radius: 30px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #fff8e7 0%, #f5e6c4 100%);
+            border-radius: 17px;
+        }
+
+        .reel-strip {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            transition: transform 0.05s linear;
+        }
+
+        .reel-item {
+            height: 160px;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 70px;
-            box-shadow: 
-                inset 0 -5px 0 #a0a0a0,
-                inset 0 5px 0 white,
-                0 15px 0 #8B4513,
-                0 20px 20px rgba(0,0,0,0.5);
-            border: 4px solid gold;
-            transition: all 0.1s;
-            animation: none;
-            transform-style: preserve-3d;
-            position: relative;
+            font-size: 80px;
+            background: linear-gradient(135deg, #fef9e8, #fff0d4);
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+            border-top: 2px solid rgba(255,255,255,0.5);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .reel::before {
-            content: '';
+        .reel-overlay {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
-            border-radius: 26px;
             pointer-events: none;
+            background: linear-gradient(180deg, 
+                rgba(0,0,0,0.3) 0%,
+                transparent 15%,
+                transparent 85%,
+                rgba(0,0,0,0.3) 100%);
+            border-radius: 17px;
+            z-index: 2;
         }
 
-        .reel::after {
-            content: '';
+        .reel-glow {
             position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
-            border-radius: 34px;
-            background: linear-gradient(45deg, gold, transparent, gold);
-            z-index: -1;
-            animation: brilloBorde 2s infinite;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        @keyframes brilloBorde {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+        .reel-wrapper.winning .reel-glow {
+            opacity: 1;
+            animation: glowPulse 0.5s infinite alternate;
         }
 
-        .reel.spinning {
-            animation: spinReel 0.1s infinite linear;
-            transform: rotateX(10deg) translateZ(20px);
+        @keyframes glowPulse {
+            from { opacity: 0.5; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1.2); }
         }
 
-        .reel.spinning-turbo {
-            animation: spinReelTurbo 0.05s infinite linear;
-            transform: rotateX(20deg) translateZ(30px);
-        }
-
-        @keyframes spinReel {
-            0% { transform: rotateX(0deg) scale(1); }
-            25% { transform: rotateX(10deg) scale(1.1); }
-            50% { transform: rotateX(0deg) scale(1); }
-            75% { transform: rotateX(-10deg) scale(1.1); }
-            100% { transform: rotateX(0deg) scale(1); }
-        }
-
-        @keyframes spinReelTurbo {
-            0% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-            25% { transform: rotateX(20deg) scale(1.2) rotate(5deg); }
-            50% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-            75% { transform: rotateX(-20deg) scale(1.2) rotate(-5deg); }
-            100% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-        }
-
-        /* Control de apuesta - estilo casino */
+        /* Control de apuesta */
         .bet-control {
             display: flex;
             justify-content: center;
@@ -371,40 +278,27 @@
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 0 #b7950b, 0 10px 20px rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            box-shadow: 0 8px 0 #b7950b;
             border: 2px solid white;
         }
 
         .bet-btn:active {
             transform: translateY(8px);
-            box-shadow: 0 0 0 #b7950b, 0 5px 10px rgba(0,0,0,0.3);
-        }
-
-        .bet-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 4px 0 #b7950b;
+            box-shadow: 0 0 0 #b7950b;
         }
 
         .bet-display {
             font-size: 36px;
             font-weight: bold;
             color: gold;
-            text-shadow: 3px 3px 0 #000, 0 0 20px gold;
+            text-shadow: 3px 3px 0 #000;
             background: rgba(0,0,0,0.3);
             padding: 10px 30px;
             border-radius: 50px;
             border: 2px solid gold;
         }
 
-        .bet-display small {
-            font-size: 18px;
-            color: rgba(255,255,255,0.8);
-        }
-
-        /* Botón JUGAR - ESPECTACULAR */
         .btn-play {
             width: 100%;
             padding: 25px;
@@ -415,11 +309,8 @@
             font-size: 36px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 
-                0 15px 0 #b7950b,
-                0 20px 30px rgba(0,0,0,0.5),
-                0 0 30px gold;
+            transition: all 0.1s;
+            box-shadow: 0 15px 0 #b7950b;
             margin: 20px 0 30px;
             text-transform: uppercase;
             letter-spacing: 4px;
@@ -428,36 +319,17 @@
             overflow: hidden;
         }
 
-        .btn-play::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: destelloBoton 2s infinite;
-        }
-
-        @keyframes destelloBoton {
-            0% { transform: rotate(45deg) translateX(-100%); }
-            100% { transform: rotate(45deg) translateX(100%); }
-        }
-
         .btn-play:active {
             transform: translateY(15px);
-            box-shadow: 0 5px 0 #b7950b, 0 10px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 0 #b7950b;
         }
 
         .btn-play:disabled {
             opacity: 0.7;
             transform: translateY(8px);
-            box-shadow: 0 7px 0 #b7950b;
             cursor: not-allowed;
         }
 
-        /* Botón MODO TURBO */
         .turbo-container {
             display: flex;
             align-items: center;
@@ -470,38 +342,20 @@
             background: linear-gradient(135deg, #ff4444, #cc0000);
             color: white;
             border: 3px solid gold;
-            padding: 15px 30px;
+            padding: 12px 25px;
             border-radius: 50px;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 8px 0 #8B0000, 0 0 20px red;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            box-shadow: 0 5px 0 #8B0000;
         }
 
         .turbo-btn.active {
             background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            box-shadow: 0 8px 0 #1B5E20, 0 0 20px #4CAF50;
+            box-shadow: 0 5px 0 #1B5E20;
         }
 
-        .turbo-btn:active {
-            transform: translateY(8px);
-            box-shadow: 0 0 0 #8B0000;
-        }
-
-        .turbo-multiplier {
-            background: gold;
-            color: #2c3e50;
-            padding: 5px 15px;
-            border-radius: 25px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        /* Apuestas rápidas */
         .quick-bets {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -516,43 +370,27 @@
             padding: 12px;
             border-radius: 30px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            font-size: 16px;
             text-align: center;
-            box-shadow: 0 5px 0 #1a2632, 0 5px 10px rgba(0,0,0,0.3);
-        }
-
-        .quick-bet:hover {
-            background: gold;
-            color: #2c3e50;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 0 #b7950b, 0 8px 15px rgba(0,0,0,0.3);
+            font-weight: bold;
+            transition: all 0.2s;
         }
 
         .quick-bet:active {
-            transform: translateY(5px);
-            box-shadow: 0 2px 0 #b7950b;
+            transform: scale(0.95);
         }
 
-        /* Panel de premios - estilo LED */
         .prize-panel {
             background: linear-gradient(135deg, #1a2632, #2c3e50);
             border-radius: 30px;
             padding: 20px;
             margin: 30px 0;
             border: 3px solid gold;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,215,0,0.2);
-            position: relative;
         }
 
         .prize-panel h3 {
             color: gold;
             text-align: center;
             margin-bottom: 20px;
-            font-size: 24px;
-            text-shadow: 2px 2px 0 #000, 0 0 20px gold;
-            letter-spacing: 2px;
         }
 
         .prize-table {
@@ -564,127 +402,82 @@
         .prize-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 18px;
+            padding: 10px 15px;
             background: rgba(0,0,0,0.5);
-            border-radius: 50px;
+            border-radius: 30px;
             color: white;
             border: 1px solid gold;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .prize-item .symbol {
-            font-size: 24px;
-            filter: drop-shadow(0 0 5px gold);
         }
 
         .prize-item .value {
             color: gold;
             font-weight: bold;
-            font-size: 20px;
-            text-shadow: 0 0 10px gold;
         }
 
-        /* Resultado con efecto especial */
         .result-box {
             text-align: center;
-            padding: 25px;
+            padding: 20px;
             background: linear-gradient(135deg, #1a2632, #2c3e50);
             border-radius: 50px;
             margin: 20px 0;
             border: 3px solid gold;
             color: white;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            box-shadow: inset 0 0 30px rgba(255,215,0,0.2);
-            position: relative;
-            overflow: hidden;
         }
 
         .result-box.win {
-            animation: winPulse 0.5s infinite alternate;
+            animation: winPulse 0.3s infinite alternate;
         }
 
         @keyframes winPulse {
-            from { box-shadow: 0 0 20px gold, inset 0 0 20px gold; }
-            to { box-shadow: 0 0 50px gold, inset 0 0 50px gold; }
+            from { box-shadow: 0 0 20px gold; }
+            to { box-shadow: 0 0 60px gold; }
         }
 
-        .win-big {
-            color: gold;
-            font-size: 32px;
-            font-weight: bold;
-            text-shadow: 0 0 20px gold;
-            animation: winText 0.3s infinite alternate;
-        }
-
-        @keyframes winText {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        /* Estadísticas */
         .stats {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
             margin-top: 20px;
         }
 
         .stat {
             background: linear-gradient(135deg, #1a2632, #2c3e50);
-            border-radius: 30px;
-            padding: 15px;
+            border-radius: 20px;
+            padding: 12px;
             text-align: center;
-            border: 2px solid gold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .stat-label {
-            color: rgba(255,255,255,0.8);
-            font-size: 14px;
-            margin-bottom: 5px;
+            border: 1px solid gold;
         }
 
         .stat-value {
             color: gold;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: bold;
-            text-shadow: 0 0 10px gold;
         }
 
-        /* Historial */
         .history {
             margin-top: 20px;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
             background: linear-gradient(135deg, #1a2632, #2c3e50);
-            border-radius: 30px;
-            padding: 15px;
-            border: 2px solid gold;
+            border-radius: 20px;
+            padding: 10px;
+            border: 1px solid gold;
         }
 
         .history-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 15px;
+            padding: 8px 12px;
             border-bottom: 1px solid rgba(255,215,0,0.3);
             color: white;
-            font-size: 16px;
         }
 
         .history-item.win {
             color: gold;
-            font-weight: bold;
-            text-shadow: 0 0 5px gold;
         }
 
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        /* ============================================
-           MODAL DE RECARGA
-           ============================================ */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -695,233 +488,81 @@
             backdrop-filter: blur(10px);
             display: none;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             z-index: 1000;
-            padding: 20px 15px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .modal-content {
             background: linear-gradient(135deg, #1e2a3a, #2a3a4a);
             border-radius: 40px;
-            padding: 30px 25px;
+            padding: 30px;
             max-width: 500px;
-            width: 100%;
-            margin: auto;
+            width: 90%;
             border: 4px solid gold;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 50px gold;
-            animation: modalEntrada 0.3s ease-out;
-            position: relative;
-        }
-
-        @keyframes modalEntrada {
-            from { 
-                opacity: 0; 
-                transform: translateY(-30px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-
-        .modal-content h2 {
-            color: gold;
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 28px;
-            text-shadow: 2px 2px 0 #000;
         }
 
         .pack-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin: 20px 0;
         }
 
-        @media (min-width: 500px) {
-            .pack-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
         .pack {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+            background: #2c3e50;
             border: 2px solid gold;
-            border-radius: 25px;
-            padding: 15px 12px;
+            border-radius: 20px;
+            padding: 15px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
-            color: white;
-            box-shadow: 0 5px 0 #1a2632;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .pack:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 #1a2632;
         }
 
         .pack.selected {
             background: gold;
             color: #2c3e50;
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #b7950b;
         }
 
         .pack-monto {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 3px;
-        }
-
-        .pack-precio {
-            font-size: 16px;
-            color: inherit;
-        }
-
-        .pack-descuento {
-            background: #ff4444;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-top: 5px;
-            display: inline-block;
         }
 
         .btn-modal {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: none;
             border-radius: 30px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 8px;
-            border: 2px solid white;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-modal:active {
-            transform: translateY(4px);
+            margin-top: 10px;
         }
 
         .btn-comprar {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: #4CAF50;
             color: white;
-            box-shadow: 0 5px 0 #2d6a2d;
-        }
-
-        .btn-comprar:active {
-            box-shadow: 0 1px 0 #2d6a2d;
         }
 
         .btn-cerrar {
-            background: linear-gradient(135deg, #f44336, #d32f2f);
+            background: #f44336;
             color: white;
-            box-shadow: 0 5px 0 #8b1e1e;
         }
 
-        .btn-cerrar:active {
-            box-shadow: 0 1px 0 #8b1e1e;
-        }
-
-        .btn-comprar:disabled, .btn-cerrar:disabled {
-            opacity: 0.5;
-            transform: none;
-            box-shadow: 0 3px 0 #666;
-            cursor: not-allowed;
-        }
-
-        /* Scrollbar personalizado */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a2632;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: gold;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f39c12;
+        @media (max-width: 600px) {
+            .reel-wrapper { width: 90px; height: 110px; }
+            .reel-item { height: 110px; font-size: 55px; }
+            .bet-display { font-size: 24px; padding: 5px 20px; }
+            .btn-play { font-size: 24px; padding: 18px; }
+            .prize-table { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
-    <!-- Librería para confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
 </head>
 <body>
-    <script src="config.js"></script>
-
-    <!-- Partículas brillantes -->
-    <div id="particulas"></div>
-
-    <!-- Modal de Recarga - AHORA CON MONTOS REALES -->
-    <div class="modal-overlay" id="modal-recarga">
-        <div class="modal-content">
-            <h2>💰 COMPRAR SALDO</h2>
-            
-            <div class="pack-grid">
-                <div class="pack" onclick="seleccionarPack(20000, 20000)">
-                    <div class="pack-monto">₲ 20.000</div>
-                    <div class="pack-precio">💰 ₲ 20.000</div>
-                    <div class="pack-descuento">Básico</div>
-                </div>
-                
-                <div class="pack" onclick="seleccionarPack(50000, 50000)">
-                    <div class="pack-monto">₲ 50.000</div>
-                    <div class="pack-precio">💰 ₲ 50.000</div>
-                    <div class="pack-descuento">Popular</div>
-                </div>
-                
-                <div class="pack" onclick="seleccionarPack(100000, 100000)">
-                    <div class="pack-monto">₲ 100.000</div>
-                    <div class="pack-precio">💰 ₲ 100.000</div>
-                    <div class="pack-descuento">+20% extra</div>
-                </div>
-                
-                <div class="pack" onclick="seleccionarPack(200000, 200000)">
-                    <div class="pack-monto">₲ 200.000</div>
-                    <div class="pack-precio">💰 ₲ 200.000</div>
-                    <div class="pack-descuento">Super Pack</div>
-                </div>
-            </div>
-
-            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 30px; margin: 20px 0; border: 2px solid gold;">
-                <p style="color: gold; text-align: center; font-size: 18px; margin-bottom: 10px;">
-                    Transferí al alias:
-                </p>
-                <p style="color: white; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 2px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 15px; word-break: break-all;">
-                    6018795
-                </p>
-                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3; color: white; box-shadow: 0 5px 0 #1565C0; margin-top: 15px;">
-                    📋 COPIAR ALIAS
-                </button>
-            </div>
-
-            <button onclick="confirmarCompra()" class="btn-modal btn-comprar" id="btn-comprar" disabled>
-                ✅ SOLICITAR RECARGA
-            </button>
-            <button onclick="cerrarModal()" class="btn-modal btn-cerrar">
-                ❌ CANCELAR
-            </button>
-        </div>
-    </div>
-
-    <!-- Barra superior -->
     <div class="user-bar">
         <div class="user-info">
-            <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
+            <span>👤 <span id="user-nombre">Cargando...</span></span>
             <div class="saldo-display">
                 <span>₲</span>
                 <span id="saldo">0</span>
@@ -933,46 +574,50 @@
         </div>
     </div>
 
-    <!-- Juego -->
     <div class="game-container">
         <div class="machine">
-            <!-- Luces LED superiores -->
             <div class="machine-header">
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
+                <div class="led-light"></div><div class="led-light"></div><div class="led-light"></div>
+                <div class="led-light"></div><div class="led-light"></div><div class="led-light"></div>
             </div>
 
-            <div class="reels">
-                <div class="reel" id="reel1">🍒</div>
-                <div class="reel" id="reel2">🍒</div>
-                <div class="reel" id="reel3">🍒</div>
+            <!-- RODILLOS CON EFECTO REAL -->
+            <div class="reels-container">
+                <div class="reel-wrapper" id="reel-wrapper-0">
+                    <div class="reel" id="reel-0">
+                        <div class="reel-strip" id="strip-0"></div>
+                    </div>
+                    <div class="reel-overlay"></div>
+                    <div class="reel-glow"></div>
+                </div>
+                <div class="reel-wrapper" id="reel-wrapper-1">
+                    <div class="reel" id="reel-1">
+                        <div class="reel-strip" id="strip-1"></div>
+                    </div>
+                    <div class="reel-overlay"></div>
+                    <div class="reel-glow"></div>
+                </div>
+                <div class="reel-wrapper" id="reel-wrapper-2">
+                    <div class="reel" id="reel-2">
+                        <div class="reel-strip" id="strip-2"></div>
+                    </div>
+                    <div class="reel-overlay"></div>
+                    <div class="reel-glow"></div>
+                </div>
             </div>
 
             <div class="bet-control">
                 <button class="bet-btn" onclick="cambiarApuesta(-1000)" id="btn-menos">-</button>
-                <div class="bet-display">
-                    <span id="apuesta">1000</span> <small>₲</small>
-                </div>
+                <div class="bet-display"><span id="apuesta">1000</span> <small>₲</small></div>
                 <button class="bet-btn" onclick="cambiarApuesta(1000)" id="btn-mas">+</button>
             </div>
 
-            <!-- Modo Turbo -->
             <div class="turbo-container">
-                <button class="turbo-btn" id="turbo-btn" onclick="toggleTurbo()">
-                    <span>⚡</span> MODO TURBO <span>⚡</span>
-                </button>
-                <div class="turbo-multiplier" id="turbo-multiplier">x1</div>
+                <button class="turbo-btn" id="turbo-btn" onclick="toggleTurbo()">⚡ MODO TURBO ⚡</button>
+                <div id="turbo-multiplier" style="background: gold; padding: 5px 15px; border-radius: 25px;">x1</div>
             </div>
 
-            <button class="btn-play" onclick="jugar()" id="btn-jugar">
-                🎰 JUGAR
-            </button>
+            <button class="btn-play" onclick="jugar()" id="btn-jugar">🎰 JUGAR</button>
 
             <div class="quick-bets">
                 <div class="quick-bet" onclick="setApuesta(5000)">₲ 5.000</div>
@@ -982,137 +627,122 @@
             </div>
         </div>
 
-        <!-- Panel de premios -->
         <div class="prize-panel">
             <h3>🏆 TABLA DE PREMIOS</h3>
             <div class="prize-table">
-                <div class="prize-item"><span class="symbol">🍒 🍒 🍒</span> <span class="value">x50</span></div>
-                <div class="prize-item"><span class="symbol">💎 💎 💎</span> <span class="value">x30</span></div>
-                <div class="prize-item"><span class="symbol">7 7 7</span> <span class="value">x20</span></div>
-                <div class="prize-item"><span class="symbol">🍋 🍋 🍋</span> <span class="value">x10</span></div>
-                <div class="prize-item"><span class="symbol">🍊 🍊 🍊</span> <span class="value">x5</span></div>
-                <div class="prize-item"><span class="symbol">2 iguales</span> <span class="value">x1</span></div>
+                <div class="prize-item"><span>🍒 🍒 🍒</span> <span class="value">x50</span></div>
+                <div class="prize-item"><span>💎 💎 💎</span> <span class="value">x30</span></div>
+                <div class="prize-item"><span>7 7 7</span> <span class="value">x20</span></div>
+                <div class="prize-item"><span>🍋 🍋 🍋</span> <span class="value">x10</span></div>
+                <div class="prize-item"><span>🍊 🍊 🍊</span> <span class="value">x5</span></div>
+                <div class="prize-item"><span>2 iguales</span> <span class="value">x1</span></div>
             </div>
         </div>
 
-        <!-- Resultado de la última jugada -->
-        <div class="result-box" id="resultado">
-            🎰 Listo para jugar
-        </div>
+        <div class="result-box" id="resultado">🎰 Listo para jugar</div>
 
-        <!-- Estadísticas -->
         <div class="stats">
-            <div class="stat">
-                <div class="stat-label">Veces jugadas</div>
-                <div class="stat-value" id="total-jugadas">0</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Mayor premio</div>
-                <div class="stat-value" id="mayor-premio">₲ 0</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Ganancias totales</div>
-                <div class="stat-value" id="ganancias">₲ 0</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">% Retorno</div>
-                <div class="stat-value" id="retorno">0%</div>
-            </div>
+            <div class="stat"><div class="stat-label">Jugadas</div><div class="stat-value" id="total-jugadas">0</div></div>
+            <div class="stat"><div class="stat-label">Mayor premio</div><div class="stat-value" id="mayor-premio">₲ 0</div></div>
+            <div class="stat"><div class="stat-label">Ganancias</div><div class="stat-value" id="ganancias">₲ 0</div></div>
+            <div class="stat"><div class="stat-label">Retorno</div><div class="stat-value" id="retorno">0%</div></div>
         </div>
 
-        <!-- Historial de últimos premios -->
-        <div class="history" id="historial">
-            <div class="history-item">Esperando jugadas...</div>
+        <div class="history" id="historial"><div class="history-item">Esperando jugadas...</div></div>
+    </div>
+
+    <div class="modal-overlay" id="modal-recarga">
+        <div class="modal-content">
+            <h2>💰 COMPRAR SALDO</h2>
+            <div class="pack-grid">
+                <div class="pack" onclick="seleccionarPack(20000, 20000)"><div class="pack-monto">₲ 20.000</div></div>
+                <div class="pack" onclick="seleccionarPack(50000, 50000)"><div class="pack-monto">₲ 50.000</div></div>
+                <div class="pack" onclick="seleccionarPack(100000, 100000)"><div class="pack-monto">₲ 100.000</div></div>
+                <div class="pack" onclick="seleccionarPack(200000, 200000)"><div class="pack-monto">₲ 200.000</div></div>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; margin: 15px 0; text-align: center;">
+                <p style="color: gold;">Alias: <strong style="font-size: 24px;">6018795</strong></p>
+                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3;">📋 COPIAR</button>
+            </div>
+            <button class="btn-modal btn-comprar" id="btn-comprar" disabled onclick="confirmarCompra()">SOLICITAR</button>
+            <button class="btn-modal btn-cerrar" onclick="cerrarModal()">CANCELAR</button>
         </div>
     </div>
 
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
         const token = localStorage.getItem('token');
-        
-        if (!token) {
-            window.location.href = 'login.html';
+        if (!token) window.location.href = 'login.html';
+
+        // Símbolos y premios
+        const simbolos = ['🍒', '💎', '7', '🍋', '🍊'];
+        const premiosMap = { '🍒🍒🍒': 50, '💎💎💎': 30, '777': 20, '🍋🍋🍋': 10, '🍊🍊🍊': 5, '2iguales': 1 };
+
+        let saldo = 0, apuesta = 1000, jugando = false, modoTurbo = false;
+        let stats = { jugadas: 0, mayorPremio: 0, gananciasTotales: 0, historial: [] };
+        let packSeleccionado = null;
+
+        // Crear strips para cada rodillo (10 símbolos repetidos para efecto de carrusel)
+        function crearStrip() {
+            let strip = [];
+            for (let i = 0; i < 20; i++) {
+                strip.push(simbolos[i % simbolos.length]);
+            }
+            return strip;
         }
 
-        // ============================================
-        // LÍMITE SECRETO (en guaraníes)
-        // ============================================
-        let LIMITE_SECRETO_POR_JUGADA = 50000; // ₲ 50.000 máximo por jugada
-
-        // Cargar límite guardado
-        const limiteGuardado = localStorage.getItem('limite_secreto_admin');
-        if (limiteGuardado) {
-            LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
-        }
-
-        // Crear partículas brillantes
-        function crearParticulas() {
-            const particulasDiv = document.getElementById('particulas');
-            for (let i = 0; i < 30; i++) {
-                const particula = document.createElement('div');
-                particula.className = 'particula';
-                particula.style.left = Math.random() * 100 + '%';
-                particula.style.top = Math.random() * 100 + '%';
-                particula.style.animationDelay = Math.random() * 3 + 's';
-                particulasDiv.appendChild(particula);
+        function inicializarRodillos() {
+            for (let i = 0; i < 3; i++) {
+                const strip = crearStrip();
+                const stripDiv = document.getElementById(`strip-${i}`);
+                stripDiv.innerHTML = strip.map(s => `<div class="reel-item">${s}</div>`).join('');
+                stripDiv.style.transform = `translateY(0px)`;
             }
         }
-        crearParticulas();
 
-        // Estado del juego
-        let usuarioActual = {};
-        let saldo = 0; // Saldo en guaraníes
-        let apuesta = 1000; // Apuesta mínima ₲ 1.000
-        let jugando = false;
-        let packSeleccionado = null;
-        let modoTurbo = false;
-        let turboMultiplicador = 1;
-        
-        // Estadísticas
-        let stats = {
-            jugadas: 0,
-            mayorPremio: 0,
-            gananciasTotales: 0,
-            historial: []
-        };
+        // Posición aleatoria inicial (efecto de carrusel)
+        function posicionAleatoriaRodillo() {
+            const itemHeight = document.querySelector('.reel-item')?.offsetHeight || 110;
+            const totalItems = 20;
+            const maxOffset = (totalItems - 1) * itemHeight;
+            return Math.floor(Math.random() * maxOffset);
+        }
 
-        // Símbolos
-        const simbolos = ['🍒', '💎', '7', '🍋', '🍊'];
-        
-        // Multiplicadores de premio
-        const premios = {
-            '🍒🍒🍒': 50,
-            '💎💎💎': 30,
-            '777': 20,
-            '🍋🍋🍋': 10,
-            '🍊🍊🍊': 5,
-            '2iguales': 1
-        };
+        function setRodilloVisible(index, simbolo, posicionFinal = null) {
+            const strip = document.getElementById(`strip-${index}`);
+            const items = strip.querySelectorAll('.reel-item');
+            const itemHeight = items[0]?.offsetHeight || 110;
+            
+            // Buscar la posición donde está el símbolo
+            let targetIndex = 0;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].textContent === simbolo) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+            
+            if (posicionFinal !== null) {
+                strip.style.transform = `translateY(-${posicionFinal}px)`;
+            } else {
+                const yOffset = targetIndex * itemHeight;
+                strip.style.transform = `translateY(-${yOffset}px)`;
+            }
+        }
 
-        // Cargar datos del usuario
         async function cargarUsuario() {
             try {
-                const res = await fetch(`${API_URL}/usuario`, {
-                    headers: { 'Authorization': token }
-                });
+                const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token } });
                 const data = await res.json();
-                
-                usuarioActual = data.usuario;
-                // AHORA: 1 ficha = ₲ 1 (directo)
                 saldo = data.usuario.fichas || 0;
-                
-                document.getElementById('user-nombre').textContent = usuarioActual.usuario;
+                document.getElementById('user-nombre').textContent = data.usuario.usuario;
                 actualizarSaldo();
-                
-                // Cargar estadísticas guardadas
-                const statsGuardadas = localStorage.getItem(`stats_${usuarioActual.id}`);
+                const statsGuardadas = localStorage.getItem(`stats_${data.usuario.id}`);
                 if (statsGuardadas) {
                     stats = JSON.parse(statsGuardadas);
                     actualizarEstadisticas();
                 }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         function actualizarSaldo() {
@@ -1121,88 +751,44 @@
 
         function toggleTurbo() {
             modoTurbo = !modoTurbo;
-            const turboBtn = document.getElementById('turbo-btn');
-            const turboMult = document.getElementById('turbo-multiplier');
-            
+            const btn = document.getElementById('turbo-btn');
+            const mult = document.getElementById('turbo-multiplier');
             if (modoTurbo) {
-                turboBtn.classList.add('active');
-                turboMultiplicador = 3;
-                turboMult.textContent = 'x3';
-                
-                // Ajustar apuesta si es muy alta para turbo (máx 30.000)
-                let maxApuestaTurbo = Math.min(30000, Math.floor(saldo / 3));
-                if (apuesta > maxApuestaTurbo) {
-                    apuesta = Math.max(1000, Math.floor(maxApuestaTurbo / 1000) * 1000);
-                    document.getElementById('apuesta').textContent = apuesta;
-                }
+                btn.classList.add('active');
+                mult.textContent = 'x3';
             } else {
-                turboBtn.classList.remove('active');
-                turboMultiplicador = 1;
-                turboMult.textContent = 'x1';
+                btn.classList.remove('active');
+                mult.textContent = 'x1';
             }
-            
-            actualizarBotonesApuesta();
-        }
-
-        function actualizarBotonesApuesta() {
-            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
-            document.getElementById('btn-menos').disabled = apuesta <= 1000;
-            document.getElementById('btn-mas').disabled = apuesta >= maxApuesta;
         }
 
         function cambiarApuesta(delta) {
             if (jugando) return;
-            
-            let nuevaApuesta = apuesta + delta;
-            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
-            
-            if (nuevaApuesta >= 1000 && nuevaApuesta <= maxApuesta) {
-                apuesta = nuevaApuesta;
+            let nueva = apuesta + delta;
+            let maxApuesta = Math.min(50000, saldo);
+            if (nueva >= 1000 && nueva <= maxApuesta) {
+                apuesta = nueva;
                 document.getElementById('apuesta').textContent = apuesta;
             }
-            
-            actualizarBotonesApuesta();
         }
 
         function setApuesta(valor) {
             if (jugando) return;
-            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
-            
-            if (valor <= saldo && valor <= maxApuesta) {
+            if (valor <= saldo && valor <= 50000) {
                 apuesta = valor;
                 document.getElementById('apuesta').textContent = apuesta;
-                actualizarBotonesApuesta();
-            } else {
-                mostrarResultado('❌ No tenés suficiente saldo o excede el máximo para turbo', 'error');
             }
         }
 
-        function getRandomSimbolo() {
-            return simbolos[Math.floor(Math.random() * simbolos.length)];
-        }
-
-        // ============================================
-        // FUNCIÓN DE CÁLCULO DE PREMIOS CON LÍMITE SECRETO
-        // ============================================
-        function calcularPremio(s1, s2, s3, apuesta) {
+        function calcularPremio(s1, s2, s3, apuestaVal) {
             if (s1 === s2 && s2 === s3) {
-                const combinacion = s1 + s1 + s1;
-                const multiplicador = premios[combinacion] || 0;
-                let premio = apuesta * multiplicador;
-                
-                // APLICAR LÍMITE SECRETO (el jugador no lo sabe)
-                if (premio > LIMITE_SECRETO_POR_JUGADA) {
-                    premio = LIMITE_SECRETO_POR_JUGADA;
-                }
+                const mult = premiosMap[s1 + s1 + s1] || 0;
+                let premio = apuestaVal * mult;
+                if (premio > 50000) premio = 50000;
                 return premio;
-                
             } else if (s1 === s2 || s2 === s3 || s1 === s3) {
-                let premio = apuesta * premios['2iguales'];
-                
-                // También aplicar límite (por si acaso)
-                if (premio > LIMITE_SECRETO_POR_JUGADA) {
-                    premio = LIMITE_SECRETO_POR_JUGADA;
-                }
+                let premio = apuestaVal * 1;
+                if (premio > 50000) premio = 50000;
                 return premio;
             }
             return 0;
@@ -1210,75 +796,70 @@
 
         async function jugar() {
             if (jugando) return;
-            
-            let costoApuesta = modoTurbo ? apuesta * 3 : apuesta;
-            
-            if (saldo < costoApuesta) {
-                mostrarResultado('❌ No tenés suficiente saldo. Recargá!', 'error');
+            let costo = modoTurbo ? apuesta * 3 : apuesta;
+            if (saldo < costo) {
+                mostrarResultado('❌ Saldo insuficiente', 'error');
                 abrirModalRecarga();
                 return;
             }
 
             jugando = true;
             document.getElementById('btn-jugar').disabled = true;
-            
-            saldo -= costoApuesta;
+            saldo -= costo;
             actualizarSaldo();
+
+            // Efecto de giro: mover los strips rápidamente
+            const itemHeight = document.querySelector('.reel-item')?.offsetHeight || 110;
+            const totalItems = 20;
+            const maxOffset = (totalItems - 1) * itemHeight;
             
-            const reels = [
-                document.getElementById('reel1'),
-                document.getElementById('reel2'),
-                document.getElementById('reel3')
-            ];
+            const tiemposGiro = modoTurbo ? 400 : 700;
+            const framesPorRodillo = modoTurbo ? 15 : 25;
             
-            if (modoTurbo) {
-                reels.forEach(reel => {
-                    reel.classList.add('spinning-turbo');
-                    reel.classList.remove('spinning');
-                });
-            } else {
-                reels.forEach(reel => {
-                    reel.classList.add('spinning');
-                    reel.classList.remove('spinning-turbo');
-                });
+            // Iniciar animación de los 3 rodillos
+            for (let i = 0; i < 3; i++) {
+                const strip = document.getElementById(`strip-${i}`);
+                let posActual = 0;
+                let frame = 0;
+                const randomFinal = Math.floor(Math.random() * maxOffset);
+                
+                const interval = setInterval(() => {
+                    if (!jugando) return;
+                    frame++;
+                    if (frame >= framesPorRodillo) {
+                        clearInterval(interval);
+                        // Posición final aleatoria, luego corregiremos al símbolo correcto
+                        strip.style.transform = `translateY(-${randomFinal}px)`;
+                    } else {
+                        posActual = (posActual + itemHeight * 0.8) % maxOffset;
+                        strip.style.transform = `translateY(-${posActual}px)`;
+                    }
+                }, tiemposGiro / framesPorRodillo);
             }
             
-            // Pequeños confettis al girar
-            confetti({
-                particleCount: 5,
-                spread: 30,
-                origin: { y: 0.5 }
-            });
-            
-            let tiempoGiro = modoTurbo ? 300 : 500;
+            // Generar resultado real
+            const s1 = simbolos[Math.floor(Math.random() * simbolos.length)];
+            const s2 = simbolos[Math.floor(Math.random() * simbolos.length)];
+            const s3 = simbolos[Math.floor(Math.random() * simbolos.length)];
             
             setTimeout(() => {
-                reels.forEach(reel => {
-                    reel.classList.remove('spinning', 'spinning-turbo');
-                });
+                // Ajustar cada rodillo al símbolo correcto
+                for (let i = 0; i < 3; i++) {
+                    const simboloFinal = [s1, s2, s3][i];
+                    setRodilloVisible(i, simboloFinal);
+                    
+                    // Efecto de brillo si es ganador
+                    const wrapper = document.getElementById(`reel-wrapper-${i}`);
+                    wrapper.classList.remove('winning');
+                }
                 
-                const s1 = getRandomSimbolo();
-                const s2 = getRandomSimbolo();
-                const s3 = getRandomSimbolo();
-                
-                reels[0].textContent = s1;
-                reels[1].textContent = s2;
-                reels[2].textContent = s3;
-                
-                const multiplicador = calcularPremio(s1, s2, s3, apuesta) / apuesta;
                 const ganancia = calcularPremio(s1, s2, s3, apuesta) * (modoTurbo ? 3 : 1);
-                
-                const resultadoDiv = document.getElementById('resultado');
                 
                 if (ganancia > 0) {
                     saldo += ganancia;
-                    
                     stats.jugadas++;
                     stats.gananciasTotales += ganancia;
-                    if (ganancia > stats.mayorPremio) {
-                        stats.mayorPremio = ganancia;
-                    }
-                    
+                    if (ganancia > stats.mayorPremio) stats.mayorPremio = ganancia;
                     stats.historial.unshift({
                         combinacion: `${s1}${s2}${s3}`,
                         ganancia,
@@ -1286,70 +867,46 @@
                     });
                     if (stats.historial.length > 10) stats.historial.pop();
                     
-                    resultadoDiv.textContent = `🎉 GANASTE ₲ ${formatoNumero(ganancia)}! (x${multiplicador})`;
-                    resultadoDiv.classList.add('win');
+                    mostrarResultado(`🎉 GANASTE ₲ ${formatoNumero(ganancia)}!`, 'win');
                     
-                    // EXPLOSIÓN DE CONFETTI para premios grandes
-                    if (ganancia >= 200000) {
-                        confetti({
-                            particleCount: 200,
-                            spread: 120,
-                            origin: { y: 0.6 },
-                            startVelocity: 40,
-                            colors: ['#ffd700', '#ff0000', '#00ff00', '#0000ff']
-                        });
-                        setTimeout(() => {
-                            confetti({
-                                particleCount: 150,
-                                spread: 90,
-                                origin: { y: 0.5, x: 0.2 }
-                            });
-                            confetti({
-                                particleCount: 150,
-                                spread: 90,
-                                origin: { y: 0.5, x: 0.8 }
-                            });
-                        }, 200);
-                    } else if (ganancia >= 50000) {
-                        confetti({
-                            particleCount: 50,
-                            spread: 70,
-                            origin: { y: 0.6 }
-                        });
+                    // Confetti
+                    if (ganancia >= 50000) {
+                        canvasConfetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
+                    } else {
+                        canvasConfetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
                     }
+                    
+                    // Marcar rodillos ganadores con brillo
+                    if (s1 === s2 || s1 === s3) document.getElementById(`reel-wrapper-0`).classList.add('winning');
+                    if (s2 === s1 || s2 === s3) document.getElementById(`reel-wrapper-1`).classList.add('winning');
+                    if (s3 === s1 || s3 === s2) document.getElementById(`reel-wrapper-2`).classList.add('winning');
                 } else {
                     stats.jugadas++;
-                    resultadoDiv.textContent = '😢 Mejor suerte la próxima';
-                    resultadoDiv.classList.remove('win');
+                    mostrarResultado('😢 Mejor suerte la próxima', 'lose');
                 }
                 
                 actualizarSaldo();
                 actualizarEstadisticas();
                 guardarEstadisticas();
-                actualizarBotonesApuesta();
                 
                 jugando = false;
                 document.getElementById('btn-jugar').disabled = false;
-            }, tiempoGiro);
+            }, tiemposGiro);
         }
 
-        function mostrarResultado(mensaje, tipo) {
-            const resultadoDiv = document.getElementById('resultado');
-            resultadoDiv.textContent = mensaje;
-            if (tipo === 'win') {
-                resultadoDiv.classList.add('win');
-            } else {
-                resultadoDiv.classList.remove('win');
-            }
+        function mostrarResultado(msg, tipo) {
+            const div = document.getElementById('resultado');
+            div.textContent = msg;
+            if (tipo === 'win') div.classList.add('win');
+            else div.classList.remove('win');
+            setTimeout(() => div.classList.remove('win'), 2000);
         }
 
         function actualizarEstadisticas() {
             document.getElementById('total-jugadas').textContent = stats.jugadas;
             document.getElementById('mayor-premio').textContent = '₲ ' + formatoNumero(stats.mayorPremio);
             document.getElementById('ganancias').textContent = '₲ ' + formatoNumero(stats.gananciasTotales);
-            
-            const retorno = stats.jugadas > 0 ? 
-                Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
+            const retorno = stats.jugadas > 0 ? Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
             document.getElementById('retorno').textContent = retorno + '%';
             
             const historialDiv = document.getElementById('historial');
@@ -1366,128 +923,46 @@
         }
 
         function guardarEstadisticas() {
-            localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats));
+            const userId = localStorage.getItem('userId') || 'default';
+            localStorage.setItem(`stats_${userId}`, JSON.stringify(stats));
         }
 
-        // ============================================
-        // FUNCIONES DEL MODAL
-        // ============================================
-        function abrirModalRecarga() {
-            packSeleccionado = null;
-            const modal = document.getElementById('modal-recarga');
-            modal.style.display = 'flex';
-            document.getElementById('btn-comprar').disabled = true;
-            document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
-            
-            // Prevenir scroll del body
-            document.body.style.overflow = 'hidden';
-            
-            // Scroll al inicio del modal
-            setTimeout(() => {
-                modal.scrollTop = 0;
-            }, 50);
-        }
-
+        // Modal functions
+        function abrirModalRecarga() { document.getElementById('modal-recarga').style.display = 'flex'; }
+        function cerrarModal() { document.getElementById('modal-recarga').style.display = 'none'; }
         function seleccionarPack(monto, precio) {
             packSeleccionado = { monto, precio };
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
             document.getElementById('btn-comprar').disabled = false;
         }
-
-        function copiarAlias() {
-            const alias = "6018795";
-            navigator.clipboard.writeText(alias);
-            
-            // Feedback visual
-            const btn = event.currentTarget;
-            const textoOriginal = btn.textContent;
-            btn.textContent = "✅ COPIADO!";
-            setTimeout(() => {
-                btn.textContent = textoOriginal;
-            }, 2000);
-        }
-
-        function cerrarModal() {
-            document.getElementById('modal-recarga').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // Cerrar modal haciendo click fuera
-        document.getElementById('modal-recarga').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarModal();
-            }
-        });
-
-        // ============================================
-        // FUNCIÓN DE CONFIRMAR COMPRA (AHORA 1 ficha = ₲ 1)
-        // ============================================
+        function copiarAlias() { navigator.clipboard.writeText("6018795"); alert('Alias copiado!'); }
         async function confirmarCompra() {
-            if (!packSeleccionado) {
-                alert('Seleccioná un pack');
-                return;
-            }
-
+            if (!packSeleccionado) return;
             const btn = document.getElementById('btn-comprar');
-            const textoOriginal = btn.textContent;
             btn.disabled = true;
-            btn.textContent = "⏳ Procesando...";
-
+            btn.textContent = "⏳...";
             try {
-                // AHORA: 1 ficha = ₲ 1 (el monto es directo)
-                const fichas = packSeleccionado.monto; // El monto en guaraníes
-                
-                // Enviar solicitud al backend
                 const res = await fetch(`${API_URL}/recargas/solicitar`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
-                    body: JSON.stringify({
-                        fichas: fichas, // Directo en guaraníes
-                        monto: packSeleccionado.precio
-                    })
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ fichas: packSeleccionado.monto, monto: packSeleccionado.precio })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
-                    // Abrir WhatsApp
-                    const mensaje = encodeURIComponent(
-                        `💰 Solicitud de recarga:\n` +
-                        `• Usuario: ${usuarioActual.usuario}\n` +
-                        `• Monto a acreditar: ₲ ${formatoNumero(packSeleccionado.monto)}\n` +
-                        `• A pagar: ₲ ${formatoNumero(packSeleccionado.precio)}\n\n` +
-                        `Ya transferí, favor acreditar. Gracias!`
-                    );
-                    window.open(`https://wa.me/595983775018?text=${mensaje}`, '_blank');
-                    
-                    alert('✅ Solicitud enviada. Te acreditaremos en minutos.');
+                    const msg = encodeURIComponent(`💰 Recarga: ${packSeleccionado.monto} Gs`);
+                    window.open(`https://wa.me/595983775018?text=${msg}`, '_blank');
+                    alert('Solicitud enviada');
                     cerrarModal();
-                } else {
-                    alert('Error: ' + (data.error || 'Error al enviar solicitud'));
-                }
-            } catch (error) {
-                alert('Error de conexión');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
-            }
+                } else alert('Error');
+            } catch (error) { alert('Error de conexión'); }
+            finally { btn.disabled = false; btn.textContent = "SOLICITAR"; }
         }
-
-        function cerrarSesion() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('usuario');
-            window.location.href = 'login.html';
-        }
-
-        function formatoNumero(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
+        function cerrarSesion() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+        function formatoNumero(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
 
         // Inicializar
+        inicializarRodillos();
         cargarUsuario();
     </script>
 </body>
