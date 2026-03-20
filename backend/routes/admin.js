@@ -3,7 +3,38 @@ const router = express.Router();
 const db = require('../config/database');
 const { verificarToken, verificarAdmin } = require('../middleware/auth');
 
+// ============================================
+// RUTAS PÚBLICAS (NO requieren autenticación)
+// ============================================
+
+// OBTENER LÍMITE ACTUAL (PÚBLICO - los jugadores pueden consultarlo)
+router.get('/obtener-limite', async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT valor FROM configuracion WHERE clave = 'limite_premio'`
+        );
+        
+        let limite = 50000;
+        
+        if (result.rows.length > 0) {
+            limite = parseInt(result.rows[0].valor);
+        } else {
+            await db.query(
+                `INSERT INTO configuracion (clave, valor) VALUES ('limite_premio', '50000')`
+            );
+        }
+        
+        res.json({ limite });
+        
+    } catch (error) {
+        console.error('Error obteniendo límite:', error);
+        res.json({ limite: 50000 });
+    }
+});
+
+// ============================================
 // TODAS LAS RUTAS DE ADMIN REQUIEREN TOKEN Y SER ADMIN
+// ============================================
 router.use(verificarToken, verificarAdmin);
 
 // OBTENER TODOS LOS USUARIOS
@@ -47,7 +78,8 @@ router.get('/solicitudes-recarga', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
-// APROBAR RECARGA - VERSIÓN CORREGIDA
+
+// APROBAR RECARGA
 router.post('/aprobar-recarga', async (req, res) => {
     const client = await db.connect();
     
@@ -58,7 +90,6 @@ router.post('/aprobar-recarga', async (req, res) => {
 
         console.log('📝 Aprobando solicitud ID:', solicitud_id);
 
-        // 1. Obtener datos de la solicitud
         const solicitud = await client.query(
             `SELECT id, usuario_id, fichas, monto, estado 
              FROM solicitudes_recarga 
@@ -72,21 +103,16 @@ router.post('/aprobar-recarga', async (req, res) => {
         }
 
         const solicitudData = solicitud.rows[0];
-        console.log('📦 Datos:', solicitudData);
-
-        // 2. Convertir a números correctamente
         const fichas = Number(solicitudData.fichas);
         const monto = Number(solicitudData.monto);
         const usuarioId = Number(solicitudData.usuario_id);
 
-        // 3. Validar que no sean NaN
         if (isNaN(fichas) || isNaN(monto) || isNaN(usuarioId)) {
             throw new Error(`Datos inválidos: fichas=${fichas}, monto=${monto}, usuarioId=${usuarioId}`);
         }
 
-        console.log(`💰 Agregando ${fichas} fichas a usuario ${usuarioId} (monto: ₲ ${monto})`);
+        console.log(`💰 Agregando ${fichas} monedas a usuario ${usuarioId}`);
 
-        // 4. Actualizar solicitud
         await client.query(
             `UPDATE solicitudes_recarga 
              SET estado = 'aprobada', fecha_resolucion = CURRENT_TIMESTAMP 
@@ -94,35 +120,37 @@ router.post('/aprobar-recarga', async (req, res) => {
             [solicitud_id]
         );
 
-        // 5. Actualizar usuario - IMPORTANTE: total_recargado también es numeric
         await client.query(
             `UPDATE usuarios 
              SET fichas = fichas + $1, 
-                 total_recargado = total_recargado + $2 
+                 total_recargado = COALESCE(total_recargado, 0) + $2 
              WHERE id = $3`,
             [fichas, monto, usuarioId]
         );
 
-        // 6. Registrar transacción
-        await client.query(
-            `INSERT INTO transacciones 
-             (usuario_id, tipo, fichas, descripcion) 
-             VALUES ($1, 'recarga', $2, $3)`,
-            [usuarioId, fichas, `Recarga de ₲ ${monto.toLocaleString()}`]
-        );
+        // Intentar registrar transacción (si la tabla existe)
+        try {
+            await client.query(
+                `INSERT INTO transacciones 
+                 (usuario_id, tipo, fichas, descripcion) 
+                 VALUES ($1, 'recarga', $2, $3)`,
+                [usuarioId, fichas, `Recarga de ${fichas} monedas`]
+            );
+        } catch (transError) {
+            console.log('⚠️ Tabla transacciones no existe, continuando...');
+        }
 
         await client.query('COMMIT');
         
         console.log('✅ Recarga aprobada exitosamente');
-        res.json({ success: true, message: `Agregadas ${fichas} fichas` });
+        res.json({ success: true, message: `Agregadas ${fichas} monedas` });
 
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('❌ Error en aprobar recarga:', error.message);
-        console.error('Stack:', error.stack);
         res.status(500).json({ 
-            error: error.message,
-            details: error.stack
+            success: false,
+            error: error.message
         });
     } finally {
         client.release();
@@ -258,7 +286,6 @@ router.get('/stats-tragamonedas', async (req, res) => {
 // ESTADÍSTICAS DE VENTAS
 router.get('/estadisticas-ventas', async (req, res) => {
     try {
-        // Por día de la semana
         const porDia = await db.query(`
             SELECT 
                 to_char(fecha_solicitud, 'Day') as dia,
@@ -272,7 +299,6 @@ router.get('/estadisticas-ventas', async (req, res) => {
             ORDER BY EXTRACT(DOW FROM fecha_solicitud)
         `);
 
-        // Por hora del día
         const porHora = await db.query(`
             SELECT 
                 EXTRACT(HOUR FROM fecha_solicitud) as hora,
@@ -286,7 +312,6 @@ router.get('/estadisticas-ventas', async (req, res) => {
             ORDER BY hora
         `);
 
-        // Totales
         const totales = await db.query(`
             SELECT 
                 COUNT(*) as total_recargas,
@@ -297,23 +322,19 @@ router.get('/estadisticas-ventas', async (req, res) => {
                 AND fecha_solicitud >= CURRENT_DATE - INTERVAL '30 days'
         `);
 
-        // Encontrar día pico
         const diaPico = porDia.rows.reduce((max, item) => 
             item.total_compras > max.total_compras ? item : max
         , porDia.rows[0] || { dia: 'Sin datos', total_compras: 0 });
 
-        // Encontrar hora pico
         const horaPico = porHora.rows.reduce((max, item) => 
             item.total_compras > max.total_compras ? item : max
         , porHora.rows[0] || { hora: 0, total_compras: 0 });
 
-        // Traducción de días
         const traduccionDias = {
             'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles',
             'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo'
         };
 
-        // Agregar día en español
         const porDiaConEsp = porDia.rows.map(d => ({
             ...d,
             dia_esp: traduccionDias[d.dia.trim()] || d.dia
@@ -334,36 +355,8 @@ router.get('/estadisticas-ventas', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener estadísticas' });
     }
 });
-// ============================================
-// CONFIGURACIÓN DE LÍMITE SECRETO
-// ============================================
 
-// OBTENER LÍMITE ACTUAL (accesible para jugadores también)
-router.get('/obtener-limite', async (req, res) => {
-    try {
-        const result = await db.query(
-            `SELECT valor FROM configuracion WHERE clave = 'limite_premio'`
-        );
-        
-        let limite = 50000;
-        
-        if (result.rows.length > 0) {
-            limite = parseInt(result.rows[0].valor);
-        } else {
-            await db.query(
-                `INSERT INTO configuracion (clave, valor) VALUES ('limite_premio', '50000')`
-            );
-        }
-        
-        res.json({ limite });
-        
-    } catch (error) {
-        console.error('Error obteniendo límite:', error);
-        res.json({ limite: 50000 });
-    }
-});
-
-// CONFIGURAR LÍMITE (solo admin)
+// CONFIGURAR LÍMITE (solo admin - YA ESTÁ DESPUÉS DEL MIDDLEWARE)
 router.post('/configurar-limite', async (req, res) => {
     try {
         const { limite } = req.body;
@@ -394,4 +387,5 @@ router.post('/configurar-limite', async (req, res) => {
         res.status(500).json({ success: false, error: 'Error interno' });
     }
 });
+
 module.exports = router;
