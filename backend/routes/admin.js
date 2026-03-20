@@ -334,5 +334,64 @@ router.get('/estadisticas-ventas', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener estadísticas' });
     }
 });
+// ============================================
+// CONFIGURACIÓN DE LÍMITE SECRETO
+// ============================================
 
+// OBTENER LÍMITE ACTUAL (accesible para jugadores también)
+router.get('/obtener-limite', async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT valor FROM configuracion WHERE clave = 'limite_premio'`
+        );
+        
+        let limite = 50000;
+        
+        if (result.rows.length > 0) {
+            limite = parseInt(result.rows[0].valor);
+        } else {
+            await db.query(
+                `INSERT INTO configuracion (clave, valor) VALUES ('limite_premio', '50000')`
+            );
+        }
+        
+        res.json({ limite });
+        
+    } catch (error) {
+        console.error('Error obteniendo límite:', error);
+        res.json({ limite: 50000 });
+    }
+});
+
+// CONFIGURAR LÍMITE (solo admin)
+router.post('/configurar-limite', async (req, res) => {
+    try {
+        const { limite } = req.body;
+        
+        if (!limite || limite < 1000 || limite > 1000000) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Límite inválido (mínimo 1000, máximo 1.000.000)' 
+            });
+        }
+        
+        await db.query(
+            `INSERT INTO configuracion (clave, valor, actualizado_por, fecha_actualizacion)
+             VALUES ('limite_premio', $1, $2, CURRENT_TIMESTAMP)
+             ON CONFLICT (clave) DO UPDATE SET 
+                valor = EXCLUDED.valor,
+                actualizado_por = EXCLUDED.actualizado_por,
+                fecha_actualizacion = CURRENT_TIMESTAMP`,
+            [limite.toString(), req.usuario.id]
+        );
+        
+        console.log(`🔒 Límite actualizado por admin ID ${req.usuario.id}: ₲ ${limite}`);
+        
+        res.json({ success: true, limite });
+        
+    } catch (error) {
+        console.error('Error configurando límite:', error);
+        res.status(500).json({ success: false, error: 'Error interno' });
+    }
+});
 module.exports = router;
