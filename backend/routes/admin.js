@@ -48,7 +48,7 @@ router.get('/solicitudes-recarga', async (req, res) => {
     }
 });
 
-// APROBAR RECARGA
+// APROBAR RECARGA - CORREGIDO para 1 ficha = ₲ 1
 router.post('/aprobar-recarga', async (req, res) => {
     const client = await db.connect();
     
@@ -79,7 +79,7 @@ router.post('/aprobar-recarga', async (req, res) => {
             [solicitud_id]
         );
 
-        // Agregar fichas al usuario
+        // Agregar fichas al usuario (ahora 1 ficha = ₲ 1)
         await client.query(
             `UPDATE usuarios 
              SET fichas = fichas + $1, 
@@ -102,7 +102,7 @@ router.post('/aprobar-recarga', async (req, res) => {
 
     } catch (error) {
         await client.query('ROLLBACK');
-        console.error('Error:', error);
+        console.error('Error en aprobar recarga:', error);
         res.status(500).json({ error: error.message });
     } finally {
         client.release();
@@ -277,15 +277,41 @@ router.get('/estadisticas-ventas', async (req, res) => {
                 AND fecha_solicitud >= CURRENT_DATE - INTERVAL '30 days'
         `);
 
+        // Encontrar día pico
+        const diaPico = porDia.rows.reduce((max, item) => 
+            item.total_compras > max.total_compras ? item : max
+        , porDia.rows[0] || { dia: 'Sin datos', total_compras: 0 });
+
+        // Encontrar hora pico
+        const horaPico = porHora.rows.reduce((max, item) => 
+            item.total_compras > max.total_compras ? item : max
+        , porHora.rows[0] || { hora: 0, total_compras: 0 });
+
+        // Traducción de días
+        const traduccionDias = {
+            'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles',
+            'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo'
+        };
+
+        // Agregar día en español
+        const porDiaConEsp = porDia.rows.map(d => ({
+            ...d,
+            dia_esp: traduccionDias[d.dia.trim()] || d.dia
+        }));
+
         res.json({
-            por_dia: porDia.rows,
+            por_dia: porDiaConEsp,
             por_hora: porHora.rows,
-            totales: totales.rows[0]
+            totales: totales.rows[0] || { total_recargas: 0, total_fichas: 0, total_monto: 0 },
+            insights: {
+                dia_pico: traduccionDias[diaPico.dia.trim()] || diaPico.dia,
+                hora_pico: horaPico.hora
+            }
         });
 
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
+        console.error('Error en estadísticas de ventas:', error);
+        res.status(500).json({ error: 'Error al obtener estadísticas' });
     }
 });
 
