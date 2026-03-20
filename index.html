@@ -124,10 +124,9 @@
             box-shadow: 0 0 15px rgba(255,215,0,0.3);
         }
 
-        .saldo-display span {
+        .saldo-display span:first-child {
             color: gold;
             font-size: 24px;
-            filter: drop-shadow(0 0 5px gold);
         }
 
         .btn-recargar {
@@ -597,19 +596,6 @@
             to { box-shadow: 0 0 50px gold, inset 0 0 50px gold; }
         }
 
-        .win-big {
-            color: gold;
-            font-size: 32px;
-            font-weight: bold;
-            text-shadow: 0 0 20px gold;
-            animation: winText 0.3s infinite alternate;
-        }
-
-        @keyframes winText {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
         .stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -756,14 +742,26 @@
         }
 
         .pack-monto {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .pack-precio {
             font-size: 16px;
-            color: inherit;
+            color: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .pack.selected .pack-precio {
+            color: #2c3e50;
         }
 
         .pack-descuento {
@@ -821,6 +819,25 @@
             cursor: not-allowed;
         }
 
+        .info-pago {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .alias-text {
+            background: rgba(0,0,0,0.5);
+            padding: 12px;
+            border-radius: 15px;
+            font-family: monospace;
+            font-size: 24px;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -848,45 +865,59 @@
 
     <div class="modal-overlay" id="modal-recarga">
         <div class="modal-content">
-            <h2>💰 COMPRAR SALDO</h2>
+            <h2>💰 COMPRAR MONEDAS</h2>
             
             <div class="pack-grid">
-                <!-- PACKS MODIFICADOS: desde 5.000 -->
                 <div class="pack" onclick="seleccionarPack(5000, 5000)">
-                    <div class="pack-monto">₲ 5.000</div>
-                    <div class="pack-precio">💰 ₲ 5.000</div>
+                    <div class="pack-monto">
+                        <span>🪙</span> 5.000
+                    </div>
+                    <div class="pack-precio">
+                        <span>₲</span> 5.000
+                    </div>
                     <div class="pack-descuento">Mini</div>
                 </div>
                 
                 <div class="pack" onclick="seleccionarPack(10000, 10000)">
-                    <div class="pack-monto">₲ 10.000</div>
-                    <div class="pack-precio">💰 ₲ 10.000</div>
+                    <div class="pack-monto">
+                        <span>🪙</span> 10.000
+                    </div>
+                    <div class="pack-precio">
+                        <span>₲</span> 10.000
+                    </div>
                     <div class="pack-descuento">Básico</div>
                 </div>
                 
                 <div class="pack" onclick="seleccionarPack(25000, 25000)">
-                    <div class="pack-monto">₲ 25.000</div>
-                    <div class="pack-precio">💰 ₲ 25.000</div>
+                    <div class="pack-monto">
+                        <span>🪙</span> 25.000
+                    </div>
+                    <div class="pack-precio">
+                        <span>₲</span> 25.000
+                    </div>
                     <div class="pack-descuento">Popular</div>
                 </div>
                 
                 <div class="pack" onclick="seleccionarPack(50000, 50000)">
-                    <div class="pack-monto">₲ 50.000</div>
-                    <div class="pack-precio">💰 ₲ 50.000</div>
+                    <div class="pack-monto">
+                        <span>🪙</span> 50.000
+                    </div>
+                    <div class="pack-precio">
+                        <span>₲</span> 50.000
+                    </div>
                     <div class="pack-descuento">Super Pack</div>
                 </div>
             </div>
 
-            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 30px; margin: 20px 0; border: 2px solid gold;">
-                <p style="color: gold; text-align: center; font-size: 18px; margin-bottom: 10px;">
-                    Transferí al alias:
-                </p>
-                <p style="color: white; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 2px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 15px; word-break: break-all;">
-                    6018795
-                </p>
-                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3; color: white; box-shadow: 0 5px 0 #1565C0; margin-top: 15px;">
+            <div class="info-pago">
+                <p style="color: gold; font-weight: bold;">📲 Transferí al alias:</p>
+                <div class="alias-text" style="color: gold; font-size: 28px; font-weight: bold;">6018795</div>
+                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3; color: white; box-shadow: 0 5px 0 #1565C0; margin-top: 10px; padding: 12px;">
                     📋 COPIAR ALIAS
                 </button>
+                <p style="font-size: 12px; margin-top: 12px; color: rgba(255,255,255,0.7);">
+                    💡 1 moneda = ₲ 1 (el valor es el mismo)
+                </p>
             </div>
 
             <button onclick="confirmarCompra()" class="btn-modal btn-comprar" id="btn-comprar" disabled>
@@ -902,7 +933,7 @@
         <div class="user-info">
             <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
             <div class="saldo-display">
-                <span>₲</span>
+                <span>🪙</span>
                 <span id="saldo">0</span>
             </div>
         </div>
@@ -934,7 +965,7 @@
             <div class="bet-control">
                 <button class="bet-btn" onclick="cambiarApuesta(-1000)" id="btn-menos">-</button>
                 <div class="bet-display">
-                    <span id="apuesta">1000</span> <small>₲</small>
+                    <span id="apuesta">1000</span> <small>🪙</small>
                 </div>
                 <button class="bet-btn" onclick="cambiarApuesta(1000)" id="btn-mas">+</button>
             </div>
@@ -951,10 +982,10 @@
             </button>
 
             <div class="quick-bets">
-                <div class="quick-bet" onclick="setApuesta(5000)">₲ 5.000</div>
-                <div class="quick-bet" onclick="setApuesta(10000)">₲ 10.000</div>
-                <div class="quick-bet" onclick="setApuesta(25000)">₲ 25.000</div>
-                <div class="quick-bet" onclick="setApuesta(50000)">₲ 50.000</div>
+                <div class="quick-bet" onclick="setApuesta(5000)">🪙 5.000</div>
+                <div class="quick-bet" onclick="setApuesta(10000)">🪙 10.000</div>
+                <div class="quick-bet" onclick="setApuesta(25000)">🪙 25.000</div>
+                <div class="quick-bet" onclick="setApuesta(50000)">🪙 50.000</div>
             </div>
         </div>
 
@@ -981,11 +1012,11 @@
             </div>
             <div class="stat">
                 <div class="stat-label">Mayor premio</div>
-                <div class="stat-value" id="mayor-premio">₲ 0</div>
+                <div class="stat-value" id="mayor-premio">🪙 0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">Ganancias totales</div>
-                <div class="stat-value" id="ganancias">₲ 0</div>
+                <div class="stat-value" id="ganancias">🪙 0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">% Retorno</div>
@@ -1011,7 +1042,6 @@
         // ============================================
         let LIMITE_SECRETO_POR_JUGADA = 50000; // valor por defecto
 
-        // Función para cargar el límite desde el backend
         async function cargarLimiteSecreto() {
             try {
                 console.log('🔒 Cargando límite secreto...');
@@ -1031,7 +1061,6 @@
                 console.log('⚠️ No se pudo cargar desde backend, usando localStorage');
             }
             
-            // Fallback a localStorage (solo si no se pudo conectar al backend)
             const limiteGuardado = localStorage.getItem('limite_secreto_admin');
             if (limiteGuardado) {
                 LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
@@ -1091,7 +1120,6 @@
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
                 actualizarSaldo();
                 
-                // 🔒 CARGAR LÍMITE SECRETO DESDE BACKEND
                 await cargarLimiteSecreto();
                 
                 const statsGuardadas = localStorage.getItem(`stats_${usuarioActual.id}`);
@@ -1161,7 +1189,7 @@
                 document.getElementById('apuesta').textContent = apuesta;
                 actualizarBotonesApuesta();
             } else {
-                mostrarResultado('❌ No tenés suficiente saldo o excede el máximo para turbo', 'error');
+                mostrarResultado('❌ No tenés suficientes monedas', 'error');
             }
         }
 
@@ -1197,7 +1225,7 @@
             let costoApuesta = modoTurbo ? apuesta * 3 : apuesta;
             
             if (saldo < costoApuesta) {
-                mostrarResultado('❌ No tenés suficiente saldo. Recargá!', 'error');
+                mostrarResultado('❌ No tenés suficientes monedas. Recargá!', 'error');
                 abrirModalRecarga();
                 return;
             }
@@ -1268,7 +1296,7 @@
                     });
                     if (stats.historial.length > 10) stats.historial.pop();
                     
-                    resultadoDiv.textContent = `🎉 GANASTE ₲ ${formatoNumero(ganancia)}! (x${multiplicador})`;
+                    resultadoDiv.textContent = `🎉 GANASTE 🪙 ${formatoNumero(ganancia)}! (x${multiplicador})`;
                     resultadoDiv.classList.add('win');
                     
                     if (ganancia >= 200000) {
@@ -1326,8 +1354,8 @@
 
         function actualizarEstadisticas() {
             document.getElementById('total-jugadas').textContent = stats.jugadas;
-            document.getElementById('mayor-premio').textContent = '₲ ' + formatoNumero(stats.mayorPremio);
-            document.getElementById('ganancias').textContent = '₲ ' + formatoNumero(stats.gananciasTotales);
+            document.getElementById('mayor-premio').textContent = '🪙 ' + formatoNumero(stats.mayorPremio);
+            document.getElementById('ganancias').textContent = '🪙 ' + formatoNumero(stats.gananciasTotales);
             
             const retorno = stats.jugadas > 0 ? 
                 Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
@@ -1340,7 +1368,7 @@
                 historialDiv.innerHTML = stats.historial.map(h => `
                     <div class="history-item ${h.ganancia > 0 ? 'win' : ''}">
                         <span>${h.combinacion}</span>
-                        <span>${h.ganancia > 0 ? '+₲ ' + formatoNumero(h.ganancia) : '0'}</span>
+                        <span>${h.ganancia > 0 ? '+🪙 ' + formatoNumero(h.ganancia) : '0'}</span>
                     </div>
                 `).join('');
             }
@@ -1423,11 +1451,11 @@
 
                 if (data.success) {
                     const mensaje = encodeURIComponent(
-                        `💰 Solicitud de recarga:\n` +
+                        `💰 SOLICITUD DE RECARGA:\n` +
                         `• Usuario: ${usuarioActual.usuario}\n` +
-                        `• Monto a acreditar: ₲ ${formatoNumero(packSeleccionado.monto)}\n` +
+                        `• Monedas: 🪙 ${formatoNumero(packSeleccionado.monto)}\n` +
                         `• A pagar: ₲ ${formatoNumero(packSeleccionado.precio)}\n\n` +
-                        `Ya transferí, favor acreditar. Gracias!`
+                        `✅ Ya transferí, favor acreditar. Gracias!`
                     );
                     window.open(`https://wa.me/595983775018?text=${mensaje}`, '_blank');
                     
