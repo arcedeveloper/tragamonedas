@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🎰 TRAGAMONEDAS PREMIUM</title>
     <style>
-        /* ========== TODO TU DISEÑO ORIGINAL SE MANTIENE ========== */
+        /* ========== TODO TU DISEÑO ORIGINAL EXACTAMENTE IGUAL ========== */
         * {
             margin: 0;
             padding: 0;
@@ -40,7 +40,8 @@
 
         @keyframes lucesBackground {
             0% { opacity: 0.5; }
-            100% { opacity: 1; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
         }
 
         .particula {
@@ -75,8 +76,6 @@
             position: relative;
             z-index: 10;
             backdrop-filter: blur(5px);
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
         .user-bar::before {
@@ -111,7 +110,7 @@
             text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
         }
 
-        .saldo-display {
+        .fichas-display {
             background: linear-gradient(135deg, #2a3a4a, #1e2a3a);
             padding: 8px 20px;
             border-radius: 30px;
@@ -124,9 +123,10 @@
             box-shadow: 0 0 15px rgba(255,215,0,0.3);
         }
 
-        .saldo-display span:first-child {
+        .fichas-display span {
             color: gold;
             font-size: 24px;
+            filter: drop-shadow(0 0 5px gold);
         }
 
         .btn-recargar {
@@ -324,6 +324,11 @@
             transform: rotateX(10deg) translateZ(20px);
         }
 
+        .reel.spinning-turbo {
+            animation: spinReelTurbo 0.05s infinite linear;
+            transform: rotateX(20deg) translateZ(30px);
+        }
+
         @keyframes spinReel {
             0% { transform: rotateX(0deg) scale(1); }
             25% { transform: rotateX(10deg) scale(1.1); }
@@ -332,21 +337,12 @@
             100% { transform: rotateX(0deg) scale(1); }
         }
 
-        /* Línea de pago CENTRAL - NUEVO */
-        .payline-container {
-            text-align: center;
-            margin: -15px 0 15px 0;
-        }
-        .payline {
-            display: inline-block;
-            background: gold;
-            padding: 5px 30px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #2c3e50;
-            letter-spacing: 2px;
-            box-shadow: 0 0 10px gold;
+        @keyframes spinReelTurbo {
+            0% { transform: rotateX(0deg) scale(1) rotate(0deg); }
+            25% { transform: rotateX(20deg) scale(1.2) rotate(5deg); }
+            50% { transform: rotateX(0deg) scale(1) rotate(0deg); }
+            75% { transform: rotateX(-20deg) scale(1.2) rotate(-5deg); }
+            100% { transform: rotateX(0deg) scale(1) rotate(0deg); }
         }
 
         .bet-control {
@@ -400,7 +396,6 @@
             color: rgba(255,255,255,0.8);
         }
 
-        /* Botón JUGAR - ESPECTACULAR */
         .btn-play {
             width: 100%;
             padding: 25px;
@@ -453,7 +448,49 @@
             cursor: not-allowed;
         }
 
-        /* Apuestas rápidas */
+        .turbo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .turbo-btn {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: white;
+            border: 3px solid gold;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 0 #8B0000, 0 0 20px red;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .turbo-btn.active {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            box-shadow: 0 8px 0 #1B5E20, 0 0 20px #4CAF50;
+        }
+
+        .turbo-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 #8B0000;
+        }
+
+        .turbo-multiplier {
+            background: gold;
+            color: #2c3e50;
+            padding: 5px 15px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
         .quick-bets {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -648,8 +685,14 @@
         }
 
         @keyframes modalEntrada {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { 
+                opacity: 0; 
+                transform: translateY(-30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
         }
 
         .modal-content h2 {
@@ -686,12 +729,38 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .pack:active { transform: translateY(4px); box-shadow: 0 1px 0 #1a2632; }
-        .pack.selected { background: gold; color: #2c3e50; transform: translateY(3px); box-shadow: 0 2px 0 #b7950b; }
-        .pack-monto { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
-        .pack-precio { font-size: 16px; color: rgba(255,255,255,0.8); }
-        .pack.selected .pack-precio { color: #2c3e50; }
-        .pack-descuento { background: #ff4444; color: white; padding: 2px 6px; border-radius: 12px; font-size: 11px; margin-top: 5px; display: inline-block; }
+        .pack:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #1a2632;
+        }
+
+        .pack.selected {
+            background: gold;
+            color: #2c3e50;
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #b7950b;
+        }
+
+        .pack-monto {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .pack-precio {
+            font-size: 16px;
+            color: inherit;
+        }
+
+        .pack-descuento {
+            background: #ff4444;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-top: 5px;
+            display: inline-block;
+        }
 
         .btn-modal {
             width: 100%;
@@ -704,13 +773,39 @@
             transition: all 0.2s;
             margin-top: 8px;
             border: 2px solid white;
+            -webkit-tap-highlight-color: transparent;
         }
-        .btn-modal:active { transform: translateY(4px); }
-        .btn-comprar { background: linear-gradient(135deg, #4CAF50, #45a049); color: white; box-shadow: 0 5px 0 #2d6a2d; }
-        .btn-comprar:active { box-shadow: 0 1px 0 #2d6a2d; }
-        .btn-cerrar { background: linear-gradient(135deg, #f44336, #d32f2f); color: white; box-shadow: 0 5px 0 #8b1e1e; }
-        .btn-cerrar:active { box-shadow: 0 1px 0 #8b1e1e; }
-        .btn-comprar:disabled, .btn-cerrar:disabled { opacity: 0.5; transform: none; box-shadow: 0 3px 0 #666; cursor: not-allowed; }
+
+        .btn-modal:active {
+            transform: translateY(4px);
+        }
+
+        .btn-comprar {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 5px 0 #2d6a2d;
+        }
+
+        .btn-comprar:active {
+            box-shadow: 0 1px 0 #2d6a2d;
+        }
+
+        .btn-cerrar {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            box-shadow: 0 5px 0 #8b1e1e;
+        }
+
+        .btn-cerrar:active {
+            box-shadow: 0 1px 0 #8b1e1e;
+        }
+
+        .btn-comprar:disabled, .btn-cerrar:disabled {
+            opacity: 0.5;
+            transform: none;
+            box-shadow: 0 3px 0 #666;
+            cursor: not-allowed;
+        }
 
         .info-pago {
             background: rgba(0,0,0,0.3);
@@ -720,6 +815,7 @@
             text-align: center;
             border: 1px solid rgba(255,215,0,0.3);
         }
+
         .alias-text {
             background: rgba(0,0,0,0.5);
             padding: 12px;
@@ -730,9 +826,23 @@
             margin: 10px 0;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a2632; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: gold; border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a2632;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: gold;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f39c12;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
 </head>
@@ -740,10 +850,10 @@
     <script src="config.js"></script>
     <div id="particulas"></div>
 
-    <!-- Modal Recarga (tu mismo modal) -->
+    <!-- Modal Recarga -->
     <div class="modal-overlay" id="modal-recarga">
         <div class="modal-content">
-            <h2>💰 COMPRAR MONEDAS</h2>
+            <h2>💰 COMPRAR FICHAS</h2>
             <div class="pack-grid">
                 <div class="pack" onclick="seleccionarPack(5000, 5000)">
                     <div class="pack-monto">🪙 5.000</div>
@@ -769,20 +879,26 @@
             <div class="info-pago">
                 <p style="color: gold; font-weight: bold;">📲 Transferí al alias:</p>
                 <div class="alias-text" style="color: gold; font-size: 28px; font-weight: bold;">6018795</div>
-                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3; box-shadow: 0 5px 0 #1565C0;">📋 COPIAR ALIAS</button>
+                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3; color: white; box-shadow: 0 5px 0 #1565C0; margin-top: 10px; padding: 12px;">
+                    📋 COPIAR ALIAS
+                </button>
             </div>
-            <button onclick="confirmarCompra()" class="btn-modal btn-comprar" id="btn-comprar" disabled>✅ SOLICITAR RECARGA</button>
-            <button onclick="cerrarModal()" class="btn-modal btn-cerrar">❌ CANCELAR</button>
+            <button onclick="confirmarCompra()" class="btn-modal btn-comprar" id="btn-comprar" disabled>
+                ✅ SOLICITAR RECARGA
+            </button>
+            <button onclick="cerrarModal()" class="btn-modal btn-cerrar">
+                ❌ CANCELAR
+            </button>
         </div>
     </div>
 
-    <!-- Barra superior (tu diseño) -->
+    <!-- Barra superior -->
     <div class="user-bar">
         <div class="user-info">
             <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
-            <div class="saldo-display">
+            <div class="fichas-display">
                 <span>🪙</span>
-                <span id="saldo">0</span>
+                <span id="fichas">0</span>
             </div>
         </div>
         <div>
@@ -795,9 +911,14 @@
     <div class="game-container">
         <div class="machine">
             <div class="machine-header">
-                <div class="led-light"></div><div class="led-light"></div><div class="led-light"></div>
-                <div class="led-light"></div><div class="led-light"></div><div class="led-light"></div>
-                <div class="led-light"></div><div class="led-light"></div>
+                <div class="led-light"></div>
+                <div class="led-light"></div>
+                <div class="led-light"></div>
+                <div class="led-light"></div>
+                <div class="led-light"></div>
+                <div class="led-light"></div>
+                <div class="led-light"></div>
+                <div class="led-light"></div>
             </div>
 
             <div class="reels">
@@ -806,17 +927,20 @@
                 <div class="reel" id="reel3">🍒</div>
             </div>
 
-            <!-- LÍNEA DE PAGO CENTRAL (NUEVO) -->
-            <div class="payline-container">
-                <div class="payline">━━━━━━ LÍNEA CENTRAL ━━━━━━</div>
+            <div class="bet-control">
+                <button class="bet-btn" onclick="cambiarApuesta(-1000)" id="btn-menos">-</button>
+                <div class="bet-display">
+                    <span id="apuesta">1000</span> <small>fichas</small>
+                </div>
+                <button class="bet-btn" onclick="cambiarApuesta(1000)" id="btn-mas">+</button>
             </div>
 
-            <div class="bet-control">
-                <button class="bet-btn" onclick="cambiarApuesta(-500)" id="btn-menos">-</button>
-                <div class="bet-display">
-                    <span id="apuesta">500</span> <small>🪙</small>
-                </div>
-                <button class="bet-btn" onclick="cambiarApuesta(500)" id="btn-mas">+</button>
+            <!-- Modo Turbo -->
+            <div class="turbo-container">
+                <button class="turbo-btn" id="turbo-btn" onclick="toggleTurbo()">
+                    <span>⚡</span> MODO TURBO <span>⚡</span>
+                </button>
+                <div class="turbo-multiplier" id="turbo-multiplier">x1</div>
             </div>
 
             <button class="btn-play" onclick="jugar()" id="btn-jugar">
@@ -824,10 +948,10 @@
             </button>
 
             <div class="quick-bets">
-                <div class="quick-bet" onclick="setApuesta(500)">🪙 500</div>
-                <div class="quick-bet" onclick="setApuesta(1000)">🪙 1.000</div>
-                <div class="quick-bet" onclick="setApuesta(2000)">🪙 2.000</div>
-                <div class="quick-bet" onclick="setApuesta(5000)">🪙 5.000</div>
+                <div class="quick-bet" onclick="setApuesta(5000)">5.000 🪙</div>
+                <div class="quick-bet" onclick="setApuesta(10000)">10.000 🪙</div>
+                <div class="quick-bet" onclick="setApuesta(25000)">25.000 🪙</div>
+                <div class="quick-bet" onclick="setApuesta(50000)">50.000 🪙</div>
             </div>
         </div>
 
@@ -854,11 +978,11 @@
             </div>
             <div class="stat">
                 <div class="stat-label">Mayor premio</div>
-                <div class="stat-value" id="mayor-premio">🪙 0</div>
+                <div class="stat-value" id="mayor-premio">0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">Ganancias totales</div>
-                <div class="stat-value" id="ganancias">🪙 0</div>
+                <div class="stat-value" id="ganancias">0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">% Retorno</div>
@@ -878,10 +1002,11 @@
 
         let LIMITE_SECRETO_POR_JUGADA = 50000;
         let usuarioActual = {};
-        let saldo = 0;
-        let apuesta = 500;
+        let fichas = 0;
+        let apuesta = 1000;
         let jugando = false;
         let packSeleccionado = null;
+        let modoTurbo = false;
         
         let stats = { jugadas: 0, mayorPremio: 0, gananciasTotales: 0, historial: [] };
         const simbolos = ['🍒', '💎', '7', '🍋', '🍊'];
@@ -909,9 +1034,9 @@
                 const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token } });
                 const data = await res.json();
                 usuarioActual = data.usuario;
-                saldo = data.usuario.fichas || 0;
+                fichas = data.usuario.fichas || 0;
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
-                actualizarSaldo();
+                actualizarFichas();
                 
                 const limiteGuardado = localStorage.getItem('limite_secreto_admin');
                 if (limiteGuardado) LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
@@ -923,22 +1048,37 @@
             } catch (error) { console.error('Error:', error); }
         }
 
-        function actualizarSaldo() {
-            document.getElementById('saldo').textContent = formatoNumero(saldo);
+        function actualizarFichas() {
+            document.getElementById('fichas').textContent = formatoNumero(fichas);
+            actualizarBotonesApuesta();
+        }
+
+        function toggleTurbo() {
+            if (jugando) return;
+            modoTurbo = !modoTurbo;
+            const turboBtn = document.getElementById('turbo-btn');
+            if (modoTurbo) {
+                turboBtn.classList.add('active');
+                let maxApuestaTurbo = Math.min(30000, Math.floor(fichas / 3));
+                if (apuesta > maxApuestaTurbo) apuesta = maxApuestaTurbo;
+                document.getElementById('apuesta').textContent = apuesta;
+            } else {
+                turboBtn.classList.remove('active');
+            }
             actualizarBotonesApuesta();
         }
 
         function actualizarBotonesApuesta() {
-            let maxApuesta = Math.min(50000, saldo);
-            document.getElementById('btn-menos').disabled = apuesta <= 500;
+            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(fichas / 3)) : Math.min(50000, fichas);
+            document.getElementById('btn-menos').disabled = apuesta <= 1000;
             document.getElementById('btn-mas').disabled = apuesta >= maxApuesta;
         }
 
         function cambiarApuesta(delta) {
             if (jugando) return;
             let nuevaApuesta = apuesta + delta;
-            let maxApuesta = Math.min(50000, saldo);
-            if (nuevaApuesta >= 500 && nuevaApuesta <= maxApuesta) {
+            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(fichas / 3)) : Math.min(50000, fichas);
+            if (nuevaApuesta >= 1000 && nuevaApuesta <= maxApuesta) {
                 apuesta = nuevaApuesta;
                 document.getElementById('apuesta').textContent = apuesta;
             }
@@ -947,8 +1087,8 @@
 
         function setApuesta(valor) {
             if (jugando) return;
-            let maxApuesta = Math.min(50000, saldo);
-            if (valor <= saldo && valor <= maxApuesta && valor >= 500) {
+            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(fichas / 3)) : Math.min(50000, fichas);
+            if (valor <= fichas && valor <= maxApuesta && valor >= 1000) {
                 apuesta = valor;
                 document.getElementById('apuesta').textContent = apuesta;
                 actualizarBotonesApuesta();
@@ -970,7 +1110,7 @@
             return 0;
         }
 
-        // Animación de giro para un rodillo
+        // Animación de giro para un rodillo (máquina real)
         function animarRodillo(elemento, simboloFinal, callback) {
             let frames = 0;
             const maxFrames = 15;
@@ -988,9 +1128,9 @@
 
         async function jugar() {
             if (jugando) return;
-            let costoApuesta = apuesta;
-            if (saldo < costoApuesta) {
-                mostrarResultado('❌ No tenés suficientes monedas', 'error');
+            let costoApuesta = modoTurbo ? apuesta * 3 : apuesta;
+            if (fichas < costoApuesta) {
+                mostrarResultado('❌ No tenés suficientes fichas', 'error');
                 abrirModalRecarga();
                 return;
             }
@@ -1003,14 +1143,13 @@
             ];
             
             const multiplicador = calcularPremio(resultado[0], resultado[1], resultado[2], apuesta) / apuesta;
-            const ganancia = calcularPremio(resultado[0], resultado[1], resultado[2], apuesta);
+            const ganancia = calcularPremio(resultado[0], resultado[1], resultado[2], apuesta) * (modoTurbo ? 3 : 1);
 
             jugando = true;
             document.getElementById('btn-jugar').disabled = true;
             
-            // Restar apuesta localmente
-            saldo -= costoApuesta;
-            actualizarSaldo();
+            fichas -= costoApuesta;
+            actualizarFichas();
             
             const reels = [
                 document.getElementById('reel1'),
@@ -1034,12 +1173,12 @@
                                 })
                             });
                             const data = await res.json();
-                            saldo = data.nuevas_fichas;
-                            actualizarSaldo();
+                            fichas = data.nuevas_fichas;
+                            actualizarFichas();
                         } catch (error) {
                             console.error('Error guardando:', error);
-                            saldo += ganancia;
-                            actualizarSaldo();
+                            fichas += ganancia;
+                            actualizarFichas();
                         }
                         
                         const resultadoDiv = document.getElementById('resultado');
@@ -1049,16 +1188,16 @@
                             if (ganancia > stats.mayorPremio) stats.mayorPremio = ganancia;
                             stats.historial.unshift({ combinacion: `${resultado[0]}${resultado[1]}${resultado[2]}`, ganancia });
                             if (stats.historial.length > 10) stats.historial.pop();
-                            resultadoDiv.textContent = `🎉 GANASTE 🪙 ${formatoNumero(ganancia)}! (x${multiplicador})`;
+                            resultadoDiv.textContent = `🎉 GANASTE 🪙 ${formatoNumero(ganancia)}! (x${multiplicador * (modoTurbo ? 3 : 1)})`;
                             resultadoDiv.classList.add('win');
-                            confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                            if (ganancia >= 50000) confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
                         } else {
                             stats.jugadas++;
                             resultadoDiv.textContent = '😢 Mejor suerte la próxima';
                             resultadoDiv.classList.remove('win');
                         }
                         
-                        actualizarSaldo();
+                        actualizarFichas();
                         actualizarEstadisticas();
                         guardarEstadisticas();
                         actualizarBotonesApuesta();
@@ -1078,14 +1217,14 @@
 
         function actualizarEstadisticas() {
             document.getElementById('total-jugadas').textContent = stats.jugadas;
-            document.getElementById('mayor-premio').textContent = '🪙 ' + formatoNumero(stats.mayorPremio);
-            document.getElementById('ganancias').textContent = '🪙 ' + formatoNumero(stats.gananciasTotales);
+            document.getElementById('mayor-premio').textContent = formatoNumero(stats.mayorPremio);
+            document.getElementById('ganancias').textContent = formatoNumero(stats.gananciasTotales);
             const retorno = stats.jugadas > 0 ? Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
             document.getElementById('retorno').textContent = retorno + '%';
             
             const historialDiv = document.getElementById('historial');
             if (stats.historial.length === 0) historialDiv.innerHTML = '<div class="history-item">Esperando jugadas...</div>';
-            else historialDiv.innerHTML = stats.historial.map(h => `<div class="history-item ${h.ganancia > 0 ? 'win' : ''}"><span>${h.combinacion}</span><span>${h.ganancia > 0 ? '+🪙 ' + formatoNumero(h.ganancia) : '0'}</span></div>`).join('');
+            else historialDiv.innerHTML = stats.historial.map(h => `<div class="history-item ${h.ganancia > 0 ? 'win' : ''}"><span>${h.combinacion}</span><span>${h.ganancia > 0 ? '+' + formatoNumero(h.ganancia) : '0'}</span></div>`).join('');
         }
 
         function guardarEstadisticas() {
@@ -1093,21 +1232,19 @@
         }
 
         // Sincronización en tiempo real
-        let ultimoSaldo = 0;
-        async function sincronizarSaldo() {
+        async function sincronizarFichas() {
             try {
                 const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token } });
                 const data = await res.json();
-                const nuevoSaldo = data.usuario.fichas || 0;
-                if (nuevoSaldo !== saldo) {
-                    saldo = nuevoSaldo;
-                    actualizarSaldo();
+                const nuevasFichas = data.usuario.fichas || 0;
+                if (nuevasFichas !== fichas) {
+                    fichas = nuevasFichas;
+                    actualizarFichas();
                     actualizarBotonesApuesta();
                 }
-                ultimoSaldo = saldo;
             } catch (error) { console.error('Error sincronizando:', error); }
         }
-        setInterval(sincronizarSaldo, 5000);
+        setInterval(sincronizarFichas, 5000);
 
         // Modal
         function abrirModalRecarga() {
@@ -1116,10 +1253,9 @@
             document.getElementById('btn-comprar').disabled = true;
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             document.body.style.overflow = 'hidden';
-            setTimeout(() => { const modal = document.getElementById('modal-recarga'); if(modal) modal.scrollTop = 0; }, 50);
         }
-        function seleccionarPack(monto, precio) {
-            packSeleccionado = { monto, precio };
+        function seleccionarPack(fichas, precio) {
+            packSeleccionado = { fichas, precio };
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
             document.getElementById('btn-comprar').disabled = false;
@@ -1133,11 +1269,11 @@
             try {
                 const res = await fetch(`${API_URL}/recargas/solicitar`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                    body: JSON.stringify({ fichas: packSeleccionado.monto, monto: packSeleccionado.precio })
+                    body: JSON.stringify({ fichas: packSeleccionado.fichas, monto: packSeleccionado.precio })
                 });
                 const data = await res.json();
                 if (data.success) {
-                    const mensaje = encodeURIComponent(`💰 SOLICITUD DE RECARGA:\n• Usuario: ${usuarioActual.usuario}\n• Monedas: 🪙 ${formatoNumero(packSeleccionado.monto)}\n• A pagar: ₲ ${formatoNumero(packSeleccionado.precio)}\n\n✅ Ya transferí, favor acreditar. Gracias!`);
+                    const mensaje = encodeURIComponent(`💰 Solicitud de recarga:\n• Usuario: ${usuarioActual.usuario}\n• Pack: ${packSeleccionado.fichas} fichas\n• Monto: ₲ ${formatoNumero(packSeleccionado.precio)}\n\nYa transferí, favor acreditar. Gracias!`);
                     window.open(`https://wa.me/595983775018?text=${mensaje}`, '_blank');
                     alert('✅ Solicitud enviada');
                     cerrarModal();
