@@ -62,7 +62,6 @@
             color: #555;
         }
 
-        /* Estilo base para TODOS los inputs */
         .form-group input {
             width: 100%;
             padding: 15px;
@@ -83,7 +82,6 @@
             width: 100%;
         }
 
-        /* Solo los inputs DENTRO de password-wrapper tienen padding-right */
         .password-wrapper input {
             padding-right: 50px;
         }
@@ -116,51 +114,59 @@
             fill: none;
         }
 
-        .btn {
+        /* Botón de registro estilo sencillo */
+        .btn-register {
             width: 100%;
             padding: 15px;
+            background: #4CAF50;
+            color: white;
             border: none;
             border-radius: 10px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .btn-register {
-            background: #4CAF50;
-            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 15px;
         }
 
         .btn-register:hover {
-            background: #388E3C;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
+            box-shadow: 0 5px 15px rgba(76,175,80,0.4);
         }
 
-        .btn-back {
-            background: #666;
-            color: white;
+        /* Texto de "¿Ya tenés cuenta?" */
+        .login-link {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
         }
 
-        .btn-back:hover {
-            background: #555;
+        .login-link a {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
         }
 
         .error-message {
             color: #f44336;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 15px;
             display: none;
+            font-size: 14px;
         }
 
         .success-message {
             color: #4CAF50;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 15px;
             display: none;
             font-weight: bold;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -181,7 +187,7 @@
         <div class="form-group">
             <label>Contraseña</label>
             <div class="password-wrapper">
-                <input type="password" id="password" placeholder="Elegí una contraseña">
+                <input type="password" id="password" placeholder="Mínimo 6 caracteres">
                 <button class="toggle-password" onclick="togglePassword('password', this)" type="button">
                     <svg class="eye-icon" viewBox="0 0 24 24">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -194,7 +200,7 @@
         <div class="form-group">
             <label>Confirmar Contraseña</label>
             <div class="password-wrapper">
-                <input type="password" id="confirm-password" placeholder="Repetí la contraseña">
+                <input type="password" id="confirm-password" placeholder="Repetí tu contraseña">
                 <button class="toggle-password" onclick="togglePassword('confirm-password', this)" type="button">
                     <svg class="eye-icon" viewBox="0 0 24 24">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -204,8 +210,11 @@
             </div>
         </div>
 
-        <button class="btn btn-register" onclick="registrarUsuario()">✅ REGISTRARME</button>
-        <button class="btn btn-back" onclick="volverLogin()">🔙 VOLVER</button>
+        <button class="btn-register" onclick="registrarUsuario()">CREAR CUENTA</button>
+        
+        <div class="login-link">
+            ¿Ya tenés cuenta? <a href="login.html">Iniciá sesión</a>
+        </div>
 
         <div id="error" class="error-message"></div>
         <div id="success" class="success-message"></div>
@@ -233,10 +242,6 @@
             }
         }
 
-        function volverLogin() {
-            window.location.href = 'login.html';
-        }
-
         async function registrarUsuario() {
             const usuario = document.getElementById('usuario').value;
             const password = document.getElementById('password').value;
@@ -253,14 +258,20 @@
                 return;
             }
 
-            if (password !== confirmPassword) {
-                errorDiv.textContent = 'Las contraseñas no coinciden';
+            if (usuario.length < 3) {
+                errorDiv.textContent = 'El usuario debe tener al menos 3 caracteres';
                 errorDiv.style.display = 'block';
                 return;
             }
 
-            if (password.length < 4) {
-                errorDiv.textContent = 'La contraseña debe tener al menos 4 caracteres';
+            if (password.length < 6) {
+                errorDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Las contraseñas no coinciden';
                 errorDiv.style.display = 'block';
                 return;
             }
