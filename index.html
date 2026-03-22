@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎰 TRAGAMONEDAS PREMIUM</title>
+    <title>🎰 TRAGAMONEDAS PREMIUM - VEGAS STYLE</title>
     <style>
         * {
             margin: 0;
@@ -27,11 +27,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 90% 30%, rgba(255, 0, 0, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 30% 80%, rgba(0, 255, 0, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 70% 70%, rgba(0, 0, 255, 0.15) 0%, transparent 30%);
+            background: radial-gradient(circle at 10% 20%, rgba(255,215,0,0.15) 0%, transparent 30%),
+                        radial-gradient(circle at 90% 30%, rgba(255,0,0,0.15) 0%, transparent 30%),
+                        radial-gradient(circle at 30% 80%, rgba(0,255,0,0.15) 0%, transparent 30%),
+                        radial-gradient(circle at 70% 70%, rgba(0,0,255,0.15) 0%, transparent 30%);
             pointer-events: none;
             z-index: 0;
             animation: lucesBackground 8s infinite alternate;
@@ -39,8 +38,7 @@
 
         @keyframes lucesBackground {
             0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
         .particula {
@@ -61,10 +59,10 @@
         }
 
         .user-bar {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto 20px auto;
             background: linear-gradient(135deg, #1e2a3a, #2a3a4a);
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 50px;
             display: flex;
             justify-content: space-between;
@@ -72,587 +70,260 @@
             color: white;
             border: 2px solid gold;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.3);
-            position: relative;
-            z-index: 10;
-            backdrop-filter: blur(5px);
             flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .user-bar::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 52px;
-            background: linear-gradient(45deg, gold, transparent, gold);
-            z-index: -1;
-            animation: bordeBrillante 3s infinite;
-        }
-
-        @keyframes bordeBrillante {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+            gap: 10px;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
         .user-name {
             font-weight: bold;
-            font-size: 16px;
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            font-size: 14px;
         }
 
         .saldo-display {
             background: linear-gradient(135deg, #2a3a4a, #1e2a3a);
-            padding: 8px 20px;
+            padding: 6px 15px;
             border-radius: 30px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 20px;
+            gap: 8px;
+            font-size: 18px;
             font-weight: bold;
             border: 2px solid gold;
-            box-shadow: 0 0 15px rgba(255,215,0,0.3);
         }
 
-        .saldo-display span:first-child {
-            color: gold;
-            font-size: 24px;
-        }
+        .saldo-display span:first-child { color: gold; font-size: 20px; }
 
         .btn-recargar {
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
         }
 
-        .btn-recargar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px #4CAF50;
-        }
+        .btn-recargar:hover { transform: scale(1.05); box-shadow: 0 0 20px #4CAF50; }
 
         .logout-btn {
             background: linear-gradient(135deg, #f44336, #d32f2f);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .logout-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px #f44336;
         }
 
         .game-container {
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
             background: rgba(10, 15, 20, 0.8);
             backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 30px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 50px rgba(255,215,0,0.2);
+            border-radius: 40px;
+            padding: 20px;
             border: 2px solid gold;
-            position: relative;
-            z-index: 10;
-        }
-
-        .game-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, transparent, gold, transparent);
-            border-radius: 50px 50px 0 0;
-            animation: barraSuperior 2s infinite;
-        }
-
-        @keyframes barraSuperior {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
         }
 
         .machine {
             background: linear-gradient(145deg, #2c3e50, #1a2632);
-            border-radius: 60px;
-            padding: 40px 20px;
-            box-shadow: 
-                inset 0 -10px 0 #0f151c,
-                0 20px 40px rgba(0,0,0,0.8),
-                0 0 30px rgba(255,215,0,0.3);
+            border-radius: 40px;
+            padding: 25px 15px;
             border: 4px solid #f1c40f;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .machine::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, 
-                #ff0000, #ff8800, #ffff00, #00ff00, 
-                #0000ff, #4b0082, #8f00ff, #ff0000);
-            border-radius: 62px;
-            z-index: -1;
-            animation: ledGira 3s linear infinite;
-            opacity: 0.5;
-        }
-
-        @keyframes ledGira {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-
-        .machine-header {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .led-light {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: red;
-            box-shadow: 0 0 10px red;
-            animation: parpadeoLED 0.5s infinite alternate;
-        }
-
-        .led-light:nth-child(2) { background: blue; box-shadow: 0 0 10px blue; animation-delay: 0.1s; }
-        .led-light:nth-child(3) { background: green; box-shadow: 0 0 10px green; animation-delay: 0.2s; }
-        .led-light:nth-child(4) { background: yellow; box-shadow: 0 0 10px yellow; animation-delay: 0.3s; }
-        .led-light:nth-child(5) { background: purple; box-shadow: 0 0 10px purple; animation-delay: 0.4s; }
-        .led-light:nth-child(6) { background: cyan; box-shadow: 0 0 10px cyan; animation-delay: 0.5s; }
-        .led-light:nth-child(7) { background: orange; box-shadow: 0 0 10px orange; animation-delay: 0.6s; }
-        .led-light:nth-child(8) { background: pink; box-shadow: 0 0 10px pink; animation-delay: 0.7s; }
-
-        @keyframes parpadeoLED {
-            from { opacity: 0.3; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1.2); }
+            margin-bottom: 20px;
         }
 
         .reels {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin: 30px 0;
-            perspective: 1000px;
-        }
-
-        .reel {
-            width: 120px;
-            height: 140px;
-            background: linear-gradient(135deg, #f0f0f0, #d0d0d0);
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 70px;
-            box-shadow: 
-                inset 0 -5px 0 #a0a0a0,
-                inset 0 5px 0 white,
-                0 15px 0 #8B4513,
-                0 20px 20px rgba(0,0,0,0.5);
-            border: 4px solid gold;
-            transition: all 0.1s;
-            animation: none;
-            transform-style: preserve-3d;
-            position: relative;
-        }
-
-        .reel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
-            border-radius: 26px;
-            pointer-events: none;
-        }
-
-        .reel::after {
-            content: '';
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
-            border-radius: 34px;
-            background: linear-gradient(45deg, gold, transparent, gold);
-            z-index: -1;
-            animation: brilloBorde 2s infinite;
-        }
-
-        @keyframes brilloBorde {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-
-        .reel.spinning {
-            animation: spinReel 0.1s infinite linear;
-            transform: rotateX(10deg) translateZ(20px);
-        }
-
-        .reel.spinning-turbo {
-            animation: spinReelTurbo 0.05s infinite linear;
-            transform: rotateX(20deg) translateZ(30px);
-        }
-
-        @keyframes spinReel {
-            0% { transform: rotateX(0deg) scale(1); }
-            25% { transform: rotateX(10deg) scale(1.1); }
-            50% { transform: rotateX(0deg) scale(1); }
-            75% { transform: rotateX(-10deg) scale(1.1); }
-            100% { transform: rotateX(0deg) scale(1); }
-        }
-
-        @keyframes spinReelTurbo {
-            0% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-            25% { transform: rotateX(20deg) scale(1.2) rotate(5deg); }
-            50% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-            75% { transform: rotateX(-20deg) scale(1.2) rotate(-5deg); }
-            100% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-        }
-
-        .bet-control {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin: 30px 0;
-        }
-
-        .bet-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, #f1c40f, #f39c12);
-            color: #2c3e50;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 0 #b7950b, 0 10px 20px rgba(0,0,0,0.3);
-            border: 2px solid white;
-        }
-
-        .bet-btn:active {
-            transform: translateY(8px);
-            box-shadow: 0 0 0 #b7950b, 0 5px 10px rgba(0,0,0,0.3);
-        }
-
-        .bet-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 4px 0 #b7950b;
-        }
-
-        .bet-display {
-            font-size: 36px;
-            font-weight: bold;
-            color: gold;
-            text-shadow: 3px 3px 0 #000, 0 0 20px gold;
-            background: rgba(0,0,0,0.3);
-            padding: 10px 30px;
-            border-radius: 50px;
-            border: 2px solid gold;
-        }
-
-        .bet-display small {
-            font-size: 18px;
-            color: rgba(255,255,255,0.8);
-        }
-
-        .btn-play {
-            width: 100%;
-            padding: 25px;
-            border: none;
-            border-radius: 60px;
-            background: linear-gradient(45deg, #f1c40f, #f39c12, #e67e22);
-            color: #2c3e50;
-            font-size: 36px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 
-                0 15px 0 #b7950b,
-                0 20px 30px rgba(0,0,0,0.5),
-                0 0 30px gold;
-            margin: 20px 0 30px;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            border: 3px solid white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-play::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: destelloBoton 2s infinite;
-        }
-
-        @keyframes destelloBoton {
-            0% { transform: rotate(45deg) translateX(-100%); }
-            100% { transform: rotate(45deg) translateX(100%); }
-        }
-
-        .btn-play:active {
-            transform: translateY(15px);
-            box-shadow: 0 5px 0 #b7950b, 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        .btn-play:disabled {
-            opacity: 0.7;
-            transform: translateY(8px);
-            box-shadow: 0 7px 0 #b7950b;
-            cursor: not-allowed;
-        }
-
-        .turbo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 15px;
             margin: 20px 0;
         }
 
-        .turbo-btn {
-            background: linear-gradient(135deg, #ff4444, #cc0000);
-            color: white;
-            border: 3px solid gold;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 0 #8B0000, 0 0 20px red;
+        .reel {
+            width: 100px;
+            height: 120px;
+            background: linear-gradient(135deg, #f0f0f0, #d0d0d0);
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            font-size: 55px;
+            box-shadow: inset 0 -5px 0 #a0a0a0, 0 15px 0 #8B4513;
+            border: 3px solid gold;
         }
 
-        .turbo-btn.active {
-            background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            box-shadow: 0 8px 0 #1B5E20, 0 0 20px #4CAF50;
+        .reel.spinning { animation: spinReel 0.1s infinite linear; }
+        .reel.spinning-turbo { animation: spinReelTurbo 0.05s infinite linear; }
+
+        @keyframes spinReel {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(360deg); }
+        }
+        @keyframes spinReelTurbo {
+            0% { transform: rotateX(0deg) rotate(0deg); }
+            100% { transform: rotateX(360deg) rotate(360deg); }
         }
 
-        .turbo-btn:active {
-            transform: translateY(8px);
-            box-shadow: 0 0 0 #8B0000;
+        /* PANEL DE BOTONES - ESTILO TRAGAMONEDAS REAL */
+        .button-panel {
+            background: linear-gradient(145deg, #1a2632, #2c3e50);
+            border-radius: 30px;
+            padding: 20px;
+            margin-top: 15px;
+            border: 2px solid gold;
         }
 
-        .turbo-multiplier {
-            background: gold;
-            color: #2c3e50;
-            padding: 5px 15px;
-            border-radius: 25px;
+        .bet-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .bet-btn {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            border: none;
+            border-radius: 40px;
+            padding: 12px 20px;
             font-size: 18px;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #b7950b;
+            transition: all 0.1s;
+            flex: 1;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .bet-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #b7950b; }
+        .bet-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            box-shadow: 0 5px 0 #1B5E20;
+            transition: all 0.1s;
+        }
+
+        .action-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #1B5E20; }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .turbo-btn {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            box-shadow: 0 5px 0 #8B0000;
+        }
+        .turbo-btn.active { background: linear-gradient(135deg, #4CAF50, #2E7D32); box-shadow: 0 5px 0 #1B5E20; }
+
+        .auto-spin-btn {
+            background: linear-gradient(135deg, #2196F3, #0b5e9e);
+            box-shadow: 0 5px 0 #0b5e9e;
+        }
+
+        .bet-display {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: gold;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 30px;
+            margin: 15px 0;
+            border: 2px solid gold;
         }
 
         .quick-bets {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin: 20px 0;
+            gap: 12px;
+            margin-top: 15px;
         }
 
         .quick-bet {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+            background: #2c3e50;
             border: 2px solid gold;
             color: gold;
-            padding: 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 25px;
             text-align: center;
-            box-shadow: 0 5px 0 #1a2632, 0 5px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
         }
-
-        .quick-bet:hover {
-            background: gold;
-            color: #2c3e50;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 0 #b7950b, 0 8px 15px rgba(0,0,0,0.3);
-        }
-
-        .quick-bet:active {
-            transform: translateY(5px);
-            box-shadow: 0 2px 0 #b7950b;
-        }
+        .quick-bet:hover { background: gold; color: #2c3e50; }
 
         .prize-panel {
             background: linear-gradient(135deg, #1a2632, #2c3e50);
-            border-radius: 30px;
-            padding: 20px;
-            margin: 30px 0;
-            border: 3px solid gold;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,215,0,0.2);
-            position: relative;
+            border-radius: 25px;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid gold;
         }
-
-        .prize-panel h3 {
-            color: gold;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-            text-shadow: 2px 2px 0 #000, 0 0 20px gold;
-            letter-spacing: 2px;
-        }
-
-        .prize-table {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .prize-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 18px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 50px;
-            color: white;
-            border: 1px solid gold;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .prize-item .symbol {
-            font-size: 24px;
-            filter: drop-shadow(0 0 5px gold);
-        }
-
-        .prize-item .value {
-            color: gold;
-            font-weight: bold;
-            font-size: 20px;
-            text-shadow: 0 0 10px gold;
-        }
+        .prize-table { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .prize-item { display: flex; justify-content: space-between; background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 30px; }
 
         .result-box {
             text-align: center;
-            padding: 25px;
-            background: linear-gradient(135deg, #1a2632, #2c3e50);
-            border-radius: 50px;
-            margin: 20px 0;
-            border: 3px solid gold;
+            padding: 15px;
+            background: #1a2632;
+            border-radius: 30px;
+            margin: 15px 0;
+            border: 2px solid gold;
             color: white;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            box-shadow: inset 0 0 30px rgba(255,215,0,0.2);
-            position: relative;
-            overflow: hidden;
         }
-
-        .result-box.win {
-            animation: winPulse 0.5s infinite alternate;
-        }
-
-        @keyframes winPulse {
-            from { box-shadow: 0 0 20px gold, inset 0 0 20px gold; }
-            to { box-shadow: 0 0 50px gold, inset 0 0 50px gold; }
-        }
+        .result-box.win { animation: winPulse 0.5s infinite alternate; }
+        @keyframes winPulse { from { box-shadow: 0 0 10px gold; } to { box-shadow: 0 0 30px gold; } }
 
         .stats {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
         }
-
         .stat {
-            background: linear-gradient(135deg, #1a2632, #2c3e50);
-            border-radius: 30px;
-            padding: 15px;
+            background: #1a2632;
+            border-radius: 20px;
+            padding: 10px;
             text-align: center;
-            border: 2px solid gold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid gold;
         }
-
-        .stat-label {
-            color: rgba(255,255,255,0.8);
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            color: gold;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 0 0 10px gold;
-        }
+        .stat-value { color: gold; font-size: 18px; font-weight: bold; }
 
         .history {
-            margin-top: 20px;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
-            background: linear-gradient(135deg, #1a2632, #2c3e50);
-            border-radius: 30px;
-            padding: 15px;
-            border: 2px solid gold;
+            background: #1a2632;
+            border-radius: 20px;
+            padding: 10px;
+            border: 1px solid gold;
         }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(255,215,0,0.3);
-            color: white;
-            font-size: 16px;
-        }
-
-        .history-item.win {
-            color: gold;
-            font-weight: bold;
-            text-shadow: 0 0 5px gold;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
+        .history-item { display: flex; justify-content: space-between; padding: 6px; border-bottom: 1px solid rgba(255,215,0,0.2); color: white; }
+        .history-item.win { color: gold; }
 
         .modal-overlay {
             position: fixed;
@@ -661,280 +332,68 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.95);
-            backdrop-filter: blur(10px);
             display: none;
             justify-content: center;
             align-items: flex-start;
             z-index: 1000;
-            padding: 20px 15px;
+            padding: 20px;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
-
         .modal-content {
             background: linear-gradient(135deg, #1e2a3a, #2a3a4a);
             border-radius: 40px;
-            padding: 30px 25px;
+            padding: 25px;
             max-width: 500px;
             width: 100%;
-            margin: auto;
             border: 4px solid gold;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 50px gold;
-            animation: modalEntrada 0.3s ease-out;
-            position: relative;
         }
-
-        @keyframes modalEntrada {
-            from { 
-                opacity: 0; 
-                transform: translateY(-30px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-
-        .modal-content h2 {
-            color: gold;
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 28px;
-            text-shadow: 2px 2px 0 #000;
-        }
-
-        .pack-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin: 20px 0;
-        }
-
-        @media (min-width: 500px) {
-            .pack-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
+        .pack-grid { display: grid; gap: 12px; margin: 20px 0; }
+        @media (min-width: 500px) { .pack-grid { grid-template-columns: repeat(2, 1fr); } }
         .pack {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+            background: #2c3e50;
             border: 2px solid gold;
             border-radius: 25px;
-            padding: 15px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: white;
-            box-shadow: 0 5px 0 #1a2632;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .pack:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 #1a2632;
-        }
-
-        .pack.selected {
-            background: gold;
-            color: #2c3e50;
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #b7950b;
-        }
-
-        .pack-monto {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .pack-precio {
-            font-size: 16px;
-            color: rgba(255,255,255,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .pack.selected .pack-precio {
-            color: #2c3e50;
-        }
-
-        .pack-descuento {
-            background: #ff4444;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 12px;
-            font-size: 11px;
-            margin-top: 5px;
-            display: inline-block;
-        }
-
-        .btn-modal {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 8px;
-            border: 2px solid white;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-modal:active {
-            transform: translateY(4px);
-        }
-
-        .btn-comprar {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            box-shadow: 0 5px 0 #2d6a2d;
-        }
-
-        .btn-comprar:active {
-            box-shadow: 0 1px 0 #2d6a2d;
-        }
-
-        .btn-cerrar {
-            background: linear-gradient(135deg, #f44336, #d32f2f);
-            color: white;
-            box-shadow: 0 5px 0 #8b1e1e;
-        }
-
-        .btn-cerrar:active {
-            box-shadow: 0 1px 0 #8b1e1e;
-        }
-
-        .btn-comprar:disabled, .btn-cerrar:disabled {
-            opacity: 0.5;
-            transform: none;
-            box-shadow: 0 3px 0 #666;
-            cursor: not-allowed;
-        }
-
-        .info-pago {
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 20px;
-            margin: 15px 0;
-            text-align: center;
-            border: 1px solid rgba(255,215,0,0.3);
-        }
-
-        .alias-text {
-            background: rgba(0,0,0,0.5);
             padding: 12px;
-            border-radius: 15px;
-            font-family: monospace;
-            font-size: 24px;
-            letter-spacing: 2px;
-            margin: 10px 0;
+            text-align: center;
+            cursor: pointer;
         }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a2632;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: gold;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f39c12;
-        }
+        .pack.selected { background: gold; color: #2c3e50; }
+        .pack-monto { font-size: 22px; font-weight: bold; }
+        .btn-modal { width: 100%; padding: 12px; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 8px; border: 2px solid white; }
+        .btn-comprar { background: #4CAF50; color: white; }
+        .btn-cerrar { background: #f44336; color: white; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
 </head>
 <body>
     <script src="config.js"></script>
-
     <div id="particulas"></div>
 
+    <!-- Modal Recarga -->
     <div class="modal-overlay" id="modal-recarga">
         <div class="modal-content">
-            <h2>💰 COMPRAR MONEDAS</h2>
-            
+            <h2 style="color: gold; text-align: center;">💰 COMPRAR MONEDAS</h2>
             <div class="pack-grid">
-                <div class="pack" onclick="seleccionarPack(5000, 5000)">
-                    <div class="pack-monto">
-                        <span>🪙</span> 5.000
-                    </div>
-                    <div class="pack-precio">
-                        <span>₲</span> 5.000
-                    </div>
-                    <div class="pack-descuento">Mini</div>
-                </div>
-                
-                <div class="pack" onclick="seleccionarPack(10000, 10000)">
-                    <div class="pack-monto">
-                        <span>🪙</span> 10.000
-                    </div>
-                    <div class="pack-precio">
-                        <span>₲</span> 10.000
-                    </div>
-                    <div class="pack-descuento">Básico</div>
-                </div>
-                
-                <div class="pack" onclick="seleccionarPack(25000, 25000)">
-                    <div class="pack-monto">
-                        <span>🪙</span> 25.000
-                    </div>
-                    <div class="pack-precio">
-                        <span>₲</span> 25.000
-                    </div>
-                    <div class="pack-descuento">Popular</div>
-                </div>
-                
-                <div class="pack" onclick="seleccionarPack(50000, 50000)">
-                    <div class="pack-monto">
-                        <span>🪙</span> 50.000
-                    </div>
-                    <div class="pack-precio">
-                        <span>₲</span> 50.000
-                    </div>
-                    <div class="pack-descuento">Super Pack</div>
-                </div>
+                <div class="pack" onclick="seleccionarPack(5000, 5000)"><div class="pack-monto">🪙 5.000</div><div>₲ 5.000</div></div>
+                <div class="pack" onclick="seleccionarPack(10000, 10000)"><div class="pack-monto">🪙 10.000</div><div>₲ 10.000</div></div>
+                <div class="pack" onclick="seleccionarPack(25000, 25000)"><div class="pack-monto">🪙 25.000</div><div>₲ 25.000</div></div>
+                <div class="pack" onclick="seleccionarPack(50000, 50000)"><div class="pack-monto">🪙 50.000</div><div>₲ 50.000</div></div>
             </div>
-
-            <div class="info-pago">
-                <p style="color: gold; font-weight: bold;">📲 Transferí al alias:</p>
-                <div class="alias-text" style="color: gold; font-size: 28px; font-weight: bold;">6018795</div>
-                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3; color: white; box-shadow: 0 5px 0 #1565C0; margin-top: 10px; padding: 12px;">
-                    📋 COPIAR ALIAS
-                </button>
-                <p style="font-size: 12px; margin-top: 12px; color: rgba(255,255,255,0.7);">
-                </p>
+            <div style="background: rgba(0,0,0,0.3); border-radius: 20px; padding: 15px; text-align: center; margin: 15px 0;">
+                <p style="color: gold;">📲 Transferí al alias:</p>
+                <p style="font-size: 28px; font-weight: bold; color: gold;">6018795</p>
+                <button onclick="copiarAlias()" class="btn-modal" style="background: #2196F3;">📋 COPIAR ALIAS</button>
             </div>
-
-            <button onclick="confirmarCompra()" class="btn-modal btn-comprar" id="btn-comprar" disabled>
-                ✅ SOLICITAR RECARGA
-            </button>
-            <button onclick="cerrarModal()" class="btn-modal btn-cerrar">
-                ❌ CANCELAR
-            </button>
+            <button onclick="confirmarCompra()" class="btn-modal btn-comprar" id="btn-comprar" disabled>✅ SOLICITAR RECARGA</button>
+            <button onclick="cerrarModal()" class="btn-modal btn-cerrar">❌ CANCELAR</button>
         </div>
     </div>
 
+    <!-- Barra superior -->
     <div class="user-bar">
         <div class="user-info">
             <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
-            <div class="saldo-display">
-                <span>🪙</span>
-                <span id="saldo">0</span>
-            </div>
+            <div class="saldo-display"><span>🪙</span><span id="saldo">0</span></div>
         </div>
         <div>
             <button class="btn-recargar" onclick="abrirModalRecarga()">➕ RECARGAR</button>
@@ -942,545 +401,291 @@
         </div>
     </div>
 
+    <!-- Juego -->
     <div class="game-container">
         <div class="machine">
-            <div class="machine-header">
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-                <div class="led-light"></div>
-            </div>
-
             <div class="reels">
                 <div class="reel" id="reel1">🍒</div>
                 <div class="reel" id="reel2">🍒</div>
                 <div class="reel" id="reel3">🍒</div>
             </div>
+        </div>
 
-            <div class="bet-control">
-                <button class="bet-btn" onclick="cambiarApuesta(-1000)" id="btn-menos">-</button>
-                <div class="bet-display">
-                    <span id="apuesta">1000</span> <small>🪙</small>
-                </div>
-                <button class="bet-btn" onclick="cambiarApuesta(1000)" id="btn-mas">+</button>
+        <!-- Panel de control estilo tragamonedas real -->
+        <div class="button-panel">
+            <div class="bet-row">
+                <button class="bet-btn" onclick="cambiarApuesta(-500)" id="btn-menos">-500</button>
+                <button class="bet-btn" onclick="cambiarApuesta(500)" id="btn-mas">+500</button>
+                <button class="bet-btn" onclick="setApuesta(5000)">BET 5K</button>
+                <button class="bet-btn" onclick="apuestaMaxima()">MAX BET</button>
             </div>
 
-            <div class="turbo-container">
-                <button class="turbo-btn" id="turbo-btn" onclick="toggleTurbo()">
-                    <span>⚡</span> MODO TURBO <span>⚡</span>
-                </button>
-                <div class="turbo-multiplier" id="turbo-multiplier">x1</div>
+            <div class="bet-display">
+                APUESTA: <span id="apuesta">1.000</span> 🪙
             </div>
 
-            <button class="btn-play" onclick="jugar()" id="btn-jugar">
-                🎰 JUGAR
-            </button>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="jugar()" id="btn-jugar">🎰 GIRAR</button>
+                <button class="action-btn auto-spin-btn" onclick="toggleAutoSpin()" id="btn-auto-spin">🔄 AUTO</button>
+                <button class="action-btn turbo-btn" onclick="toggleTurbo()" id="turbo-btn">⚡ TURBO</button>
+            </div>
 
             <div class="quick-bets">
+                <div class="quick-bet" onclick="setApuesta(1000)">🪙 1.000</div>
+                <div class="quick-bet" onclick="setApuesta(2000)">🪙 2.000</div>
                 <div class="quick-bet" onclick="setApuesta(5000)">🪙 5.000</div>
                 <div class="quick-bet" onclick="setApuesta(10000)">🪙 10.000</div>
-                <div class="quick-bet" onclick="setApuesta(25000)">🪙 25.000</div>
-                <div class="quick-bet" onclick="setApuesta(50000)">🪙 50.000</div>
             </div>
         </div>
 
         <div class="prize-panel">
-            <h3>🏆 TABLA DE PREMIOS</h3>
+            <h3 style="color: gold; text-align: center;">🏆 PREMIOS</h3>
             <div class="prize-table">
-                <div class="prize-item"><span class="symbol">🍒 🍒 🍒</span> <span class="value">x50</span></div>
-                <div class="prize-item"><span class="symbol">💎 💎 💎</span> <span class="value">x30</span></div>
-                <div class="prize-item"><span class="symbol">7 7 7</span> <span class="value">x20</span></div>
-                <div class="prize-item"><span class="symbol">🍋 🍋 🍋</span> <span class="value">x10</span></div>
-                <div class="prize-item"><span class="symbol">🍊 🍊 🍊</span> <span class="value">x5</span></div>
-                <div class="prize-item"><span class="symbol">2 iguales</span> <span class="value">x1</span></div>
+                <div class="prize-item"><span>🍒🍒🍒</span><span>x50</span></div>
+                <div class="prize-item"><span>💎💎💎</span><span>x30</span></div>
+                <div class="prize-item"><span>777</span><span>x20</span></div>
+                <div class="prize-item"><span>🍋🍋🍋</span><span>x10</span></div>
+                <div class="prize-item"><span>🍊🍊🍊</span><span>x5</span></div>
+                <div class="prize-item"><span>2 iguales</span><span>x1</span></div>
             </div>
         </div>
 
-        <div class="result-box" id="resultado">
-            🎰 Listo para jugar
-        </div>
+        <div class="result-box" id="resultado">🎰 Listo para jugar</div>
 
         <div class="stats">
-            <div class="stat">
-                <div class="stat-label">Veces jugadas</div>
-                <div class="stat-value" id="total-jugadas">0</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Mayor premio</div>
-                <div class="stat-value" id="mayor-premio">🪙 0</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Ganancias totales</div>
-                <div class="stat-value" id="ganancias">🪙 0</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">% Retorno</div>
-                <div class="stat-value" id="retorno">0%</div>
-            </div>
+            <div class="stat"><div class="stat-label">JUGADAS</div><div class="stat-value" id="total-jugadas">0</div></div>
+            <div class="stat"><div class="stat-label">MEJOR PREMIO</div><div class="stat-value" id="mayor-premio">🪙 0</div></div>
+            <div class="stat"><div class="stat-label">GANANCIAS</div><div class="stat-value" id="ganancias">🪙 0</div></div>
+            <div class="stat"><div class="stat-label">RETORNO</div><div class="stat-value" id="retorno">0%</div></div>
         </div>
 
-        <div class="history" id="historial">
-            <div class="history-item">Esperando jugadas...</div>
-        </div>
+        <div class="history" id="historial"><div class="history-item">Esperando jugadas...</div></div>
     </div>
 
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
         const token = localStorage.getItem('token');
-        
-        if (!token) {
-            window.location.href = 'login.html';
-        }
+        if (!token) window.location.href = 'login.html';
 
-        // ============================================
-        // LÍMITE SECRETO - Cargar desde backend
-        // ============================================
-        let LIMITE_SECRETO_POR_JUGADA = 50000; // valor por defecto
-
-        async function cargarLimiteSecreto() {
-            try {
-                console.log('🔒 Cargando límite secreto...');
-                const res = await fetch(`${API_URL}/admin/obtener-limite`, {
-                    headers: { 'Authorization': token }
-                });
-                
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.limite) {
-                        LIMITE_SECRETO_POR_JUGADA = data.limite;
-                        console.log('✅ Límite secreto cargado desde backend:', LIMITE_SECRETO_POR_JUGADA);
-                        return;
-                    }
-                }
-            } catch (error) {
-                console.log('⚠️ No se pudo cargar desde backend, usando localStorage');
-            }
-            
-            const limiteGuardado = localStorage.getItem('limite_secreto_admin');
-            if (limiteGuardado) {
-                LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
-                console.log('🔒 Límite secreto desde localStorage:', LIMITE_SECRETO_POR_JUGADA);
-            }
-        }
-
-        function crearParticulas() {
-            const particulasDiv = document.getElementById('particulas');
-            for (let i = 0; i < 30; i++) {
-                const particula = document.createElement('div');
-                particula.className = 'particula';
-                particula.style.left = Math.random() * 100 + '%';
-                particula.style.top = Math.random() * 100 + '%';
-                particula.style.animationDelay = Math.random() * 3 + 's';
-                particulasDiv.appendChild(particula);
-            }
-        }
-        crearParticulas();
-
+        let LIMITE_SECRETO_POR_JUGADA = 50000;
         let usuarioActual = {};
         let saldo = 0;
         let apuesta = 1000;
         let jugando = false;
         let packSeleccionado = null;
         let modoTurbo = false;
-        let turboMultiplicador = 1;
+        let autoSpinActivo = false;
+        let intervaloAutoSpin = null;
         
-        let stats = {
-            jugadas: 0,
-            mayorPremio: 0,
-            gananciasTotales: 0,
-            historial: []
-        };
-
+        let stats = { jugadas: 0, mayorPremio: 0, gananciasTotales: 0, historial: [] };
         const simbolos = ['🍒', '💎', '7', '🍋', '🍊'];
-        
-        const premios = {
-            '🍒🍒🍒': 50,
-            '💎💎💎': 30,
-            '777': 20,
-            '🍋🍋🍋': 10,
-            '🍊🍊🍊': 5,
-            '2iguales': 1
-        };
+        const premios = { '🍒🍒🍒':50, '💎💎💎':30, '777':20, '🍋🍋🍋':10, '🍊🍊🍊':5, '2iguales':1 };
 
         async function cargarUsuario() {
             try {
-                const res = await fetch(`${API_URL}/usuario`, {
-                    headers: { 'Authorization': token }
-                });
+                const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token } });
                 const data = await res.json();
-                
                 usuarioActual = data.usuario;
                 saldo = data.usuario.fichas || 0;
-                
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
                 actualizarSaldo();
-                
-                await cargarLimiteSecreto();
-                
+                const limiteGuardado = localStorage.getItem('limite_secreto_admin');
+                if (limiteGuardado) LIMITE_SECRETO_POR_JUGADA = parseInt(limiteGuardado);
                 const statsGuardadas = localStorage.getItem(`stats_${usuarioActual.id}`);
-                if (statsGuardadas) {
-                    stats = JSON.parse(statsGuardadas);
-                    actualizarEstadisticas();
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+                if (statsGuardadas) { stats = JSON.parse(statsGuardadas); actualizarEstadisticas(); }
+            } catch (error) { console.error('Error:', error); }
         }
 
-        function actualizarSaldo() {
-            document.getElementById('saldo').textContent = formatoNumero(saldo);
+        function actualizarSaldo() { document.getElementById('saldo').textContent = formatoNumero(saldo); }
+        
+        function apuestaMaxima() {
+            if (jugando) return;
+            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
+            apuesta = maxApuesta;
+            document.getElementById('apuesta').textContent = formatoNumero(apuesta);
+            actualizarBotonesApuesta();
         }
 
         function toggleTurbo() {
+            if (jugando) return;
             modoTurbo = !modoTurbo;
             const turboBtn = document.getElementById('turbo-btn');
-            const turboMult = document.getElementById('turbo-multiplier');
-            
             if (modoTurbo) {
                 turboBtn.classList.add('active');
-                turboMultiplicador = 3;
-                turboMult.textContent = 'x3';
-                
                 let maxApuestaTurbo = Math.min(30000, Math.floor(saldo / 3));
-                if (apuesta > maxApuestaTurbo) {
-                    apuesta = Math.max(1000, Math.floor(maxApuestaTurbo / 1000) * 1000);
-                    document.getElementById('apuesta').textContent = apuesta;
-                }
+                if (apuesta > maxApuestaTurbo) apuesta = Math.max(1000, Math.floor(maxApuestaTurbo / 1000) * 1000);
+                document.getElementById('apuesta').textContent = formatoNumero(apuesta);
             } else {
                 turboBtn.classList.remove('active');
-                turboMultiplicador = 1;
-                turboMult.textContent = 'x1';
             }
-            
             actualizarBotonesApuesta();
+        }
+
+        function toggleAutoSpin() {
+            if (autoSpinActivo) {
+                clearInterval(intervaloAutoSpin);
+                autoSpinActivo = false;
+                document.getElementById('btn-auto-spin').style.opacity = '1';
+                document.getElementById('btn-auto-spin').textContent = '🔄 AUTO';
+            } else {
+                if (saldo < (modoTurbo ? apuesta * 3 : apuesta)) {
+                    alert('No tenés suficientes monedas');
+                    return;
+                }
+                autoSpinActivo = true;
+                document.getElementById('btn-auto-spin').style.opacity = '0.7';
+                document.getElementById('btn-auto-spin').textContent = '⏹️ DETENER';
+                intervaloAutoSpin = setInterval(() => { if (!jugando) jugar(); }, 800);
+            }
         }
 
         function actualizarBotonesApuesta() {
             let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
-            document.getElementById('btn-menos').disabled = apuesta <= 1000;
+            document.getElementById('btn-menos').disabled = apuesta <= 500;
             document.getElementById('btn-mas').disabled = apuesta >= maxApuesta;
         }
 
         function cambiarApuesta(delta) {
             if (jugando) return;
-            
             let nuevaApuesta = apuesta + delta;
             let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
-            
-            if (nuevaApuesta >= 1000 && nuevaApuesta <= maxApuesta) {
+            if (nuevaApuesta >= 500 && nuevaApuesta <= maxApuesta) {
                 apuesta = nuevaApuesta;
-                document.getElementById('apuesta').textContent = apuesta;
+                document.getElementById('apuesta').textContent = formatoNumero(apuesta);
             }
-            
             actualizarBotonesApuesta();
         }
 
         function setApuesta(valor) {
             if (jugando) return;
             let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(saldo / 3)) : Math.min(50000, saldo);
-            
             if (valor <= saldo && valor <= maxApuesta) {
                 apuesta = valor;
-                document.getElementById('apuesta').textContent = apuesta;
+                document.getElementById('apuesta').textContent = formatoNumero(apuesta);
                 actualizarBotonesApuesta();
-            } else {
-                mostrarResultado('❌ No tenés suficientes monedas', 'error');
             }
         }
 
-        function getRandomSimbolo() {
-            return simbolos[Math.floor(Math.random() * simbolos.length)];
-        }
+        function getRandomSimbolo() { return simbolos[Math.floor(Math.random() * simbolos.length)]; }
 
         function calcularPremio(s1, s2, s3, apuesta) {
             if (s1 === s2 && s2 === s3) {
-                const combinacion = s1 + s1 + s1;
-                const multiplicador = premios[combinacion] || 0;
-                let premio = apuesta * multiplicador;
-                
-                if (premio > LIMITE_SECRETO_POR_JUGADA) {
-                    premio = LIMITE_SECRETO_POR_JUGADA;
-                }
-                return premio;
-                
+                let premio = apuesta * (premios[s1+s1+s1] || 0);
+                return Math.min(premio, LIMITE_SECRETO_POR_JUGADA);
             } else if (s1 === s2 || s2 === s3 || s1 === s3) {
                 let premio = apuesta * premios['2iguales'];
-                
-                if (premio > LIMITE_SECRETO_POR_JUGADA) {
-                    premio = LIMITE_SECRETO_POR_JUGADA;
-                }
-                return premio;
+                return Math.min(premio, LIMITE_SECRETO_POR_JUGADA);
             }
             return 0;
         }
 
         async function jugar() {
             if (jugando) return;
-            
             let costoApuesta = modoTurbo ? apuesta * 3 : apuesta;
-            
             if (saldo < costoApuesta) {
-                mostrarResultado('❌ No tenés suficientes monedas. Recargá!', 'error');
+                mostrarResultado('❌ Saldo insuficiente', 'error');
+                if (autoSpinActivo) toggleAutoSpin();
                 abrirModalRecarga();
                 return;
             }
 
             jugando = true;
             document.getElementById('btn-jugar').disabled = true;
-            
             saldo -= costoApuesta;
             actualizarSaldo();
             
-            const reels = [
-                document.getElementById('reel1'),
-                document.getElementById('reel2'),
-                document.getElementById('reel3')
-            ];
+            const reels = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+            reels.forEach(r => r.classList.add(modoTurbo ? 'spinning-turbo' : 'spinning'));
             
-            if (modoTurbo) {
-                reels.forEach(reel => {
-                    reel.classList.add('spinning-turbo');
-                    reel.classList.remove('spinning');
-                });
-            } else {
-                reels.forEach(reel => {
-                    reel.classList.add('spinning');
-                    reel.classList.remove('spinning-turbo');
-                });
-            }
-            
-            confetti({
-                particleCount: 5,
-                spread: 30,
-                origin: { y: 0.5 }
-            });
-            
-            let tiempoGiro = modoTurbo ? 300 : 500;
+            confetti({ particleCount: 3, spread: 20, origin: { y: 0.5 } });
             
             setTimeout(() => {
-                reels.forEach(reel => {
-                    reel.classList.remove('spinning', 'spinning-turbo');
-                });
-                
-                const s1 = getRandomSimbolo();
-                const s2 = getRandomSimbolo();
-                const s3 = getRandomSimbolo();
-                
-                reels[0].textContent = s1;
-                reels[1].textContent = s2;
-                reels[2].textContent = s3;
-                
-                const multiplicador = calcularPremio(s1, s2, s3, apuesta) / apuesta;
+                reels.forEach(r => r.classList.remove('spinning', 'spinning-turbo'));
+                const s1 = getRandomSimbolo(), s2 = getRandomSimbolo(), s3 = getRandomSimbolo();
+                reels[0].textContent = s1; reels[1].textContent = s2; reels[2].textContent = s3;
                 const ganancia = calcularPremio(s1, s2, s3, apuesta) * (modoTurbo ? 3 : 1);
-                
-                const resultadoDiv = document.getElementById('resultado');
                 
                 if (ganancia > 0) {
                     saldo += ganancia;
-                    
                     stats.jugadas++;
                     stats.gananciasTotales += ganancia;
-                    if (ganancia > stats.mayorPremio) {
-                        stats.mayorPremio = ganancia;
-                    }
-                    
-                    stats.historial.unshift({
-                        combinacion: `${s1}${s2}${s3}`,
-                        ganancia,
-                        fecha: new Date().toLocaleTimeString()
-                    });
+                    if (ganancia > stats.mayorPremio) stats.mayorPremio = ganancia;
+                    stats.historial.unshift({ combinacion: `${s1}${s2}${s3}`, ganancia });
                     if (stats.historial.length > 10) stats.historial.pop();
-                    
-                    resultadoDiv.textContent = `🎉 GANASTE 🪙 ${formatoNumero(ganancia)}! (x${multiplicador})`;
-                    resultadoDiv.classList.add('win');
-                    
-                    if (ganancia >= 200000) {
-                        confetti({
-                            particleCount: 200,
-                            spread: 120,
-                            origin: { y: 0.6 },
-                            startVelocity: 40,
-                            colors: ['#ffd700', '#ff0000', '#00ff00', '#0000ff']
-                        });
-                        setTimeout(() => {
-                            confetti({
-                                particleCount: 150,
-                                spread: 90,
-                                origin: { y: 0.5, x: 0.2 }
-                            });
-                            confetti({
-                                particleCount: 150,
-                                spread: 90,
-                                origin: { y: 0.5, x: 0.8 }
-                            });
-                        }, 200);
-                    } else if (ganancia >= 50000) {
-                        confetti({
-                            particleCount: 50,
-                            spread: 70,
-                            origin: { y: 0.6 }
-                        });
-                    }
+                    mostrarResultado(`🎉 GANASTE 🪙 ${formatoNumero(ganancia)}!`, 'win');
+                    if (ganancia >= 50000) confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
                 } else {
                     stats.jugadas++;
-                    resultadoDiv.textContent = '😢 Mejor suerte la próxima';
-                    resultadoDiv.classList.remove('win');
+                    mostrarResultado('😢 Mejor suerte', 'lose');
                 }
-                
                 actualizarSaldo();
                 actualizarEstadisticas();
                 guardarEstadisticas();
                 actualizarBotonesApuesta();
-                
                 jugando = false;
                 document.getElementById('btn-jugar').disabled = false;
-            }, tiempoGiro);
+            }, modoTurbo ? 300 : 500);
         }
 
         function mostrarResultado(mensaje, tipo) {
-            const resultadoDiv = document.getElementById('resultado');
-            resultadoDiv.textContent = mensaje;
-            if (tipo === 'win') {
-                resultadoDiv.classList.add('win');
-            } else {
-                resultadoDiv.classList.remove('win');
-            }
+            const div = document.getElementById('resultado');
+            div.textContent = mensaje;
+            if (tipo === 'win') div.classList.add('win');
+            else div.classList.remove('win');
         }
 
         function actualizarEstadisticas() {
             document.getElementById('total-jugadas').textContent = stats.jugadas;
             document.getElementById('mayor-premio').textContent = '🪙 ' + formatoNumero(stats.mayorPremio);
             document.getElementById('ganancias').textContent = '🪙 ' + formatoNumero(stats.gananciasTotales);
-            
-            const retorno = stats.jugadas > 0 ? 
-                Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
+            const retorno = stats.jugadas > 0 ? Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
             document.getElementById('retorno').textContent = retorno + '%';
-            
             const historialDiv = document.getElementById('historial');
-            if (stats.historial.length === 0) {
-                historialDiv.innerHTML = '<div class="history-item">Esperando jugadas...</div>';
-            } else {
-                historialDiv.innerHTML = stats.historial.map(h => `
-                    <div class="history-item ${h.ganancia > 0 ? 'win' : ''}">
-                        <span>${h.combinacion}</span>
-                        <span>${h.ganancia > 0 ? '+🪙 ' + formatoNumero(h.ganancia) : '0'}</span>
-                    </div>
-                `).join('');
-            }
+            if (stats.historial.length === 0) historialDiv.innerHTML = '<div class="history-item">Esperando jugadas...</div>';
+            else historialDiv.innerHTML = stats.historial.map(h => `<div class="history-item ${h.ganancia > 0 ? 'win' : ''}"><span>${h.combinacion}</span><span>${h.ganancia > 0 ? '+🪙 ' + formatoNumero(h.ganancia) : '0'}</span></div>`).join('');
         }
 
-        function guardarEstadisticas() {
-            localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats));
-        }
+        function guardarEstadisticas() { localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats)); }
 
+        // Modal
         function abrirModalRecarga() {
             packSeleccionado = null;
-            const modal = document.getElementById('modal-recarga');
-            modal.style.display = 'flex';
+            document.getElementById('modal-recarga').style.display = 'flex';
             document.getElementById('btn-comprar').disabled = true;
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             document.body.style.overflow = 'hidden';
-            
-            setTimeout(() => {
-                modal.scrollTop = 0;
-            }, 50);
         }
-
         function seleccionarPack(monto, precio) {
             packSeleccionado = { monto, precio };
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
             document.getElementById('btn-comprar').disabled = false;
         }
-
-        function copiarAlias() {
-            const alias = "6018795";
-            navigator.clipboard.writeText(alias);
-            
-            const btn = event.currentTarget;
-            const textoOriginal = btn.textContent;
-            btn.textContent = "✅ COPIADO!";
-            setTimeout(() => {
-                btn.textContent = textoOriginal;
-            }, 2000);
-        }
-
-        function cerrarModal() {
-            document.getElementById('modal-recarga').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        document.getElementById('modal-recarga').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarModal();
-            }
-        });
-
+        function copiarAlias() { navigator.clipboard.writeText("6018795"); alert('✅ Alias copiado!'); }
+        function cerrarModal() { document.getElementById('modal-recarga').style.display = 'none'; document.body.style.overflow = 'auto'; }
         async function confirmarCompra() {
-            if (!packSeleccionado) {
-                alert('Seleccioná un pack');
-                return;
-            }
-
+            if (!packSeleccionado) { alert('Seleccioná un pack'); return; }
             const btn = document.getElementById('btn-comprar');
-            const textoOriginal = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = "⏳ Procesando...";
-
+            btn.disabled = true; btn.textContent = "⏳ Procesando...";
             try {
-                const fichas = packSeleccionado.monto;
-                
                 const res = await fetch(`${API_URL}/recargas/solicitar`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
-                    body: JSON.stringify({
-                        fichas: fichas,
-                        monto: packSeleccionado.precio
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ fichas: packSeleccionado.monto, monto: packSeleccionado.precio })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
-                    const mensaje = encodeURIComponent(
-                        `💰 SOLICITUD DE RECARGA:\n` +
-                        `• Usuario: ${usuarioActual.usuario}\n` +
-                        `• Monedas: 🪙 ${formatoNumero(packSeleccionado.monto)}\n` +
-                        `• A pagar: ₲ ${formatoNumero(packSeleccionado.precio)}\n\n` +
-                        `✅ Ya transferí, favor acreditar. Gracias!`
-                    );
+                    const mensaje = encodeURIComponent(`💰 SOLICITUD DE RECARGA:\n• Usuario: ${usuarioActual.usuario}\n• Monedas: 🪙 ${formatoNumero(packSeleccionado.monto)}\n• A pagar: ₲ ${formatoNumero(packSeleccionado.precio)}\n\n✅ Ya transferí, favor acreditar. Gracias!`);
                     window.open(`https://wa.me/595983775018?text=${mensaje}`, '_blank');
-                    
-                    alert('✅ Solicitud enviada. Te acreditaremos en minutos.');
+                    alert('✅ Solicitud enviada');
                     cerrarModal();
-                } else {
-                    alert('Error: ' + (data.error || 'Error al enviar solicitud'));
-                }
-            } catch (error) {
-                alert('Error de conexión');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
-            }
+                } else alert('Error: ' + (data.error || 'Error al enviar'));
+            } catch (error) { alert('Error de conexión'); }
+            finally { btn.disabled = false; btn.textContent = "✅ SOLICITAR RECARGA"; }
         }
+        function cerrarSesion() { localStorage.removeItem('token'); localStorage.removeItem('usuario'); window.location.href = 'login.html'; }
+        function formatoNumero(num) { return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
 
-        function cerrarSesion() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('usuario');
-            window.location.href = 'login.html';
-        }
-
-        function formatoNumero(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
+        document.getElementById('modal-recarga').addEventListener('click', function(e) { if (e.target === this) cerrarModal(); });
         cargarUsuario();
     </script>
 </body>
