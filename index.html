@@ -469,12 +469,13 @@
         let LIMITE_SECRETO_POR_JUGADA = 50000;
         let usuarioActual = {};
         let saldo = 0;
-        let apuesta = 500; // Apuesta mínima de 500
+        let apuesta = 500;
         let jugando = false;
         let packSeleccionado = null;
         let modoTurbo = false;
         let autoSpinActivo = false;
         let intervaloAutoSpin = null;
+        let ultimoSaldo = 0;
         
         let stats = { jugadas: 0, mayorPremio: 0, gananciasTotales: 0, historial: [] };
         const simbolos = ['🍒', '💎', '7', '🍋', '🍊'];
@@ -490,10 +491,10 @@
                 const data = await res.json();
                 usuarioActual = data.usuario;
                 saldo = data.usuario.fichas || 0;
+                ultimoSaldo = saldo;
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
                 actualizarSaldo();
                 
-                // Ajustar apuesta si es mayor que el saldo
                 if (apuesta > saldo && saldo > 0) apuesta = Math.min(500, saldo);
                 document.getElementById('apuesta').textContent = formatoNumero(apuesta);
                 
@@ -601,9 +602,13 @@
             return 0;
         }
 
+        // ============================================
+        // FUNCIÓN JUGAR CORREGIDA - GUARDA EN BACKEND
+        // ============================================
         async function jugar() {
             if (jugando) return;
             let costoApuesta = modoTurbo ? apuesta * 3 : apuesta;
+            
             if (saldo < costoApuesta) {
                 mostrarResultado('❌ Saldo insuficiente', 'error');
                 if (autoSpinActivo) toggleAutoSpin();
@@ -613,6 +618,35 @@
 
             jugando = true;
             document.getElementById('btn-jugar').disabled = true;
+            
+            // RESTAR SALDO EN EL BACKEND (jugada inicial)
+            try {
+                const resRestar = await fetch(`${API_URL}/jugar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({
+                        apuesta: costoApuesta,
+                        ganancia: 0,
+                        combinacion: 'pendiente'
+                    })
+                });
+                
+                if (!resRestar.ok) {
+                    const errorData = await resRestar.json();
+                    throw new Error(errorData.error || 'Error al procesar jugada');
+                }
+            } catch (error) {
+                console.error('Error guardando jugada:', error);
+                mostrarResultado('❌ Error de conexión', 'error');
+                jugando = false;
+                document.getElementById('btn-jugar').disabled = false;
+                return;
+            }
+            
+            // Actualizar saldo local
             saldo -= costoApuesta;
             actualizarSaldo();
             
@@ -621,14 +655,40 @@
             
             confetti({ particleCount: 3, spread: 20, origin: { y: 0.5 } });
             
-            setTimeout(() => {
+            setTimeout(async () => {
                 reels.forEach(r => r.classList.remove('spinning', 'spinning-turbo'));
                 const s1 = getRandomSimbolo(), s2 = getRandomSimbolo(), s3 = getRandomSimbolo();
                 reels[0].textContent = s1; reels[1].textContent = s2; reels[2].textContent = s3;
                 const ganancia = calcularPremio(s1, s2, s3, apuesta) * (modoTurbo ? 3 : 1);
                 
                 if (ganancia > 0) {
-                    saldo += ganancia;
+                    // GUARDAR GANANCIA EN EL BACKEND
+                    try {
+                        const resGanar = await fetch(`${API_URL}/jugar`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': token
+                            },
+                            body: JSON.stringify({
+                                apuesta: costoApuesta,
+                                ganancia: ganancia,
+                                combinacion: `${s1}${s2}${s3}`
+                            })
+                        });
+                        
+                        if (!resGanar.ok) {
+                            throw new Error('Error al guardar ganancia');
+                        }
+                        
+                        const data = await resGanar.json();
+                        saldo = data.nuevas_fichas;
+                    } catch (error) {
+                        console.error('Error guardando ganancia:', error);
+                        // Fallback: usar cálculo local
+                        saldo += ganancia;
+                    }
+                    
                     stats.jugadas++;
                     stats.gananciasTotales += ganancia;
                     if (ganancia > stats.mayorPremio) stats.mayorPremio = ganancia;
@@ -640,6 +700,7 @@
                     stats.jugadas++;
                     mostrarResultado('😢 Mejor suerte', 'lose');
                 }
+                
                 actualizarSaldo();
                 actualizarEstadisticas();
                 guardarEstadisticas();
@@ -669,13 +730,15 @@
 
         function guardarEstadisticas() { localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats)); }
 
-        // Sincronización en tiempo real
-        let ultimoSaldo = 0;
+        // Sincronización en tiempo real cada 5 segundos
         async function sincronizarSaldo() {
             try {
-                const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token } });
+                const res = await fetch(`${API_URL}/usuario`, {
+                    headers: { 'Authorization': token }
+                });
                 const data = await res.json();
                 const nuevoSaldo = data.usuario.fichas || 0;
+                
                 if (nuevoSaldo !== saldo) {
                     console.log(`🔄 Sincronizando: ${formatoNumero(saldo)} → ${formatoNumero(nuevoSaldo)}`);
                     saldo = nuevoSaldo;
@@ -686,9 +749,11 @@
                     }
                 }
                 ultimoSaldo = saldo;
-            } catch (error) { console.error('Error sincronizando:', error); }
+            } catch (error) {
+                console.error('Error sincronizando:', error);
+            }
         }
-        setInterval(sincronizarSaldo, 10000);
+        setInterval(sincronizarSaldo, 5000);
 
         // Modal
         function abrirModalRecarga() {
@@ -697,6 +762,11 @@
             document.getElementById('btn-comprar').disabled = true;
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             document.body.style.overflow = 'hidden';
+            
+            setTimeout(() => {
+                const modal = document.getElementById('modal-recarga');
+                if (modal) modal.scrollTop = 0;
+            }, 50);
         }
         function seleccionarPack(monto, precio) {
             packSeleccionado = { monto, precio };
@@ -704,16 +774,32 @@
             event.currentTarget.classList.add('selected');
             document.getElementById('btn-comprar').disabled = false;
         }
-        function copiarAlias() { navigator.clipboard.writeText("6018795"); alert('✅ Alias copiado!'); }
-        function cerrarModal() { document.getElementById('modal-recarga').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        function copiarAlias() { 
+            navigator.clipboard.writeText("6018795"); 
+            const btn = event.currentTarget;
+            const textoOriginal = btn.textContent;
+            btn.textContent = "✅ COPIADO!";
+            setTimeout(() => { btn.textContent = textoOriginal; }, 2000);
+        }
+        function cerrarModal() { 
+            document.getElementById('modal-recarga').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; 
+        }
         async function confirmarCompra() {
             if (!packSeleccionado) { alert('Seleccioná un pack'); return; }
             const btn = document.getElementById('btn-comprar');
             btn.disabled = true; btn.textContent = "⏳ Procesando...";
             try {
                 const res = await fetch(`${API_URL}/recargas/solicitar`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                    body: JSON.stringify({ fichas: packSeleccionado.monto, monto: packSeleccionado.precio })
+                    method: 'POST', 
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': token 
+                    },
+                    body: JSON.stringify({ 
+                        fichas: packSeleccionado.monto, 
+                        monto: packSeleccionado.precio 
+                    })
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -725,9 +811,15 @@
             } catch (error) { alert('Error de conexión'); }
             finally { btn.disabled = false; btn.textContent = "✅ SOLICITAR RECARGA"; }
         }
-        function cerrarSesion() { localStorage.removeItem('token'); localStorage.removeItem('usuario'); window.location.href = 'login.html'; }
+        function cerrarSesion() { 
+            localStorage.removeItem('token'); 
+            localStorage.removeItem('usuario'); 
+            window.location.href = 'login.html'; 
+        }
 
-        document.getElementById('modal-recarga').addEventListener('click', function(e) { if (e.target === this) cerrarModal(); });
+        document.getElementById('modal-recarga').addEventListener('click', function(e) { 
+            if (e.target === this) cerrarModal(); 
+        });
         cargarUsuario();
     </script>
 </body>
