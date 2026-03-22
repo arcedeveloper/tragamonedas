@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🎰 TRAGAMONEDAS PREMIUM</title>
     <style>
-        /* ========== TODO TU DISEÑO ORIGINAL EXACTAMENTE IGUAL ========== */
         * {
             margin: 0;
             padding: 0;
@@ -997,7 +996,8 @@
 
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
-        const token = localStorage.getItem('token');
+        // ✅ CAMBIADO: usar sessionStorage en lugar de localStorage
+        const token = sessionStorage.getItem('token');
         if (!token) window.location.href = 'login.html';
 
         let LIMITE_SECRETO_POR_JUGADA = 50000;
@@ -1281,7 +1281,12 @@
             } catch (error) { alert('Error de conexión'); }
             finally { btn.disabled = false; btn.textContent = "✅ SOLICITAR RECARGA"; }
         }
-        function cerrarSesion() { localStorage.removeItem('token'); localStorage.removeItem('usuario'); window.location.href = 'login.html'; }
+        // ✅ CAMBIADO: cerrarSesion con sessionStorage
+        function cerrarSesion() { 
+            sessionStorage.removeItem('token'); 
+            sessionStorage.removeItem('usuario'); 
+            window.location.href = 'login.html'; 
+        }
 
         document.getElementById('modal-recarga').addEventListener('click', function(e) { if (e.target === this) cerrarModal(); });
         cargarUsuario();
