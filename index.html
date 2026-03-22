@@ -996,7 +996,6 @@
 
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
-        // ✅ CAMBIADO: usar sessionStorage en lugar de localStorage
         const token = sessionStorage.getItem('token');
         if (!token) window.location.href = 'login.html';
 
@@ -1231,20 +1230,47 @@
             localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats));
         }
 
-        // Sincronización en tiempo real
-        async function sincronizarFichas() {
+        // ============================================
+        // SINCRONIZACIÓN SILENCIOSA (sin titilar)
+        // ============================================
+        let ultimoSaldoGuardado = 0;
+
+        async function sincronizarSaldoSilencioso() {
             try {
-                const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token } });
+                const res = await fetch(`${API_URL}/usuario`, { 
+                    headers: { 'Authorization': token },
+                    cache: 'no-cache'
+                });
                 const data = await res.json();
-                const nuevasFichas = data.usuario.fichas || 0;
-                if (nuevasFichas !== fichas) {
-                    fichas = nuevasFichas;
-                    actualizarFichas();
+                const nuevoSaldo = data.usuario.fichas || 0;
+                
+                if (nuevoSaldo !== fichas) {
+                    console.log(`🔄 Sincronización silenciosa: ${formatoNumero(fichas)} → ${formatoNumero(nuevoSaldo)}`);
+                    fichas = nuevoSaldo;
+                    // Actualizar SOLO el número, sin animación ni parpadeo
+                    document.getElementById('fichas').textContent = formatoNumero(fichas);
                     actualizarBotonesApuesta();
+                    
+                    // Mostrar notificación SOLO si es una recarga externa (no jugada)
+                    if (nuevoSaldo > ultimoSaldoGuardado && !jugando) {
+                        mostrarResultado(`💰 Se acreditaron +${formatoNumero(nuevoSaldo - ultimoSaldoGuardado)} monedas`, 'win');
+                        setTimeout(() => {
+                            const div = document.getElementById('resultado');
+                            if (div.textContent.includes('acreditaron')) {
+                                div.textContent = '🎰 Listo para jugar';
+                                div.classList.remove('win');
+                            }
+                        }, 2000);
+                    }
                 }
-            } catch (error) { console.error('Error sincronizando:', error); }
+                ultimoSaldoGuardado = fichas;
+            } catch (error) {
+                console.error('Error sincronizando:', error);
+            }
         }
-        setInterval(sincronizarFichas, 5000);
+
+        // Sincronización cada 5 segundos pero SILENCIOSA (no titila)
+        setInterval(sincronizarSaldoSilencioso, 5000);
 
         // Modal
         function abrirModalRecarga() {
@@ -1281,7 +1307,6 @@
             } catch (error) { alert('Error de conexión'); }
             finally { btn.disabled = false; btn.textContent = "✅ SOLICITAR RECARGA"; }
         }
-        // ✅ CAMBIADO: cerrarSesion con sessionStorage
         function cerrarSesion() { 
             sessionStorage.removeItem('token'); 
             sessionStorage.removeItem('usuario'); 
