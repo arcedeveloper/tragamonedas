@@ -114,7 +114,6 @@
             fill: none;
         }
 
-        /* Estilo de botón sencillo como el que te gustó */
         .btn-login {
             width: 100%;
             padding: 15px;
@@ -134,7 +133,6 @@
             box-shadow: 0 5px 15px rgba(76,175,80,0.4);
         }
 
-        /* Texto de "¿No tenés cuenta?" y enlace */
         .register-link {
             text-align: center;
             margin-top: 10px;
@@ -240,8 +238,9 @@
                 const data = await res.json();
 
                 if (res.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                    // ✅ CAMBIADO: usar sessionStorage
+                    sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
                     
                     if (data.usuario.role === 'admin') {
                         window.location.href = 'admin.html';
