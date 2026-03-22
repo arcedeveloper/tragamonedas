@@ -1053,4 +1053,181 @@
 
                 document.getElementById('total-usuarios').textContent = data.total_usuarios || 0;
                 document.getElementById('usuarios-activos').textContent = data.usuarios_activos || 0;
-                document.getElementById('fichas-totales').textContent = '
+                document.getElementById('fichas-totales').textContent = '🪙 ' + formatoNumero(data.fichas_totales || 0);
+                document.getElementById('total-recargas').textContent = '₲ ' + formatoNumero(Math.round(data.total_recargas || 0));
+            } catch (error) {
+                console.error('❌ Error cargando estadísticas:', error);
+                if (error.message === '401') {
+                    cerrarSesion();
+                }
+            }
+        }
+
+        function abrirModalFichas(userId, usuario) {
+            usuarioSeleccionado = userId;
+            document.getElementById('modal-usuario').textContent = usuario;
+            document.getElementById('modal-fichas').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-fichas').style.display = 'none';
+        }
+
+        async function confirmarAgregarFichas() {
+            const fichas = parseInt(document.getElementById('fichas-agregar').value);
+
+            try {
+                const res = await fetch(`${API_URL}/admin/agregar-fichas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({
+                        usuario_id: usuarioSeleccionado,
+                        fichas: fichas
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert(`✅ 🪙 ${formatoNumero(fichas)} monedas agregadas`);
+                    cerrarModal();
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function quitarFichas(userId) {
+            const cantidad = prompt('¿Cuántas monedas querés quitar?', '10000');
+            if (!cantidad) return;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/quitar-fichas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({
+                        usuario_id: userId,
+                        fichas: parseInt(cantidad)
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert(`✅ Monedas quitadas`);
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function aprobarSolicitud(solicitudId, usuarioId, fichas) {
+            try {
+                const res = await fetch(`${API_URL}/admin/aprobar-recarga`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ solicitud_id: solicitudId })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert(`✅ Recarga aprobada: 🪙 ${formatoNumero(fichas)} monedas`);
+                    cargarDatos();
+                    cargarEstadisticasVentas();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function rechazarSolicitud(solicitudId) {
+            if (!confirm('¿Rechazar esta solicitud?')) return;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/rechazar-recarga`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ solicitud_id: solicitudId })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('✅ Solicitud rechazada');
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function toggleUsuario(userId, activo) {
+            try {
+                const res = await fetch(`${API_URL}/admin/toggle-usuario`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ usuario_id: userId, activo })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        // ✅ CAMBIADO: cerrarSesion con sessionStorage
+        function cerrarSesion() {
+            console.log('🔓 Cerrando sesión...');
+            sessionStorage.removeItem('admin_token');
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('usuario');
+            window.location.href = 'login.html';
+        }
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        if (!verificarAcceso()) {
+            // Redirige
+        } else {
+            console.log('✅ Cargando datos del admin...');
+            cargarDatos();
+            cargarEstadisticasVentas();
+            cargarLimiteDesdeBackend();
+            setInterval(cargarSolicitudes, 5000);
+        }
+    </script>
+</body>
+</html>
