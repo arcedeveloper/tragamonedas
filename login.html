@@ -62,7 +62,6 @@
             color: #555;
         }
 
-        /* Estilo base para TODOS los inputs */
         .form-group input {
             width: 100%;
             padding: 15px;
@@ -83,7 +82,6 @@
             width: 100%;
         }
 
-        /* Solo los inputs DENTRO de password-wrapper tienen padding-right */
         .password-wrapper input {
             padding-right: 50px;
         }
@@ -116,51 +114,142 @@
             fill: none;
         }
 
+        /* ===== BOTONES REDISEÑADOS ===== */
         .btn {
             width: 100%;
-            padding: 15px;
+            padding: 0;
             border: none;
-            border-radius: 10px;
+            border-radius: 60px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 15px 20px;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-icon {
+            font-size: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-text {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Botón Login - gradiente brillante */
         .btn-login {
-            background: #4CAF50;
-            color: white;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+            position: relative;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
         }
 
         .btn-login:hover {
-            background: #388E3C;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76,175,80,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(76, 175, 80, 0.4);
         }
 
+        .btn-login:active {
+            transform: translateY(1px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Botón Registrar - efecto vidrio + borde neón */
         .btn-register {
-            background: #2196F3;
-            color: white;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+            position: relative;
+            backdrop-filter: blur(2px);
+        }
+
+        .btn-register::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 60px;
+            padding: 2px;
+            background: linear-gradient(135deg, #64b5f6, #ffd54f);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .btn-register:hover::after {
+            opacity: 1;
         }
 
         .btn-register:hover {
-            background: #1976D2;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(33, 150, 243, 0.4);
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
         }
 
-        .error-message {
-            color: #f44336;
-            text-align: center;
-            margin-top: 10px;
-            display: none;
+        .btn-register:active {
+            transform: translateY(1px);
         }
 
+        /* Efecto ripple para ambos botones */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Separador mejorado */
         .separator {
             text-align: center;
-            margin: 20px 0;
-            color: #666;
+            margin: 24px 0 20px;
+            color: #888;
             position: relative;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .separator::before,
@@ -168,13 +257,32 @@
             content: '';
             position: absolute;
             top: 50%;
-            width: 45%;
+            width: 42%;
             height: 1px;
-            background: #ddd;
+            background: linear-gradient(90deg, transparent, #ddd, transparent);
         }
 
-        .separator::before { left: 0; }
-        .separator::after { right: 0; }
+        .separator::before {
+            left: 0;
+            background: linear-gradient(90deg, transparent, #ddd);
+        }
+
+        .separator::after {
+            right: 0;
+            background: linear-gradient(90deg, #ddd, transparent);
+        }
+
+        .error-message {
+            color: #f44336;
+            text-align: center;
+            margin-top: 16px;
+            display: none;
+            font-size: 14px;
+            background: rgba(244, 67, 54, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(2px);
+        }
     </style>
 </head>
 <body>
@@ -187,12 +295,12 @@
         </div>
 
         <div class="form-group">
-            <label>Usuario</label>
+            <label>👤 Usuario</label>
             <input type="text" id="usuario" placeholder="Ingresá tu usuario">
         </div>
 
         <div class="form-group">
-            <label>Contraseña</label>
+            <label>🔒 Contraseña</label>
             <div class="password-wrapper">
                 <input type="password" id="password" placeholder="Ingresá tu contraseña">
                 <button class="toggle-password" onclick="togglePassword('password', this)" type="button">
@@ -204,11 +312,25 @@
             </div>
         </div>
 
-        <button class="btn btn-login" onclick="iniciarSesion()">🔐 INGRESAR</button>
+        <!-- Botón INGRESAR rediseñado -->
+        <button class="btn btn-login" onclick="iniciarSesion()">
+            <div class="btn-content">
+                <span class="btn-icon">✨</span>
+                <span class="btn-text">INGRESAR</span>
+                <span class="btn-icon">🎰</span>
+            </div>
+        </button>
         
-        <div class="separator">o</div>
+        <div class="separator">✦  continuar con  ✦</div>
         
-        <button class="btn btn-register" onclick="irRegistro()">📝 CREAR CUENTA</button>
+        <!-- Botón CREAR CUENTA rediseñado -->
+        <button class="btn btn-register" onclick="irRegistro()">
+            <div class="btn-content">
+                <span class="btn-icon">🌟</span>
+                <span class="btn-text">CREAR CUENTA</span>
+                <span class="btn-icon">🚀</span>
+            </div>
+        </button>
 
         <div id="error" class="error-message"></div>
     </div>
@@ -216,6 +338,67 @@
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
 
+        // Función para crear efecto ripple en los botones
+        function createRipple(event, button) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            
+            button.style.position = 'relative';
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Agregar efecto ripple a los botones (preservando funcionalidad original)
+        const attachRippleToButtons = () => {
+            const loginBtn = document.querySelector('.btn-login');
+            const registerBtn = document.querySelector('.btn-register');
+            
+            if (loginBtn) {
+                loginBtn.addEventListener('click', (e) => {
+                    createRipple(e, loginBtn);
+                    // Pequeño delay para no interferir con la función original
+                    setTimeout(() => {
+                        if (typeof iniciarSesion === 'function') {
+                            // Prevenir doble ejecución si ya se llamó desde onclick
+                            if (!loginBtn.hasAttribute('data-clicked')) {
+                                loginBtn.setAttribute('data-clicked', 'true');
+                                iniciarSesion();
+                                setTimeout(() => loginBtn.removeAttribute('data-clicked'), 300);
+                            }
+                        }
+                    }, 50);
+                });
+            }
+            
+            if (registerBtn) {
+                registerBtn.addEventListener('click', (e) => {
+                    createRipple(e, registerBtn);
+                    setTimeout(() => {
+                        if (typeof irRegistro === 'function') {
+                            if (!registerBtn.hasAttribute('data-clicked')) {
+                                registerBtn.setAttribute('data-clicked', 'true');
+                                irRegistro();
+                                setTimeout(() => registerBtn.removeAttribute('data-clicked'), 300);
+                            }
+                        }
+                    }, 50);
+                });
+            }
+        };
+
+        // Mejorar togglePassword con animación sutil
         function togglePassword(inputId, button) {
             const input = document.getElementById(inputId);
             const svg = button.querySelector('svg');
@@ -226,12 +409,16 @@
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                     <line x1="1" y1="1" x2="23" y2="23"></line>
                 `;
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => button.style.transform = '', 150);
             } else {
                 input.type = 'password';
                 svg.innerHTML = `
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
                 `;
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => button.style.transform = '', 150);
             }
         }
 
@@ -245,12 +432,28 @@
             const errorDiv = document.getElementById('error');
 
             if (!usuario || !password) {
-                errorDiv.textContent = 'Completá todos los campos';
+                errorDiv.textContent = '⚠️ Completá todos los campos';
                 errorDiv.style.display = 'block';
+                // Animación de vibración suave en el contenedor del error
+                errorDiv.style.transform = 'scale(1.02)';
+                setTimeout(() => errorDiv.style.transform = '', 200);
                 return;
             }
 
             try {
+                // Mostrar feedback visual de carga en el botón
+                const loginBtn = document.querySelector('.btn-login');
+                const originalContent = loginBtn.innerHTML;
+                loginBtn.innerHTML = `
+                    <div class="btn-content">
+                        <span class="btn-icon">⏳</span>
+                        <span class="btn-text">INGRESANDO...</span>
+                        <span class="btn-icon">🎰</span>
+                    </div>
+                `;
+                loginBtn.style.opacity = '0.8';
+                loginBtn.disabled = true;
+
                 const res = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -259,24 +462,99 @@
 
                 const data = await res.json();
 
+                // Restaurar botón
+                loginBtn.innerHTML = originalContent;
+                loginBtn.style.opacity = '';
+                loginBtn.disabled = false;
+
                 if (res.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('usuario', JSON.stringify(data.usuario));
                     
-                    if (data.usuario.role === 'admin') {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'index.html';
-                    }
+                    // Animación de éxito antes de redirigir
+                    errorDiv.style.display = 'none';
+                    const container = document.querySelector('.login-container');
+                    container.style.transform = 'scale(0.98)';
+                    container.style.transition = 'transform 0.2s';
+                    
+                    setTimeout(() => {
+                        if (data.usuario.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    }, 200);
                 } else {
-                    errorDiv.textContent = data.error || 'Error al iniciar sesión';
+                    errorDiv.textContent = data.error || '❌ Error al iniciar sesión';
                     errorDiv.style.display = 'block';
+                    // Sacudir el contenedor del error para dar feedback
+                    errorDiv.style.animation = 'shake 0.3s ease-in-out';
+                    setTimeout(() => errorDiv.style.animation = '', 300);
                 }
             } catch (error) {
-                errorDiv.textContent = 'Error de conexión';
+                const loginBtn = document.querySelector('.btn-login');
+                if (loginBtn) {
+                    loginBtn.innerHTML = `
+                        <div class="btn-content">
+                            <span class="btn-icon">✨</span>
+                            <span class="btn-text">INGRESAR</span>
+                            <span class="btn-icon">🎰</span>
+                        </div>
+                    `;
+                    loginBtn.style.opacity = '';
+                    loginBtn.disabled = false;
+                }
+                errorDiv.textContent = '🔌 Error de conexión con el servidor';
                 errorDiv.style.display = 'block';
+                errorDiv.style.animation = 'shake 0.3s ease-in-out';
+                setTimeout(() => errorDiv.style.animation = '', 300);
             }
         }
+
+        // Agregar animación de shake al CSS dinámicamente
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+            .btn:active .btn-content {
+                transform: scale(0.97);
+            }
+            .btn-login .btn-icon, .btn-register .btn-icon {
+                transition: transform 0.2s ease;
+            }
+            .btn-login:hover .btn-icon, .btn-register:hover .btn-icon {
+                transform: scale(1.1);
+            }
+            .login-container {
+                transition: transform 0.2s ease;
+            }
+            .form-group input {
+                transition: all 0.3s, transform 0.1s;
+            }
+            .form-group input:active {
+                transform: scale(0.99);
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Inicializar ripples cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            attachRippleToButtons();
+            
+            // Mejorar la experiencia de los inputs con feedback visual
+            const inputs = document.querySelectorAll('.form-group input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', (e) => {
+                    e.target.parentElement.classList.add('input-focused');
+                });
+                input.addEventListener('blur', (e) => {
+                    e.target.parentElement.classList.remove('input-focused');
+                });
+            });
+        });
     </script>
 </body>
 </html>
