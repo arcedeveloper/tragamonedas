@@ -28,7 +28,32 @@ router.post('/jugar', verificarToken, async (req, res) => {
             return res.status(400).json({ error: 'Fichas insuficientes' });
         }
 
-        // Registrar jugada
+        // Si es solo una apuesta sin ganancia (primer paso)
+        if (ganancia === 0 && combinacion === 'pendiente') {
+            // Solo restar apuesta
+            await client.query(
+                `UPDATE usuarios 
+                 SET fichas = fichas - $1,
+                     veces_jugadas = veces_jugadas + 1
+                 WHERE id = $2`,
+                [apuesta, usuarioId]
+            );
+
+            await client.query('COMMIT');
+            
+            const nuevoSaldo = await db.query(
+                'SELECT fichas FROM usuarios WHERE id = $1',
+                [usuarioId]
+            );
+
+            return res.json({
+                success: true,
+                nuevas_fichas: nuevoSaldo.rows[0].fichas,
+                ganancia: 0
+            });
+        }
+
+        // Registrar jugada completa (con ganancia)
         await client.query(
             `INSERT INTO historial_juego 
              (usuario_id, apuesta, ganancia, combinacion) 
@@ -39,25 +64,28 @@ router.post('/jugar', verificarToken, async (req, res) => {
         // Actualizar fichas
         await client.query(
             `UPDATE usuarios 
-             SET fichas = fichas - $1 + $2,
-                 veces_jugadas = veces_jugadas + 1
+             SET fichas = fichas - $1 + $2
              WHERE id = $3`,
             [apuesta, ganancia, usuarioId]
         );
 
         // Registrar transacción
-        await client.query(
-            `INSERT INTO transacciones (usuario_id, tipo, fichas, descripcion) 
-             VALUES ($1, 'jugada', $2, $3)`,
-            [usuarioId, -apuesta, `Apuesta de ${apuesta} fichas`]
-        );
-
-        if (ganancia > 0) {
+        try {
             await client.query(
                 `INSERT INTO transacciones (usuario_id, tipo, fichas, descripcion) 
-                 VALUES ($1, 'premio', $2, $3)`,
-                [usuarioId, ganancia, `Premio por combinación ${combinacion}`]
+                 VALUES ($1, 'jugada', $2, $3)`,
+                [usuarioId, -apuesta, `Apuesta de ${apuesta} fichas`]
             );
+
+            if (ganancia > 0) {
+                await client.query(
+                    `INSERT INTO transacciones (usuario_id, tipo, fichas, descripcion) 
+                     VALUES ($1, 'premio', $2, $3)`,
+                    [usuarioId, ganancia, `Premio por combinación ${combinacion}`]
+                );
+            }
+        } catch (transError) {
+            console.log('⚠️ Tabla transacciones no existe, continuando...');
         }
 
         await client.query('COMMIT');
