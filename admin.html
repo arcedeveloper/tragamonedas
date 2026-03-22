@@ -536,30 +536,30 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-             <table>
+            <table>
                 <thead>
-                     <tr>
+                    <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
                         <th>💰 Monto a Pagar (₲)</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
-                     </tr>
+                    </tr>
                 </thead>
                 <tbody id="solicitudes-body">
-                     <tr>
+                    <tr>
                         <td colspan="6" style="text-align: center;">Cargando...</td>
-                     </tr>
+                    </tr>
                 </tbody>
-             </table>
+            </table>
         </div>
 
         <div class="table-container">
             <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
-             <table>
+            <table>
                 <thead>
-                     <tr>
+                    <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
@@ -568,10 +568,10 @@
                         <th>🏆 Mayor Premio</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-                     </tr>
+                    </tr>
                 </thead>
                 <tbody id="usuarios-body"></tbody>
-             </table>
+            </table>
         </div>
 
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
@@ -629,7 +629,7 @@
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
         
-        // ✅ CAMBIADO: usar sessionStorage en lugar de localStorage
+        // ✅ CAMBIADO: usar sessionStorage
         let token = sessionStorage.getItem('token') || sessionStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
 
@@ -642,7 +642,6 @@
         console.log('Token:', token ? token.substring(0, 20) + '...' : '❌ No hay token');
         
         try {
-            // ✅ CAMBIADO: leer usuario de sessionStorage
             const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
             console.log('Usuario guardado:', usuario);
             if (usuario.role) {
@@ -660,7 +659,6 @@
             }
 
             try {
-                // ✅ CAMBIADO: leer usuario de sessionStorage
                 const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
                 if (usuario.role !== 'admin') {
                     console.log('❌ Usuario no es admin - role:', usuario.role);
@@ -851,22 +849,22 @@
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${d.dia_esp}</strong></td>
-                        <td>
+                         <td><strong>${d.dia_esp}</strong></td>
+                         <td>
                             ${d.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${d.total_compras}</div>
                             </div>
-                        </td>
-                        <td>🪙 ${formatoNumero(d.total_fichas)}</td>
-                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
-                    </tr>
+                         </td>
+                         <td>🪙 ${formatoNumero(d.total_fichas)}</td>
+                         <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
+                     </tr>
                 `;
             });
 
             html += `
                         </tbody>
-                    </table>
+                     </table>
                 </div>
             `;
 
@@ -887,22 +885,22 @@
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${horaFormateada}</strong></td>
-                        <td>
+                         <td><strong>${horaFormateada}</strong></td>
+                         <td>
                             ${h.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${h.total_compras}</div>
                             </div>
-                        </td>
-                        <td>🪙 ${formatoNumero(h.total_fichas)}</td>
-                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
-                    </tr>
+                         </td>
+                         <td>🪙 ${formatoNumero(h.total_fichas)}</td>
+                         <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
+                     </tr>
                 `;
             });
 
             html += `
                         </tbody>
-                    </table>
+                     </table>
                 </div>
             `;
 
@@ -955,8 +953,8 @@
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${u.id}</td>
-                            <td><strong>${u.usuario}</strong></td>
+                             <td>${u.id}</td>
+                             <td><strong>${u.usuario}</strong></td>
                             <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(u.total_recargado || 0))}</td>
                             <td>${u.veces_jugadas || 0}</td>
@@ -1012,8 +1010,8 @@
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${s.id}</td>
-                            <td><strong>${s.usuario}</strong></td>
+                             <td>${s.id}</td>
+                             <td><strong>${s.usuario}</strong></td>
                             <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
                             <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
