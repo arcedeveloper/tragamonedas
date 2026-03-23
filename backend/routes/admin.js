@@ -387,5 +387,40 @@ router.post('/configurar-limite', async (req, res) => {
         res.status(500).json({ success: false, error: 'Error interno' });
     }
 });
-
+// OBTENER HISTORIAL DE UN USUARIO ESPECÍFICO
+router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, async (req, res) => {
+    try {
+        const { usuarioId } = req.params;
+        
+        // Obtener historial de jugadas
+        const historial = await db.query(
+            `SELECT id, apuesta, ganancia, combinacion, fecha 
+             FROM historial_juego 
+             WHERE usuario_id = $1 
+             ORDER BY fecha DESC 
+             LIMIT 100`,
+            [usuarioId]
+        );
+        
+        // Obtener estadísticas del usuario
+        const stats = await db.query(
+            `SELECT 
+                COUNT(*) as total_jugadas,
+                SUM(CASE WHEN ganancia > 0 THEN 1 ELSE 0 END) as victorias,
+                COALESCE(SUM(ganancia), 0) as ganancias_totales
+             FROM historial_juego
+             WHERE usuario_id = $1`,
+            [usuarioId]
+        );
+        
+        res.json({
+            historial: historial.rows,
+            stats: stats.rows[0] || { total_jugadas: 0, victorias: 0, ganancias_totales: 0 }
+        });
+        
+    } catch (error) {
+        console.error('Error obteniendo historial:', error);
+        res.status(500).json({ error: 'Error al obtener historial' });
+    }
+});
 module.exports = router;
