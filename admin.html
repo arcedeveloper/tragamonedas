@@ -102,7 +102,6 @@
 
         tr:hover {
             background: #f5f5f5;
-            cursor: pointer;
         }
 
         .badge {
@@ -144,20 +143,6 @@
         .btn-block {
             background: #f44336;
             color: white;
-        }
-
-        .btn-ver-historial {
-            background: #2196F3;
-            color: white;
-            padding: 4px 8px;
-            font-size: 11px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-
-        .btn-ver-historial:hover {
-            background: #1976D2;
         }
 
         .solicitudes-container {
@@ -683,30 +668,30 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-            <table>
+             <table>
                 <thead>
-                    <tr>
+                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
                         <th>💰 Monto a Pagar (₲)</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
-                    </tr>
+                     </tr>
                 </thead>
                 <tbody id="solicitudes-body">
-                    <tr>
+                     <tr>
                         <td colspan="6" style="text-align: center;">Cargando...</td>
-                    </tr>
+                     </tr>
                 </tbody>
-            </table>
+             </table>
         </div>
 
         <div class="table-container">
             <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
-            <table>
+             <table>
                 <thead>
-                    <tr>
+                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
@@ -717,10 +702,10 @@
                         <th>🏆 Mayor Premio</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-                    </tr>
+                     </tr>
                 </thead>
                 <tbody id="usuarios-body"></tbody>
-            </table>
+             </table>
         </div>
 
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
@@ -850,7 +835,6 @@
             contentDiv.innerHTML = '<div class="loading-stats">Cargando historial...</div>';
             
             try {
-                // Obtener historial del usuario
                 const res = await fetch(`${API_URL}/admin/historial-usuario/${usuarioId}`, {
                     headers: { 'Authorization': token }
                 });
@@ -887,7 +871,6 @@
                 return;
             }
             
-            // Resumen del usuario
             let html = `
                 <div class="resumen-usuario">
                     <div class="resumen-item">
@@ -910,13 +893,13 @@
                 
                 <table class="historial-tabla">
                     <thead>
-                        <tr>
+                         <tr>
                             <th>Fecha</th>
                             <th>Apuesta</th>
                             <th>Ganancia</th>
                             <th>Combinación</th>
                             <th>Resultado</th>
-                        </tr>
+                         </tr>
                     </thead>
                     <tbody>
             `;
@@ -928,19 +911,19 @@
                 const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
                 
                 html += `
-                    <tr>
+                     <tr>
                         <td>${fecha}</td>
                         <td>🪙 ${formatoNumero(j.apuesta)}</td>
                         <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
                         <td style="font-size: 20px;">${j.combinacion}</td>
                         <td class="${resultadoClass}">${resultadoText}</td>
-                    </tr>
+                     </tr>
                 `;
             });
             
             html += `
                     </tbody>
-                </table>
+                 </table>
             `;
             
             contentDiv.innerHTML = html;
@@ -951,7 +934,6 @@
             usuarioHistorialActual = null;
         }
 
-        // Cerrar modal al hacer click fuera
         document.getElementById('modal-historial').addEventListener('click', function(e) {
             if (e.target === this) {
                 cerrarModalHistorial();
@@ -1116,12 +1098,13 @@
 
             html += '<div class="estadisticas-grid">';
             
+            // Tabla por día
             html += `
                 <div class="estadisticas-card">
                     <h3>📅 Ventas por día de la semana</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                            <tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
+                             <tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
                         </thead>
                         <tbody>
             `;
@@ -1132,25 +1115,26 @@
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${d.dia_esp}</strong>84
+                        <td><strong>${d.dia_esp}</strong></td>
                         <td>
                             ${d.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${d.total_compras}</div>
                             </div>
-                        84
-                        <td>🪙 ${formatoNumero(d.total_fichas)}84
-                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}84
-                    比
+                        \n\n
+                        <td>🪙 ${formatoNumero(d.total_fichas)}<\/td>
+                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}<\/td>
+                    </tr>
                 `;
             });
 
             html += `
                         </tbody>
-                     Carpeta
+                    </table>
                 </div>
             `;
 
+            // Tabla por hora
             html += `
                 <div class="estadisticas-card">
                     <h3>⏰ Ventas por hora del día</h3>
@@ -1168,27 +1152,28 @@
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${horaFormateada}</strong>84
+                        <td><strong>${horaFormateada}</strong><\/td>
                         <td>
                             ${h.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${h.total_compras}</div>
                             </div>
-                        84
-                        <td>🪙 ${formatoNumero(h.total_fichas)}84
-                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}84
-                    比
+                        <\/td>
+                        <td>🪙 ${formatoNumero(h.total_fichas)}<\/td>
+                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}<\/td>
+                    </tr>
                 `;
             });
 
             html += `
                         </tbody>
-                     Carpeta
+                    </table>
                 </div>
             `;
 
             html += '</div>';
 
+            // Resumen de totales
             html += `
                 <div class="resumen-stats">
                     <div class="resumen-item">
@@ -1239,26 +1224,26 @@
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                             <td>${u.id}</td>
-                             <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
-                             <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
-                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(totalRecargado))}</td>
-                             <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}</td>
-                             <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
-                             <td>${u.veces_jugadas || 0}</td>
-                             <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
-                             <td>
+                            <td>${u.id}<\/td>
+                            <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span><\/td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(saldo)}<\/td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(totalRecargado))}<\/td>
+                            <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}<\/td>
+                            <td class="pagar-cell">₲ ${formatoNumero(aPagar)}<\/td>
+                            <td>${u.veces_jugadas || 0}<\/td>
+                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}<\/td>
+                            <td>
                                 ${u.activo ? 
                                     '<span class="badge badge-active">Activo</span>' : 
                                     '<span class="badge badge-inactive">Bloqueado</span>'}
-                             </td>
-                             <td>
+                            <\/td>
+                            <td>
                                 <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
                                 <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
                                 ${u.activo ? 
                                     `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒 Bloquear</button>` :
                                     `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓 Activar</button>`}
-                             </td>
+                            <\/td>
                         `;
                         tbody.appendChild(tr);
                     }
@@ -1292,21 +1277,21 @@
                 const tbody = document.getElementById('solicitudes-body');
                 
                 if (!solicitudes || solicitudes.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td> </tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td></tr>';
                 } else {
                     tbody.innerHTML = '';
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                             <td>${s.id}</td>
-                             <td><strong>${s.usuario}</strong></td>
-                             <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
-                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
-                             <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
-                             <td>
+                            <td>${s.id}<\/td>
+                            <td><strong>${s.usuario}</strong><\/td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}<\/td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}<\/td>
+                            <td>${new Date(s.fecha_solicitud).toLocaleString()}<\/td>
+                            <td>
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
                                 <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
-                             </td>
+                            <\/td>
                         `;
                         tbody.appendChild(tr);
                     });
