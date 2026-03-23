@@ -946,12 +946,14 @@
                 🎰 JUGAR
             </button>
 
- <div class="quick-bets">
-    <div class="quick-bet" onclick="setApuesta(1000)">🪙 1.000</div>
-    <div class="quick-bet" onclick="setApuesta(5000)">🪙 5.000</div>
-    <div class="quick-bet" onclick="setApuesta(10000)">🪙 10.000</div>
-    <div class="quick-bet" onclick="setApuesta(20000)">🪙 20.000</div>
-</div>
+            <div class="quick-bets">
+                <div class="quick-bet" onclick="setApuesta(1000)">🪙 1.000</div>
+                <div class="quick-bet" onclick="setApuesta(5000)">🪙 5.000</div>
+                <div class="quick-bet" onclick="setApuesta(10000)">🪙 10.000</div>
+                <div class="quick-bet" onclick="setApuesta(20000)">🪙 20.000</div>
+            </div>
+        </div>
+
         <div class="prize-panel">
             <h3>🏆 TABLA DE PREMIOS</h3>
             <div class="prize-table">
@@ -1145,6 +1147,7 @@
             jugando = true;
             document.getElementById('btn-jugar').disabled = true;
             
+            // RESTAR APUESTA LOCALMENTE
             fichas -= costoApuesta;
             actualizarFichas();
             
@@ -1158,7 +1161,7 @@
             animarRodillo(reels[0], resultado[0], () => {
                 animarRodillo(reels[1], resultado[1], () => {
                     animarRodillo(reels[2], resultado[2], async () => {
-                        // Guardar resultado en backend
+                        // GUARDAR RESULTADO EN BACKEND (SOLO UNA LLAMADA)
                         try {
                             const res = await fetch(`${API_URL}/jugar`, {
                                 method: 'POST',
@@ -1174,6 +1177,7 @@
                             actualizarFichas();
                         } catch (error) {
                             console.error('Error guardando:', error);
+                            // Si falla, usar cálculo local
                             fichas += ganancia;
                             actualizarFichas();
                         }
@@ -1245,11 +1249,9 @@
                 if (nuevoSaldo !== fichas) {
                     console.log(`🔄 Sincronización silenciosa: ${formatoNumero(fichas)} → ${formatoNumero(nuevoSaldo)}`);
                     fichas = nuevoSaldo;
-                    // Actualizar SOLO el número, sin animación ni parpadeo
                     document.getElementById('fichas').textContent = formatoNumero(fichas);
                     actualizarBotonesApuesta();
                     
-                    // Mostrar notificación SOLO si es una recarga externa (no jugada)
                     if (nuevoSaldo > ultimoSaldoGuardado && !jugando) {
                         mostrarResultado(`💰 Se acreditaron +${formatoNumero(nuevoSaldo - ultimoSaldoGuardado)} monedas`, 'win');
                         setTimeout(() => {
@@ -1267,7 +1269,6 @@
             }
         }
 
-        // Sincronización cada 5 segundos pero SILENCIOSA (no titila)
         setInterval(sincronizarSaldoSilencioso, 5000);
 
         // Modal
