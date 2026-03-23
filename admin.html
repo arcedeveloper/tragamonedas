@@ -536,30 +536,30 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-            <table>
+             <table>
                 <thead>
-                    <tr>
+                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
                         <th>💰 Monto a Pagar (₲)</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
-                    </tr>
+                     </tr>
                 </thead>
                 <tbody id="solicitudes-body">
-                    <tr>
+                     <tr>
                         <td colspan="6" style="text-align: center;">Cargando...</td>
-                    </tr>
+                     </tr>
                 </tbody>
-            </table>
+             </table>
         </div>
 
         <div class="table-container">
             <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
-            <table>
+             <table>
                 <thead>
-                    <tr>
+                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
@@ -568,10 +568,10 @@
                         <th>🏆 Mayor Premio</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-                    </tr>
+                     </tr>
                 </thead>
                 <tbody id="usuarios-body"></tbody>
-            </table>
+             </table>
         </div>
 
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
@@ -849,22 +849,22 @@
                 
                 html += `
                     <tr class="${esPico}">
-                         <td><strong>${d.dia_esp}</strong></td>
-                         <td>
+                        <td><strong>${d.dia_esp}</strong></td>
+                        <td>
                             ${d.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${d.total_compras}</div>
                             </div>
-                         </td>
-                         <td>🪙 ${formatoNumero(d.total_fichas)}</td>
-                         <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
-                     </tr>
+                        </td>
+                        <td>🪙 ${formatoNumero(d.total_fichas)}</td>
+                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
+                    </tr>
                 `;
             });
 
             html += `
                         </tbody>
-                     </table>
+                    </table>
                 </div>
             `;
 
@@ -885,22 +885,22 @@
                 
                 html += `
                     <tr class="${esPico}">
-                         <td><strong>${horaFormateada}</strong></td>
-                         <td>
+                        <td><strong>${horaFormateada}</strong></td>
+                        <td>
                             ${h.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${h.total_compras}</div>
                             </div>
-                         </td>
-                         <td>🪙 ${formatoNumero(h.total_fichas)}</td>
-                         <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
-                     </tr>
+                        </td>
+                        <td>🪙 ${formatoNumero(h.total_fichas)}</td>
+                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
+                    </tr>
                 `;
             });
 
             html += `
                         </tbody>
-                     </table>
+                    </table>
                 </div>
             `;
 
@@ -953,8 +953,8 @@
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                             <td>${u.id}</td>
-                             <td><strong>${u.usuario}</strong></td>
+                            <td>${u.id}</td>
+                            <td><strong>${u.usuario}</strong></td>
                             <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(u.total_recargado || 0))}</td>
                             <td>${u.veces_jugadas || 0}</td>
@@ -1010,8 +1010,8 @@
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                             <td>${s.id}</td>
-                             <td><strong>${s.usuario}</strong></td>
+                            <td>${s.id}</td>
+                            <td><strong>${s.usuario}</strong></td>
                             <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
                             <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
@@ -1224,7 +1224,45 @@
             cargarDatos();
             cargarEstadisticasVentas();
             cargarLimiteDesdeBackend();
-            setInterval(cargarSolicitudes, 5000);
+            
+            // ============================================
+            // ACTUALIZACIÓN INTELIGENTE (sin setInterval constante)
+            // ============================================
+            let ultimaCantidadSolicitudes = 0;
+
+            async function verificarSolicitudesNuevas() {
+                try {
+                    const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, {
+                        headers: { 'Authorization': token }
+                    });
+                    
+                    if (!res.ok) return;
+                    
+                    const solicitudes = await res.json();
+                    const cantidadActual = solicitudes.length;
+                    
+                    // SOLO actualizar si hay NUEVAS solicitudes
+                    if (cantidadActual !== ultimaCantidadSolicitudes) {
+                        console.log(`📢 Nuevas solicitudes: ${ultimaCantidadSolicitudes} → ${cantidadActual}`);
+                        await cargarSolicitudes();
+                        ultimaCantidadSolicitudes = cantidadActual;
+                    }
+                    
+                    // También actualizar estadísticas generales cada 30 seg (menos frecuente)
+                    if (Math.random() < 0.1) { // Aprox cada 30 seg si se llama cada 3 seg
+                        await cargarEstadisticas();
+                    }
+                    
+                } catch (error) {
+                    console.error('Error verificando solicitudes:', error);
+                }
+            }
+
+            // Verificar CADA 3 SEGUNDOS pero SOLO recargar si hay cambios
+            setInterval(verificarSolicitudesNuevas, 3000);
+
+            // También actualizar estadísticas de ventas cada 30 segundos (menos frecuente)
+            setInterval(cargarEstadisticasVentas, 30000);
         }
     </script>
 </body>
