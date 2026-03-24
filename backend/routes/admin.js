@@ -128,7 +128,6 @@ router.post('/aprobar-recarga', async (req, res) => {
             [fichas, monto, usuarioId]
         );
 
-        // Intentar registrar transacción (si la tabla existe)
         try {
             await client.query(
                 `INSERT INTO transacciones 
@@ -356,7 +355,7 @@ router.get('/estadisticas-ventas', async (req, res) => {
     }
 });
 
-// CONFIGURAR LÍMITE (solo admin - YA ESTÁ DESPUÉS DEL MIDDLEWARE)
+// CONFIGURAR LÍMITE (solo admin)
 router.post('/configurar-limite', async (req, res) => {
     try {
         const { limite } = req.body;
@@ -387,10 +386,15 @@ router.post('/configurar-limite', async (req, res) => {
         res.status(500).json({ success: false, error: 'Error interno' });
     }
 });
-// OBTENER HISTORIAL DE UN USUARIO ESPECÍFICO
+
+// ============================================
+// NUEVO: OBTENER HISTORIAL DE UN USUARIO
+// ============================================
 router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, async (req, res) => {
     try {
         const { usuarioId } = req.params;
+        
+        console.log(`📜 Obteniendo historial del usuario ${usuarioId}`);
         
         // Obtener historial de jugadas
         const historial = await db.query(
@@ -419,8 +423,9 @@ router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, asyn
         });
         
     } catch (error) {
-        console.error('Error obteniendo historial:', error);
+        console.error('❌ Error obteniendo historial:', error);
         res.status(500).json({ error: 'Error al obtener historial' });
     }
 });
+
 module.exports = router;
