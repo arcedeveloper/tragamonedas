@@ -182,7 +182,7 @@
             color: #0b5e9e;
         }
 
-        /* Modal de historial */
+        /* Modal de historial simplificado */
         .modal-historial {
             display: none;
             position: fixed;
@@ -263,19 +263,13 @@
             color: #f44336;
         }
 
-        .no-historial {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .resumen-usuario {
+        .resumen-simple {
             background: #f5f5f5;
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
 
@@ -289,7 +283,7 @@
         }
 
         .resumen-item .value {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             color: #2E7D32;
         }
@@ -324,7 +318,7 @@
             .estadisticas-grid {
                 grid-template-columns: 1fr;
             }
-            .resumen-usuario {
+            .resumen-simple {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -629,16 +623,6 @@
         .info-seguridad strong {
             color: #ff8888;
         }
-
-        .icono-monedas {
-            color: #f39c12;
-            font-size: 16px;
-        }
-
-        .icono-guarani {
-            color: #4CAF50;
-            font-size: 16px;
-        }
     </style>
 </head>
 <body>
@@ -671,28 +655,28 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-             表
+            表
                 <thead>
-                     <tr>
+                    <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
                         <th>💰 Monto a Pagar (₲)</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
-                      </thead>
+                     </thead>
                 <tbody id="solicitudes-body">
-                     <tr>
+                    <tr>
                         <td colspan="6" style="text-align: center;">Cargando...</td>
-                      </tbody>
-              </table>
+                     </tbody>
+             </table>
         </div>
 
         <div class="table-container">
             <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
-             <table>
+            表
                 <thead>
-                     <tr>
+                    <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Saldo Actual</th>
@@ -703,7 +687,7 @@
                         <th>🏆 Mayor Premio</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-                      </thead>
+                     </thead>
                 <tbody id="usuarios-body"></tbody>
              </table>
         </div>
@@ -761,7 +745,7 @@
         </div>
     </div>
 
-    <!-- Modal de historial de usuario -->
+    <!-- Modal de historial de usuario SIMPLIFICADO -->
     <div id="modal-historial" class="modal-historial">
         <div class="modal-historial-content">
             <div class="modal-historial-header">
@@ -824,7 +808,7 @@
         }
 
         // ============================================
-        // FUNCIÓN PARA VER HISTORIAL DEL USUARIO
+        // FUNCIÓN PARA VER HISTORIAL DEL USUARIO (SIMPLIFICADA)
         // ============================================
         async function verHistorialUsuario(usuarioId, usuarioNombre) {
             usuarioHistorialActual = { id: usuarioId, nombre: usuarioNombre };
@@ -862,50 +846,34 @@
             const historial = data.historial || [];
             const stats = data.stats || {};
             
-            // Calcular balance neto real (lo que realmente ganó jugando)
-            const totalApostado = historial.reduce((sum, j) => sum + (j.apuesta || 0), 0);
-            const totalGanadoReal = stats.ganancias_totales || 0;
-            const balanceNeto = totalGanadoReal - totalApostado;
-            
-            // A Pagar = balance neto (solo si es positivo)
-            const aPagar = balanceNeto > 0 ? balanceNeto : 0;
+            // Calcular A Pagar = Saldo Actual - Inversión Total (solo si es positivo)
+            const inversionTotal = stats.inversion_total || 0;
+            const saldoActual = stats.saldo_actual || 0;
+            const aPagar = saldoActual > inversionTotal ? saldoActual - inversionTotal : 0;
             
             if (historial.length === 0) {
                 contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas para este usuario</div>`;
                 return;
             }
             
+            // Resumen SIMPLE - solo lo necesario
             let html = `
-                <div class="resumen-usuario">
+                <div class="resumen-simple">
                     <div class="resumen-item">
                         <div class="label">👤 Usuario</div>
                         <div class="value">${usuarioNombre}</div>
                     </div>
                     <div class="resumen-item">
                         <div class="label">💰 Inversión Total</div>
-                        <div class="value">₲ ${formatoNumero(stats.inversion_total || 0)}</div>
+                        <div class="value">₲ ${formatoNumero(inversionTotal)}</div>
                     </div>
                     <div class="resumen-item">
                         <div class="label">🪙 Saldo Actual</div>
-                        <div class="value">🪙 ${formatoNumero(stats.saldo_actual || 0)}</div>
-                    </div>
-                    <div class="resumen-item">
-                        <div class="label">🎰 Total Apostado</div>
-                        <div class="value">🪙 ${formatoNumero(totalApostado)}</div>
-                    </div>
-                    <div class="resumen-item">
-                        <div class="label">🏆 Total Ganado</div>
-                        <div class="value">🪙 ${formatoNumero(totalGanadoReal)}</div>
-                    </div>
-                    <div class="resumen-item">
-                        <div class="label">📊 Balance Neto</div>
-                        <div class="value" style="color: ${balanceNeto >= 0 ? '#4CAF50' : '#f44336'}">
-                            ${balanceNeto >= 0 ? '+' : ''}🪙 ${formatoNumero(Math.abs(balanceNeto))}
-                        </div>
+                        <div class="value">🪙 ${formatoNumero(saldoActual)}</div>
                     </div>
                     <div class="resumen-item">
                         <div class="label">💵 A PAGAR (si retira)</div>
-                        <div class="value" style="color: #4CAF50; font-size: 22px;">₲ ${formatoNumero(aPagar)}</div>
+                        <div class="value" style="color: #4CAF50; font-size: 24px;">₲ ${formatoNumero(aPagar)}</div>
                     </div>
                 </div>
                 
@@ -917,7 +885,7 @@
                             <th>Ganancia</th>
                             <th>Combinación</th>
                             <th>Resultado</th>
-                        </thead>
+                         </thead>
                     <tbody>
             `;
             
@@ -929,18 +897,18 @@
                 
                 html += `
                     <tr>
-                        <td>${fecha}</td>
+                        <td>${fecha} </td>
                         <td>🪙 ${formatoNumero(j.apuesta)}</td>
                         <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
                         <td style="font-size: 20px;">${j.combinacion}</td>
                         <td class="${resultadoClass}">${resultadoText}</td>
-                    </tr>
+                     </tr>
                 `;
             });
             
             html += `
                     </tbody>
-                </table>
+                 </table>
             `;
             
             contentDiv.innerHTML = html;
@@ -958,7 +926,7 @@
         });
 
         // ============================================
-        // FUNCIONES DEL LÍMITE SECRETO
+        // FUNCIONES DEL LÍMITE SECRETO (sin cambios)
         // ============================================
         async function cargarLimiteDesdeBackend() {
             try {
@@ -1115,13 +1083,12 @@
 
             html += '<div class="estadisticas-grid">';
             
-            // Tabla por día
             html += `
                 <div class="estadisticas-card">
                     <h3>📅 Ventas por día de la semana</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                              <tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
+                             <tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
                         </thead>
                         <tbody>
             `;
@@ -1132,32 +1099,31 @@
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${d.dia_esp}</strong></td>
+                        <td><strong>${d.dia_esp}</strong>84
                         <td>
                             ${d.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${d.total_compras}</div>
                             </div>
-                        </td>
-                        <td>🪙 ${formatoNumero(d.total_fichas)}</td>
-                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
-                    </tr>
+                        84
+                        <td>🪙 ${formatoNumero(d.total_fichas)}84
+                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}84
+                    比
                 `;
             });
 
             html += `
                         </tbody>
-                    </table>
+                     Carpeta
                 </div>
             `;
 
-            // Tabla por hora
             html += `
                 <div class="estadisticas-card">
                     <h3>⏰ Ventas por hora del día</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                            <tr><th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
+                             people<th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th>
                         </thead>
                         <tbody>
             `;
@@ -1169,28 +1135,27 @@
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${horaFormateada}</strong></td>
+                        <td><strong>${horaFormateada}</strong>84
                         <td>
                             ${h.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${h.total_compras}</div>
                             </div>
-                        </td>
-                        <td>🪙 ${formatoNumero(h.total_fichas)}</td>
-                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
-                    </tr>
+                        84
+                        <td>🪙 ${formatoNumero(h.total_fichas)}84
+                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}84
+                    比
                 `;
             });
 
             html += `
                         </tbody>
-                    </table>
+                     Carpeta
                 </div>
             `;
 
             html += '</div>';
 
-            // Resumen de totales
             html += `
                 <div class="resumen-stats">
                     <div class="resumen-item">
@@ -1236,25 +1201,25 @@
                     if (u.role !== 'admin') {
                         const saldo = u.fichas || 0;
                         const inversion = u.total_recargado || 0;
-                        const ganancias = saldo - inversion; // Lo que ganó realmente
+                        const ganancias = saldo - inversion;
                         const aPagar = ganancias > 0 ? ganancias : 0;
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${u.id}</td>
-                            <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
+                             <td>${u.id}</td>
+                             <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
                             <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(inversion))}</td>
                             <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}</td>
                             <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
-                            <td>${u.veces_jugadas || 0}</td>
-                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
-                            <td>
+                             <td>${u.veces_jugadas || 0}</td>
+                             <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
+                             <td>
                                 ${u.activo ? 
                                     '<span class="badge badge-active">Activo</span>' : 
                                     '<span class="badge badge-inactive">Bloqueado</span>'}
                             </td>
-                            <td>
+                             <td>
                                 <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
                                 <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
                                 ${u.activo ? 
@@ -1293,19 +1258,24 @@
                 
                 const tbody = document.getElementById('solicitudes-body');
                 
+                if (!tbody) {
+                    console.error('❌ Elemento solicitudes-body no encontrado');
+                    return;
+                }
+                
                 if (!solicitudes || solicitudes.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td></tr>';
+                    tbody.innerHTML = ' <td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td> ';
                 } else {
                     tbody.innerHTML = '';
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${s.id}</td>
-                            <td><strong>${s.usuario}</strong></td>
+                             <td>${s.id}</td>
+                             <td><strong>${s.usuario}</strong></td>
                             <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
-                            <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
-                            <td>
+                             <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+                             <td>
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
                                 <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
                             </td>
