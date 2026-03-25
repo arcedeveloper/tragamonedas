@@ -388,13 +388,22 @@ router.post('/configurar-limite', async (req, res) => {
 });
 
 // ============================================
-// NUEVO: OBTENER HISTORIAL DE UN USUARIO
+// OBTENER HISTORIAL DE UN USUARIO (CON SALDO ACTUAL E INVERSIÓN)
 // ============================================
 router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, async (req, res) => {
     try {
         const { usuarioId } = req.params;
         
         console.log(`📜 Obteniendo historial del usuario ${usuarioId}`);
+        
+        // Obtener datos del usuario (inversión y saldo actual)
+        const usuario = await db.query(
+            `SELECT total_recargado, fichas FROM usuarios WHERE id = $1`,
+            [usuarioId]
+        );
+        
+        const inversionTotal = usuario.rows[0]?.total_recargado || 0;
+        const saldoActual = usuario.rows[0]?.fichas || 0;
         
         // Obtener historial de jugadas
         const historial = await db.query(
@@ -419,7 +428,11 @@ router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, asyn
         
         res.json({
             historial: historial.rows,
-            stats: stats.rows[0] || { total_jugadas: 0, victorias: 0, ganancias_totales: 0 }
+            stats: {
+                ...stats.rows[0],
+                inversion_total: inversionTotal,
+                saldo_actual: saldoActual
+            }
         });
         
     } catch (error) {
