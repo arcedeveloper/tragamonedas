@@ -275,7 +275,7 @@
             border-radius: 10px;
             margin-bottom: 20px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
         }
 
@@ -289,7 +289,7 @@
         }
 
         .resumen-item .value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #2E7D32;
         }
@@ -323,6 +323,9 @@
         @media (max-width: 768px) {
             .estadisticas-grid {
                 grid-template-columns: 1fr;
+            }
+            .resumen-usuario {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -668,7 +671,7 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-             <table>
+             表
                 <thead>
                      <tr>
                         <th>ID</th>
@@ -677,14 +680,12 @@
                         <th>💰 Monto a Pagar (₲)</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
-                     </tr>
-                </thead>
+                      </thead>
                 <tbody id="solicitudes-body">
                      <tr>
                         <td colspan="6" style="text-align: center;">Cargando...</td>
-                     </tr>
-                </tbody>
-             </table>
+                      </tbody>
+              </table>
         </div>
 
         <div class="table-container">
@@ -694,16 +695,15 @@
                      <tr>
                         <th>ID</th>
                         <th>Usuario</th>
-                        <th>🪙 Monedas</th>
-                        <th>💰 Total Recargado (₲)</th>
-                        <th>🏆 Ganancias (₲)</th>
-                        <th>💰 A Pagar (₲)</th>
+                        <th>🪙 Saldo Actual</th>
+                        <th>💰 Inversión Total (₲)</th>
+                        <th>🏆 Ganancias (🪙)</th>
+                        <th>💵 A Pagar (₲)</th>
                         <th>Veces Jugadas</th>
                         <th>🏆 Mayor Premio</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-                     </tr>
-                </thead>
+                      </thead>
                 <tbody id="usuarios-body"></tbody>
              </table>
         </div>
@@ -862,12 +862,16 @@
             const historial = data.historial || [];
             const stats = data.stats || {};
             
+            // Calcular balance neto real (lo que realmente ganó jugando)
+            const totalApostado = historial.reduce((sum, j) => sum + (j.apuesta || 0), 0);
+            const totalGanadoReal = stats.ganancias_totales || 0;
+            const balanceNeto = totalGanadoReal - totalApostado;
+            
+            // A Pagar = balance neto (solo si es positivo)
+            const aPagar = balanceNeto > 0 ? balanceNeto : 0;
+            
             if (historial.length === 0) {
-                contentDiv.innerHTML = `
-                    <div class="no-data">
-                        📭 No hay jugadas registradas para este usuario
-                    </div>
-                `;
+                contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas para este usuario</div>`;
                 return;
             }
             
@@ -878,29 +882,42 @@
                         <div class="value">${usuarioNombre}</div>
                     </div>
                     <div class="resumen-item">
-                        <div class="label">🎰 Total Jugadas</div>
-                        <div class="value">${stats.total_jugadas || 0}</div>
+                        <div class="label">💰 Inversión Total</div>
+                        <div class="value">₲ ${formatoNumero(stats.inversion_total || 0)}</div>
                     </div>
                     <div class="resumen-item">
-                        <div class="label">🏆 Victorias</div>
-                        <div class="value">${stats.victorias || 0}</div>
+                        <div class="label">🪙 Saldo Actual</div>
+                        <div class="value">🪙 ${formatoNumero(stats.saldo_actual || 0)}</div>
                     </div>
                     <div class="resumen-item">
-                        <div class="label">💰 Total Ganado</div>
-                        <div class="value">🪙 ${formatoNumero(stats.ganancias_totales || 0)}</div>
+                        <div class="label">🎰 Total Apostado</div>
+                        <div class="value">🪙 ${formatoNumero(totalApostado)}</div>
+                    </div>
+                    <div class="resumen-item">
+                        <div class="label">🏆 Total Ganado</div>
+                        <div class="value">🪙 ${formatoNumero(totalGanadoReal)}</div>
+                    </div>
+                    <div class="resumen-item">
+                        <div class="label">📊 Balance Neto</div>
+                        <div class="value" style="color: ${balanceNeto >= 0 ? '#4CAF50' : '#f44336'}">
+                            ${balanceNeto >= 0 ? '+' : ''}🪙 ${formatoNumero(Math.abs(balanceNeto))}
+                        </div>
+                    </div>
+                    <div class="resumen-item">
+                        <div class="label">💵 A PAGAR (si retira)</div>
+                        <div class="value" style="color: #4CAF50; font-size: 22px;">₲ ${formatoNumero(aPagar)}</div>
                     </div>
                 </div>
                 
                 <table class="historial-tabla">
                     <thead>
-                         <tr>
+                        <tr>
                             <th>Fecha</th>
                             <th>Apuesta</th>
                             <th>Ganancia</th>
                             <th>Combinación</th>
                             <th>Resultado</th>
-                         </tr>
-                    </thead>
+                        </thead>
                     <tbody>
             `;
             
@@ -911,19 +928,19 @@
                 const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
                 
                 html += `
-                     <tr>
+                    <tr>
                         <td>${fecha}</td>
                         <td>🪙 ${formatoNumero(j.apuesta)}</td>
                         <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
                         <td style="font-size: 20px;">${j.combinacion}</td>
                         <td class="${resultadoClass}">${resultadoText}</td>
-                     </tr>
+                    </tr>
                 `;
             });
             
             html += `
                     </tbody>
-                 </table>
+                </table>
             `;
             
             contentDiv.innerHTML = html;
@@ -1104,7 +1121,7 @@
                     <h3>📅 Ventas por día de la semana</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                             <tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
+                              <tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
                         </thead>
                         <tbody>
             `;
@@ -1121,9 +1138,9 @@
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${d.total_compras}</div>
                             </div>
-                        \n\n
-                        <td>🪙 ${formatoNumero(d.total_fichas)}<\/td>
-                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}<\/td>
+                        </td>
+                        <td>🪙 ${formatoNumero(d.total_fichas)}</td>
+                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
                     </tr>
                 `;
             });
@@ -1140,7 +1157,7 @@
                     <h3>⏰ Ventas por hora del día</h3>
                     <table class="estadisticas-tabla">
                         <thead>
-                             people<th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th>
+                            <tr><th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto (₲)</th></tr>
                         </thead>
                         <tbody>
             `;
@@ -1152,15 +1169,15 @@
                 
                 html += `
                     <tr class="${esPico}">
-                        <td><strong>${horaFormateada}</strong><\/td>
+                        <td><strong>${horaFormateada}</strong></td>
                         <td>
                             ${h.total_compras}
                             <div class="barra-progreso-container">
                                 <div class="barra-progreso" style="width: ${porcentaje}%">${h.total_compras}</div>
                             </div>
-                        <\/td>
-                        <td>🪙 ${formatoNumero(h.total_fichas)}<\/td>
-                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}<\/td>
+                        </td>
+                        <td>🪙 ${formatoNumero(h.total_fichas)}</td>
+                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
                     </tr>
                 `;
             });
@@ -1218,32 +1235,32 @@
                 usuarios.forEach(u => {
                     if (u.role !== 'admin') {
                         const saldo = u.fichas || 0;
-                        const totalRecargado = u.total_recargado || 0;
-                        const ganancias = saldo - totalRecargado;
+                        const inversion = u.total_recargado || 0;
+                        const ganancias = saldo - inversion; // Lo que ganó realmente
                         const aPagar = ganancias > 0 ? ganancias : 0;
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${u.id}<\/td>
-                            <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span><\/td>
-                            <td class="monedas-cell">🪙 ${formatoNumero(saldo)}<\/td>
-                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(totalRecargado))}<\/td>
-                            <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}<\/td>
-                            <td class="pagar-cell">₲ ${formatoNumero(aPagar)}<\/td>
-                            <td>${u.veces_jugadas || 0}<\/td>
-                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}<\/td>
+                            <td>${u.id}</td>
+                            <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(inversion))}</td>
+                            <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}</td>
+                            <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
+                            <td>${u.veces_jugadas || 0}</td>
+                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
                             <td>
                                 ${u.activo ? 
                                     '<span class="badge badge-active">Activo</span>' : 
                                     '<span class="badge badge-inactive">Bloqueado</span>'}
-                            <\/td>
+                            </td>
                             <td>
                                 <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
                                 <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
                                 ${u.activo ? 
                                     `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒 Bloquear</button>` :
                                     `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓 Activar</button>`}
-                            <\/td>
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     }
@@ -1283,15 +1300,15 @@
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${s.id}<\/td>
-                            <td><strong>${s.usuario}</strong><\/td>
-                            <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}<\/td>
-                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}<\/td>
-                            <td>${new Date(s.fecha_solicitud).toLocaleString()}<\/td>
+                            <td>${s.id}</td>
+                            <td><strong>${s.usuario}</strong></td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
+                            <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
                             <td>
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
                                 <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
-                            <\/td>
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     });
