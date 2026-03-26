@@ -375,13 +375,6 @@
             border-top: 2px dashed #dee2e6;
         }
 
-        .resumen-item {
-            text-align: center;
-            padding: 15px;
-            background: white;
-            border-radius: 10px;
-        }
-
         .resumen-valor {
             font-size: 28px;
             font-weight: bold;
@@ -578,7 +571,7 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-             <table>
+            <table>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -594,7 +587,7 @@
                         <td colspan="6" style="text-align: center;">Cargando...</td>
                     </tr>
                 </tbody>
-             </table>
+            </table>
         </div>
 
         <div class="table-container">
@@ -685,31 +678,15 @@
         let token = sessionStorage.getItem('token') || sessionStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
 
-        // ✅ FUNCIÓN CORREGIDA: redondea a entero antes de formatear
         function formatoNumero(num) {
             if (num === null || num === undefined) return '0';
-            // Forzar a número y redondear a entero
             let numeroLimpio = Math.floor(Number(num));
             if (isNaN(numeroLimpio)) return '0';
             return numeroLimpio.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        console.log('🔍 DEBUG - Información de sesión:');
-        console.log('Token:', token ? token.substring(0, 20) + '...' : '❌ No hay token');
-        
-        try {
-            const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
-            console.log('Usuario guardado:', usuario);
-            if (usuario.role) {
-                console.log('Rol:', usuario.role);
-            }
-        } catch (e) {
-            console.log('❌ Error parseando usuario');
-        }
-
         function verificarAcceso() {
             if (!token) {
-                console.log('❌ No hay token - redirigiendo a login');
                 window.location.href = 'login.html';
                 return false;
             }
@@ -717,23 +694,17 @@
             try {
                 const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
                 if (usuario.role !== 'admin') {
-                    console.log('❌ Usuario no es admin - role:', usuario.role);
                     alert('⛔ Acceso denegado. No tenés permisos de administrador.');
                     window.location.href = 'index.html';
                     return false;
                 }
-                console.log('✅ Acceso verificado - Admin OK');
                 return true;
             } catch (error) {
-                console.log('❌ Error verificando acceso:', error);
                 window.location.href = 'login.html';
                 return false;
             }
         }
 
-        // ============================================
-        // FUNCIÓN PARA VER HISTORIAL DEL USUARIO
-        // ============================================
         async function verHistorialUsuario(usuarioId, usuarioNombre) {
             const modal = document.getElementById('modal-historial');
             const contentDiv = document.getElementById('historial-content');
@@ -746,21 +717,14 @@
                     headers: { 'Authorization': token }
                 });
                 
-                if (!res.ok) {
-                    throw new Error('Error al cargar historial');
-                }
+                if (!res.ok) throw new Error('Error al cargar historial');
                 
                 const data = await res.json();
                 mostrarHistorial(data, usuarioNombre);
                 
             } catch (error) {
                 console.error('Error:', error);
-                contentDiv.innerHTML = `
-                    <div class="no-data">
-                        ❌ Error al cargar historial<br>
-                        <small>${error.message}</small>
-                    </div>
-                `;
+                contentDiv.innerHTML = `<div class="no-data">❌ Error al cargar historial<br><small>${error.message}</small></div>`;
             }
         }
         
@@ -1055,12 +1019,12 @@
                             <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
                             <td>${u.veces_jugadas || 0}</td>
                             <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
-                            <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}
+                            <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
                             <td>
                                 <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
                                 <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
                                 ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒 Bloquear</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓 Activar</button>`}
-                             </td>
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     }
@@ -1090,15 +1054,15 @@
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${s.id} 72
-                            <td><strong>${s.usuario}</strong> 72
-                            <td class="monedas-cell">🪙 ${formatoNumero(Math.floor(s.fichas))} 72
-                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))} 72
-                            <td>${new Date(s.fecha_solicitud).toLocaleString()} 72
+                            <td>${s.id}</td>
+                            <td><strong>${s.usuario}</strong></td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(Math.floor(s.fichas))}</td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
+                            <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
                             <td>
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${Math.floor(s.fichas)})">✅ Aprobar</button>
                                 <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
-                             </td>
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     });
@@ -1275,7 +1239,6 @@
         }
 
         function cerrarSesion() {
-            console.log('🔓 Cerrando sesión...');
             sessionStorage.removeItem('admin_token');
             sessionStorage.removeItem('token');
             sessionStorage.removeItem('usuario');
@@ -1285,7 +1248,6 @@
         if (!verificarAcceso()) {
             // Redirige
         } else {
-            console.log('✅ Cargando datos del admin...');
             cargarDatos();
             cargarEstadisticasVentas();
             cargarLimiteDesdeBackend();
