@@ -578,28 +578,28 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-            <table>
+             表
                 <thead>
-                    <tr>
+                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Monedas</th>
                         <th>💰 Monto a Pagar (₲)</th>
                         <th>Fecha</th>
                         <th>Acciones</th>
-                     </thead>
+                      </thead>
                 <tbody id="solicitudes-body">
-                    <tr>
+                     <tr>
                         <td colspan="6" style="text-align: center;">Cargando...<\/td>
-                     </tbody>
-            </table>
+                      </tbody>
+               </table>
         </div>
 
         <div class="table-container">
             <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
-            <table>
+             表
                 <thead>
-                    <tr>
+                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>🪙 Saldo Actual</th>
@@ -610,9 +610,9 @@
                         <th>🏆 Mayor Premio</th>
                         <th>Estado</th>
                         <th>Acciones</th>
-                     </thead>
+                      </thead>
                 <tbody id="usuarios-body"></tbody>
-            </table>
+              </table>
         </div>
 
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
@@ -634,7 +634,7 @@
             </h2>
             <div class="limite-control">
                 <div class="limite-input-group">
-                    <label>💰 LÍMITE MÁXIMO POR JUGADA (🪙 monedas):</label>
+                    <label>💰 LÍMITE MÁXIMO POR JUGADA (₲ guaraníes):</label>
                     <input type="number" id="limite-premios" value="50000" min="1000" max="1000000" step="1000">
                     <button class="btn-limite" onclick="actualizarLimite()">
                         💾 ACTUALIZAR LÍMITE
@@ -642,8 +642,8 @@
                 </div>
                 <div class="limite-actual">
                     <div>LÍMITE ACTUAL</div>
-                    <div class="valor" id="limite-actual-valor">🪙 50.000</div>
-                    <small>Máximo de monedas que se puede ganar por jugada</small>
+                    <div class="valor" id="limite-actual-valor">₲ 50.000</div>
+                    <small>Máximo de guaraníes que se puede ganar por jugada</small>
                 </div>
             </div>
         </div>
@@ -793,13 +793,14 @@
                 
                 <table class="historial-tabla">
                     <thead>
-                        <tr>
+                         <tr>
                             <th>Fecha</th>
                             <th>Apuesta</th>
                             <th>Ganancia</th>
                             <th>Combinación</th>
                             <th>Resultado</th>
-                         </thead>
+                         </tr>
+                    </thead>
                     <tbody>
             `;
             
@@ -810,19 +811,19 @@
                 const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
                 
                 html += `
-                    <tr>
-                        <td>${fecha} 72
-                        72🪙 ${formatoNumero(j.apuesta)}72
-                        <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}72
-                        <td style="font-size: 20px;">${j.combinacion}72
-                        <td class="${resultadoClass}">${resultadoText}72
+                     <tr>
+                         <td>${fecha} </td>
+                         <td>🪙 ${formatoNumero(j.apuesta)}</td>
+                        <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
+                        <td style="font-size: 20px;">${j.combinacion}</td>
+                        <td class="${resultadoClass}">${resultadoText}</td>
                      </tr>
                 `;
             });
             
             html += `
                     </tbody>
-                </table>
+                 </table>
             `;
             
             contentDiv.innerHTML = html;
@@ -838,6 +839,9 @@
             }
         });
 
+        // ============================================
+        // FUNCIONES DEL LÍMITE SECRETO (formateado en guaraníes)
+        // ============================================
         async function cargarLimiteDesdeBackend() {
             try {
                 const res = await fetch(`${API_URL}/admin/obtener-limite`, {
@@ -847,21 +851,25 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data.limite) {
-                        document.getElementById('limite-premios').value = data.limite;
-                        document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(data.limite);
+                        const limite = data.limite;
+                        document.getElementById('limite-premios').value = limite;
+                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(limite);
+                        console.log('✅ Límite cargado: ₲', limite);
                     }
                 } else {
+                    console.log('⚠️ No se pudo cargar límite, usando localStorage');
                     const limiteGuardado = localStorage.getItem('limite_secreto_admin');
                     if (limiteGuardado) {
                         document.getElementById('limite-premios').value = limiteGuardado;
-                        document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
+                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
                     }
                 }
             } catch (error) {
+                console.error('❌ Error cargando límite:', error);
                 const limiteGuardado = localStorage.getItem('limite_secreto_admin');
                 if (limiteGuardado) {
                     document.getElementById('limite-premios').value = limiteGuardado;
-                    document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
+                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
                 }
             }
         }
@@ -870,7 +878,7 @@
             const nuevoLimite = parseInt(document.getElementById('limite-premios').value);
             
             if (nuevoLimite < 1000 || nuevoLimite > 1000000) {
-                alert('❌ Límite inválido (mínimo 1.000, máximo 1.000.000)');
+                alert('❌ Límite inválido (mínimo ₲ 1.000, máximo ₲ 1.000.000)');
                 return;
             }
             
@@ -893,13 +901,16 @@
                 
                 if (data.success) {
                     localStorage.setItem('limite_secreto_admin', nuevoLimite);
-                    document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(nuevoLimite);
-                    alert(`✅ Límite actualizado a 🪙 ${formatoNumero(nuevoLimite)}`);
+                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(nuevoLimite);
+                    alert(`✅ LÍMITE ACTUALIZADO\n\nNuevo límite: ₲ ${formatoNumero(nuevoLimite)}\n\n✓ Guardado en el servidor\n✓ Los jugadores NO verán este cambio\n✓ El juego aplicará el nuevo límite automáticamente`);
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('❌ Error al guardar: ' + (data.error || 'desconocido'));
+                    await cargarLimiteDesdeBackend();
                 }
             } catch (error) {
-                alert('Error de conexión');
+                console.error('Error:', error);
+                alert('❌ Error de conexión al servidor. El límite NO se guardó.\n\nVerificá que el servidor esté funcionando.');
+                await cargarLimiteDesdeBackend();
             } finally {
                 btn.disabled = false;
                 btn.textContent = textoOriginal;
@@ -970,12 +981,12 @@
             data.por_dia.forEach(d => {
                 const porcentaje = (d.total_compras / maxComprasDia) * 100;
                 html += `
-                    <tr>
+                     <tr>
                         <td><strong>${d.dia_esp}</strong></td>
                         <td>${d.total_compras}<div class="barra-progreso-container"><div class="barra-progreso" style="width: ${porcentaje}%"></div></div></td>
                         <td>🪙 ${formatoNumero(d.total_fichas)}</td>
                         <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
-                    </tr>
+                     </tr>
                 `;
             });
 
@@ -993,12 +1004,12 @@
                 const porcentaje = (h.total_compras / maxComprasHora) * 100;
                 const horaFormateada = h.hora < 10 ? `0${h.hora}:00` : `${h.hora}:00`;
                 html += `
-                    <tr>
+                     <tr>
                         <td><strong>${horaFormateada}</strong></td>
                         <td>${h.total_compras}<div class="barra-progreso-container"><div class="barra-progreso" style="width: ${porcentaje}%"></div></div></td>
                         <td>🪙 ${formatoNumero(h.total_fichas)}</td>
                         <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
-                    </tr>
+                     </tr>
                 `;
             });
 
@@ -1039,16 +1050,16 @@
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${u.id}<\/td>
-                            <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span><\/td>
+                             <td>${u.id}<\/td>
+                             <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span><\/td>
                             <td class="monedas-cell">🪙 ${formatoNumero(saldo)}<\/td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(inversion))}<\/td>
                             <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}<\/td>
                             <td class="pagar-cell">₲ ${formatoNumero(aPagar)}<\/td>
-                            <td>${u.veces_jugadas || 0}<\/td>
-                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}<\/td>
-                            <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}<\/td>
-                            <td>
+                             源性${u.veces_jugadas || 0}<\/td>
+                             源性🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}<\/td>
+                             源性${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}<\/td>
+                             源性
                                 <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
                                 <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
                                 ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒 Bloquear</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓 Activar</button>`}
@@ -1082,12 +1093,12 @@
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                             <td>${s.id}<\/td>
-                             <td><strong>${s.usuario}</strong><\/td>
+                             源性${s.id}<\/td>
+                             源性<strong>${s.usuario}</strong><\/td>
                             <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}<\/td>
                             <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}<\/td>
-                             <td>${new Date(s.fecha_solicitud).toLocaleString()}<\/td>
-                             <td>
+                             源性${new Date(s.fecha_solicitud).toLocaleString()}<\/td>
+                             源性
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
                                 <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
                              <\/td>
