@@ -126,11 +126,40 @@
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
             margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76,175,80,0.4);
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-login .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn-login .timer {
+            font-size: 14px;
+            background: rgba(0,0,0,0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: none;
         }
 
         .register-link {
@@ -186,7 +215,11 @@
             </div>
         </div>
 
-        <button class="btn-login" onclick="iniciarSesion()">INGRESAR</button>
+        <button class="btn-login" id="btn-login" onclick="iniciarSesion()">
+            <span class="spinner"></span>
+            <span class="btn-text">INGRESAR</span>
+            <span class="timer"></span>
+        </button>
         
         <div class="register-link">
             ¿No tenés cuenta? <a href="register.html">Registrate</a>
@@ -221,6 +254,10 @@
             const usuario = document.getElementById('usuario').value;
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('error');
+            const btn = document.getElementById('btn-login');
+            const spinner = btn.querySelector('.spinner');
+            const timerSpan = btn.querySelector('.timer');
+            const btnText = btn.querySelector('.btn-text');
 
             if (!usuario || !password) {
                 errorDiv.textContent = 'Completá todos los campos';
@@ -228,17 +265,36 @@
                 return;
             }
 
+            // Mostrar indicador de carga
+            errorDiv.style.display = 'none';
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnText.textContent = 'CONECTANDO...';
+            
+            // Contador de tiempo
+            let segundos = 0;
+            timerSpan.style.display = 'inline-block';
+            const intervaloContador = setInterval(() => {
+                segundos++;
+                timerSpan.textContent = `${segundos}s`;
+            }, 1000);
+
             try {
+                const inicio = Date.now();
                 const res = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ usuario, password })
                 });
 
+                const tiempoRespuesta = Date.now() - inicio;
+                console.log(`⏱️ Tiempo de respuesta: ${tiempoRespuesta}ms`);
+
                 const data = await res.json();
 
+                clearInterval(intervaloContador);
+
                 if (res.ok) {
-                    // ✅ CAMBIADO: usar sessionStorage
                     sessionStorage.setItem('token', data.token);
                     sessionStorage.setItem('usuario', JSON.stringify(data.usuario));
                     
@@ -248,11 +304,20 @@
                         window.location.href = 'index.html';
                     }
                 } else {
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                    btnText.textContent = 'INGRESAR';
+                    timerSpan.style.display = 'none';
                     errorDiv.textContent = data.error || 'Error al iniciar sesión';
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {
-                errorDiv.textContent = 'Error de conexión';
+                clearInterval(intervaloContador);
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                btnText.textContent = 'INGRESAR';
+                timerSpan.style.display = 'none';
+                errorDiv.textContent = 'Error de conexión. El servidor puede estar despertando, intentá de nuevo.';
                 errorDiv.style.display = 'block';
             }
         }
