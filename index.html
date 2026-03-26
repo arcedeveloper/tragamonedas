@@ -595,6 +595,7 @@
             to { box-shadow: 0 0 50px gold, inset 0 0 50px gold; }
         }
 
+        /* ESTADÍSTICAS MODIFICADAS - NUEVOS CAMPOS */
         .stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -970,18 +971,23 @@
             🎰 Listo para jugar
         </div>
 
+        <!-- ESTADÍSTICAS MODIFICADAS -->
         <div class="stats">
             <div class="stat">
                 <div class="stat-label">Veces jugadas</div>
                 <div class="stat-value" id="total-jugadas">0</div>
             </div>
             <div class="stat">
-                <div class="stat-label">Mayor premio</div>
+                <div class="stat-label">🏆 Mayor premio</div>
                 <div class="stat-value" id="mayor-premio">0</div>
             </div>
             <div class="stat">
-                <div class="stat-label">Ganancias totales</div>
-                <div class="stat-value" id="ganancias">0</div>
+                <div class="stat-label">💰 Saldo Actual</div>
+                <div class="stat-value" id="saldo-actual">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">💵 A Pagar (si retira)</div>
+                <div class="stat-value" id="a-pagar">0</div>
             </div>
             <div class="stat">
                 <div class="stat-label">% Retorno</div>
@@ -1028,12 +1034,21 @@
         }
         crearParticulas();
 
+        function actualizarSaldoYPagar() {
+            const inversion = usuarioActual.total_recargado || 0;
+            const aPagar = fichas > inversion ? fichas - inversion : 0;
+            document.getElementById('saldo-actual').textContent = formatoNumero(fichas);
+            document.getElementById('a-pagar').textContent = formatoNumero(aPagar);
+        }
+
         async function cargarUsuario() {
             try {
                 const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token } });
                 const data = await res.json();
                 usuarioActual = data.usuario;
                 fichas = data.usuario.fichas || 0;
+                usuarioActual.total_recargado = data.usuario.total_recargado || 0;
+                
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
                 actualizarFichas();
                 
@@ -1049,6 +1064,7 @@
 
         function actualizarFichas() {
             document.getElementById('fichas').textContent = formatoNumero(fichas);
+            actualizarSaldoYPagar();
             actualizarBotonesApuesta();
         }
 
@@ -1109,7 +1125,6 @@
             return 0;
         }
 
-        // Animación de giro para un rodillo (máquina real)
         function animarRodillo(elemento, simboloFinal, callback) {
             let frames = 0;
             const maxFrames = 15;
@@ -1134,7 +1149,6 @@
                 return;
             }
 
-            // GENERAR RESULTADO ALEATORIO (RNG) ANTES DE LA ANIMACIÓN
             const resultado = [
                 getRandomSimbolo(),
                 getRandomSimbolo(),
@@ -1147,7 +1161,6 @@
             jugando = true;
             document.getElementById('btn-jugar').disabled = true;
             
-            // RESTAR APUESTA LOCALMENTE
             fichas -= costoApuesta;
             actualizarFichas();
             
@@ -1157,11 +1170,9 @@
                 document.getElementById('reel3')
             ];
             
-            // ANIMACIÓN SECUENCIAL (como máquina real)
             animarRodillo(reels[0], resultado[0], () => {
                 animarRodillo(reels[1], resultado[1], () => {
                     animarRodillo(reels[2], resultado[2], async () => {
-                        // GUARDAR RESULTADO EN BACKEND (SOLO UNA LLAMADA)
                         try {
                             const res = await fetch(`${API_URL}/jugar`, {
                                 method: 'POST',
@@ -1177,7 +1188,6 @@
                             actualizarFichas();
                         } catch (error) {
                             console.error('Error guardando:', error);
-                            // Si falla, usar cálculo local
                             fichas += ganancia;
                             actualizarFichas();
                         }
@@ -1219,7 +1229,6 @@
         function actualizarEstadisticas() {
             document.getElementById('total-jugadas').textContent = stats.jugadas;
             document.getElementById('mayor-premio').textContent = formatoNumero(stats.mayorPremio);
-            document.getElementById('ganancias').textContent = formatoNumero(stats.gananciasTotales);
             const retorno = stats.jugadas > 0 ? Math.round((stats.gananciasTotales / (stats.jugadas * apuesta)) * 100) : 0;
             document.getElementById('retorno').textContent = retorno + '%';
             
@@ -1232,9 +1241,6 @@
             localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats));
         }
 
-        // ============================================
-        // SINCRONIZACIÓN SILENCIOSA (sin titilar)
-        // ============================================
         let ultimoSaldoGuardado = 0;
 
         async function sincronizarSaldoSilencioso() {
@@ -1245,11 +1251,12 @@
                 });
                 const data = await res.json();
                 const nuevoSaldo = data.usuario.fichas || 0;
+                usuarioActual.total_recargado = data.usuario.total_recargado || 0;
                 
                 if (nuevoSaldo !== fichas) {
                     console.log(`🔄 Sincronización silenciosa: ${formatoNumero(fichas)} → ${formatoNumero(nuevoSaldo)}`);
                     fichas = nuevoSaldo;
-                    document.getElementById('fichas').textContent = formatoNumero(fichas);
+                    actualizarFichas();
                     actualizarBotonesApuesta();
                     
                     if (nuevoSaldo > ultimoSaldoGuardado && !jugando) {
@@ -1271,7 +1278,6 @@
 
         setInterval(sincronizarSaldoSilencioso, 5000);
 
-        // Modal
         function abrirModalRecarga() {
             packSeleccionado = null;
             document.getElementById('modal-recarga').style.display = 'flex';
