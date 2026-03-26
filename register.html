@@ -114,7 +114,6 @@
             fill: none;
         }
 
-        /* Botón de registro estilo sencillo */
         .btn-register {
             width: 100%;
             padding: 15px;
@@ -127,14 +126,42 @@
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
             margin-bottom: 15px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76,175,80,0.4);
+        .btn-register:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        /* Texto de "¿Ya tenés cuenta?" */
+        .btn-register .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn-register .timer {
+            font-size: 14px;
+            background: rgba(0,0,0,0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: none;
+        }
+
         .login-link {
             text-align: center;
             margin-top: 10px;
@@ -181,7 +208,7 @@
 
         <div class="form-group">
             <label>Usuario</label>
-            <input type="text" id="usuario" placeholder="Elegí un usuario">
+            <input type="text" id="usuario" placeholder="Elegí un usuario (mínimo 3 caracteres)">
         </div>
 
         <div class="form-group">
@@ -210,7 +237,11 @@
             </div>
         </div>
 
-        <button class="btn-register" onclick="registrarUsuario()">CREAR CUENTA</button>
+        <button class="btn-register" id="btn-register" onclick="registrarUsuario()">
+            <span class="spinner"></span>
+            <span class="btn-text">CREAR CUENTA</span>
+            <span class="timer"></span>
+        </button>
         
         <div class="login-link">
             ¿Ya tenés cuenta? <a href="login.html">Iniciá sesión</a>
@@ -248,6 +279,10 @@
             const confirmPassword = document.getElementById('confirm-password').value;
             const errorDiv = document.getElementById('error');
             const successDiv = document.getElementById('success');
+            const btn = document.getElementById('btn-register');
+            const spinner = btn.querySelector('.spinner');
+            const timerSpan = btn.querySelector('.timer');
+            const btnText = btn.querySelector('.btn-text');
 
             errorDiv.style.display = 'none';
             successDiv.style.display = 'none';
@@ -276,14 +311,33 @@
                 return;
             }
 
+            // Mostrar indicador de carga
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnText.textContent = 'CONECTANDO...';
+            
+            // Contador de tiempo
+            let segundos = 0;
+            timerSpan.style.display = 'inline-block';
+            const intervaloContador = setInterval(() => {
+                segundos++;
+                timerSpan.textContent = `${segundos}s`;
+            }, 1000);
+
             try {
+                const inicio = Date.now();
                 const res = await fetch(`${API_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ usuario, password, role: 'user' })
                 });
 
+                const tiempoRespuesta = Date.now() - inicio;
+                console.log(`⏱️ Tiempo de respuesta: ${tiempoRespuesta}ms`);
+
                 const data = await res.json();
+
+                clearInterval(intervaloContador);
 
                 if (res.ok) {
                     successDiv.textContent = '✅ Cuenta creada correctamente. Redirigiendo...';
@@ -293,11 +347,20 @@
                         window.location.href = 'login.html';
                     }, 2000);
                 } else {
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                    btnText.textContent = 'CREAR CUENTA';
+                    timerSpan.style.display = 'none';
                     errorDiv.textContent = data.error || 'Error al registrar';
                     errorDiv.style.display = 'block';
                 }
             } catch (error) {
-                errorDiv.textContent = 'Error de conexión';
+                clearInterval(intervaloContador);
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                btnText.textContent = 'CREAR CUENTA';
+                timerSpan.style.display = 'none';
+                errorDiv.textContent = 'Error de conexión. El servidor puede estar despertando, intentá de nuevo.';
                 errorDiv.style.display = 'block';
             }
         }
