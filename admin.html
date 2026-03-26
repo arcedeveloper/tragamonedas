@@ -578,7 +578,7 @@
 
         <div class="solicitudes-container">
             <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-            表
+            <table>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -592,12 +592,12 @@
                     <tr>
                         <td colspan="6" style="text-align: center;">Cargando...<\/td>
                      </tbody>
-               </table>
+            </table>
         </div>
 
         <div class="table-container">
             <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
-            表
+            <table>
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -612,7 +612,7 @@
                         <th>Acciones</th>
                      </thead>
                 <tbody id="usuarios-body"></tbody>
-               </table>
+            </table>
         </div>
 
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
@@ -634,7 +634,7 @@
             </h2>
             <div class="limite-control">
                 <div class="limite-input-group">
-                    <label>💰 LÍMITE MÁXIMO POR JUGADA (₲ guaraníes):</label>
+                    <label>💰 LÍMITE MÁXIMO POR JUGADA (🪙 monedas):</label>
                     <input type="number" id="limite-premios" value="50000" min="1000" max="1000000" step="1000">
                     <button class="btn-limite" onclick="actualizarLimite()">
                         💾 ACTUALIZAR LÍMITE
@@ -642,8 +642,8 @@
                 </div>
                 <div class="limite-actual">
                     <div>LÍMITE ACTUAL</div>
-                    <div class="valor" id="limite-actual-valor">₲ 50.000</div>
-                    <small>Máximo de guaraníes que se puede ganar por jugada</small>
+                    <div class="valor" id="limite-actual-valor">🪙 50.000</div>
+                    <small>Máximo de monedas que se puede ganar por jugada</small>
                 </div>
             </div>
         </div>
@@ -816,13 +816,13 @@
                         <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}72
                         <td style="font-size: 20px;">${j.combinacion}72
                         <td class="${resultadoClass}">${resultadoText}72
-                      </tr>
+                     </tr>
                 `;
             });
             
             html += `
                     </tbody>
-                 </table>
+                </table>
             `;
             
             contentDiv.innerHTML = html;
@@ -838,9 +838,6 @@
             }
         });
 
-        // ============================================
-        // FUNCIONES DEL LÍMITE SECRETO (CON FORMATO DE NÚMEROS)
-        // ============================================
         async function cargarLimiteDesdeBackend() {
             try {
                 const res = await fetch(`${API_URL}/admin/obtener-limite`, {
@@ -850,26 +847,21 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data.limite) {
-                        const limite = data.limite;
-                        document.getElementById('limite-premios').value = limite;
-                        // ✅ FORMATO DE NÚMEROS
-                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(limite);
-                        console.log('✅ Límite cargado:', limite);
+                        document.getElementById('limite-premios').value = data.limite;
+                        document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(data.limite);
                     }
                 } else {
-                    console.log('⚠️ No se pudo cargar límite, usando localStorage');
                     const limiteGuardado = localStorage.getItem('limite_secreto_admin');
                     if (limiteGuardado) {
                         document.getElementById('limite-premios').value = limiteGuardado;
-                        document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+                        document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
                     }
                 }
             } catch (error) {
-                console.error('❌ Error cargando límite:', error);
                 const limiteGuardado = localStorage.getItem('limite_secreto_admin');
                 if (limiteGuardado) {
                     document.getElementById('limite-premios').value = limiteGuardado;
-                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(parseInt(limiteGuardado));
+                    document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
                 }
             }
         }
@@ -901,17 +893,13 @@
                 
                 if (data.success) {
                     localStorage.setItem('limite_secreto_admin', nuevoLimite);
-                    // ✅ FORMATO DE NÚMEROS
-                    document.getElementById('limite-actual-valor').textContent = '₲ ' + formatoNumero(nuevoLimite);
-                    alert(`✅ LÍMITE ACTUALIZADO\n\nNuevo límite: ₲ ${formatoNumero(nuevoLimite)}\n\n✓ Guardado en el servidor\n✓ Los jugadores NO verán este cambio\n✓ El juego aplicará el nuevo límite automáticamente`);
+                    document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(nuevoLimite);
+                    alert(`✅ Límite actualizado a 🪙 ${formatoNumero(nuevoLimite)}`);
                 } else {
-                    alert('❌ Error al guardar: ' + (data.error || 'desconocido'));
-                    await cargarLimiteDesdeBackend();
+                    alert('Error: ' + (data.error || 'desconocido'));
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error de conexión al servidor. El límite NO se guardó.\n\nVerificá que el servidor esté funcionando.');
-                await cargarLimiteDesdeBackend();
+                alert('Error de conexión');
             } finally {
                 btn.disabled = false;
                 btn.textContent = textoOriginal;
@@ -975,7 +963,7 @@
                 <div class="estadisticas-card">
                     <h3>📅 Ventas por día</h3>
                     <table class="estadisticas-tabla">
-                        <thead> people<th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th> </thead>
+                        <thead><tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th></tr></thead>
                         <tbody>
             `;
 
@@ -997,7 +985,7 @@
                 <div class="estadisticas-card">
                     <h3>⏰ Ventas por hora</h3>
                     <table class="estadisticas-tabla">
-                        <thead> people<th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th> </thead>
+                        <thead><tr><th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th></tr></thead>
                         <tbody>
             `;
 
@@ -1051,20 +1039,20 @@
                         
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                             <td>${u.id}</td>
-                             <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
-                            <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
-                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(inversion))} \n
-                            <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)} \n
-                            <td class="pagar-cell">₲ ${formatoNumero(aPagar)} \n
-                            源性${u.veces_jugadas || 0} \n
-                            源性🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))} \n
-                            源性${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'} \n
-                            源性
+                            <td>${u.id}<\/td>
+                            <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span><\/td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(saldo)}<\/td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(inversion))}<\/td>
+                            <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}<\/td>
+                            <td class="pagar-cell">₲ ${formatoNumero(aPagar)}<\/td>
+                            <td>${u.veces_jugadas || 0}<\/td>
+                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}<\/td>
+                            <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}<\/td>
+                            <td>
                                 <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
                                 <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
                                 ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒 Bloquear</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓 Activar</button>`}
-                             \n
+                             <\/td>
                         `;
                         tbody.appendChild(tr);
                     }
@@ -1094,15 +1082,15 @@
                     solicitudes.forEach(s => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                             源性${s.id} \n
-                             源性<strong>${s.usuario}</strong> \n
-                            <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)} \n
-                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))} \n
-                             源性${new Date(s.fecha_solicitud).toLocaleString()} \n
-                             源性
+                             <td>${s.id}<\/td>
+                             <td><strong>${s.usuario}</strong><\/td>
+                            <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}<\/td>
+                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}<\/td>
+                             <td>${new Date(s.fecha_solicitud).toLocaleString()}<\/td>
+                             <td>
                                 <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
                                 <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
-                             \n
+                             <\/td>
                         `;
                         tbody.appendChild(tr);
                     });
