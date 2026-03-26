@@ -1033,7 +1033,6 @@
         function actualizarSaldoYPagar() {
             const inversion = usuarioActual.total_recargado || 0;
             const aPagar = fichas > inversion ? fichas - inversion : 0;
-            document.getElementById('saldo-actual').textContent = formatoNumero(fichas);
             document.getElementById('a-pagar').textContent = formatoNumero(aPagar);
         }
 
