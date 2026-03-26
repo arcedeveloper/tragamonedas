@@ -1055,7 +1055,7 @@
                             <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
                             <td>${u.veces_jugadas || 0}</td>
                             <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
-                            <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'} 72
+                            <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}
                             <td>
                                 <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
                                 <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
