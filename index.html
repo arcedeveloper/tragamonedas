@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎰 TRAGAMONEDAS</title>
+    <title>🎰 TRAGAMONEDAS LATINO</title>
     <style>
         * {
             margin: 0;
@@ -75,6 +75,8 @@
             position: relative;
             z-index: 10;
             backdrop-filter: blur(5px);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .user-bar::before {
@@ -319,29 +321,86 @@
         }
 
         .reel.spinning {
-            animation: spinReel 0.1s infinite linear;
-            transform: rotateX(10deg) translateZ(20px);
-        }
-
-        .reel.spinning-turbo {
-            animation: spinReelTurbo 0.05s infinite linear;
-            transform: rotateX(20deg) translateZ(30px);
+            animation: spinReel 0.07s infinite linear;
         }
 
         @keyframes spinReel {
             0% { transform: rotateX(0deg) scale(1); }
-            25% { transform: rotateX(10deg) scale(1.1); }
+            25% { transform: rotateX(15deg) scale(1.1); }
             50% { transform: rotateX(0deg) scale(1); }
-            75% { transform: rotateX(-10deg) scale(1.1); }
+            75% { transform: rotateX(-15deg) scale(1.1); }
             100% { transform: rotateX(0deg) scale(1); }
         }
 
-        @keyframes spinReelTurbo {
-            0% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-            25% { transform: rotateX(20deg) scale(1.2) rotate(5deg); }
-            50% { transform: rotateX(0deg) scale(1) rotate(0deg); }
-            75% { transform: rotateX(-20deg) scale(1.2) rotate(-5deg); }
-            100% { transform: rotateX(0deg) scale(1) rotate(0deg); }
+        /* Panel de control estilo tragamonedas latino */
+        .control-panel {
+            background: linear-gradient(145deg, #1a2632, #2c3e50);
+            border-radius: 40px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid gold;
+        }
+
+        .stop-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 20px 0;
+        }
+
+        .stop-btn {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: white;
+            border: none;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #8B0000, 0 5px 15px rgba(0,0,0,0.5);
+            transition: all 0.1s;
+            border: 2px solid gold;
+        }
+
+        .stop-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 #8B0000;
+        }
+
+        .stop-btn:disabled {
+            opacity: 0.5;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .spin-all-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #f1c40f, #f39c12, #e67e22);
+            color: #2c3e50;
+            border: none;
+            padding: 18px;
+            border-radius: 50px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #b7950b, 0 5px 15px rgba(0,0,0,0.5);
+            transition: all 0.1s;
+            margin: 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 2px solid white;
+        }
+
+        .spin-all-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 2px 0 #b7950b;
+        }
+
+        .spin-all-btn:disabled {
+            opacity: 0.6;
+            transform: translateY(5px);
+            cursor: not-allowed;
         }
 
         .bet-control {
@@ -395,58 +454,6 @@
             color: rgba(255,255,255,0.8);
         }
 
-        .btn-play {
-            width: 100%;
-            padding: 25px;
-            border: none;
-            border-radius: 60px;
-            background: linear-gradient(45deg, #f1c40f, #f39c12, #e67e22);
-            color: #2c3e50;
-            font-size: 36px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 
-                0 15px 0 #b7950b,
-                0 20px 30px rgba(0,0,0,0.5),
-                0 0 30px gold;
-            margin: 20px 0 30px;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            border: 3px solid white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-play::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: destelloBoton 2s infinite;
-        }
-
-        @keyframes destelloBoton {
-            0% { transform: rotate(45deg) translateX(-100%); }
-            100% { transform: rotate(45deg) translateX(100%); }
-        }
-
-        .btn-play:active {
-            transform: translateY(15px);
-            box-shadow: 0 5px 0 #b7950b, 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        .btn-play:disabled {
-            opacity: 0.7;
-            transform: translateY(8px);
-            box-shadow: 0 7px 0 #b7950b;
-            cursor: not-allowed;
-        }
-
         .turbo-container {
             display: flex;
             align-items: center;
@@ -459,13 +466,13 @@
             background: linear-gradient(135deg, #ff4444, #cc0000);
             color: white;
             border: 3px solid gold;
-            padding: 15px 30px;
+            padding: 12px 25px;
             border-radius: 50px;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 8px 0 #8B0000, 0 0 20px red;
+            box-shadow: 0 8px 0 #8B0000;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -473,21 +480,7 @@
 
         .turbo-btn.active {
             background: linear-gradient(135deg, #4CAF50, #2E7D32);
-            box-shadow: 0 8px 0 #1B5E20, 0 0 20px #4CAF50;
-        }
-
-        .turbo-btn:active {
-            transform: translateY(8px);
-            box-shadow: 0 0 0 #8B0000;
-        }
-
-        .turbo-multiplier {
-            background: gold;
-            color: #2c3e50;
-            padding: 5px 15px;
-            border-radius: 25px;
-            font-size: 18px;
-            font-weight: bold;
+            box-shadow: 0 8px 0 #1B5E20;
         }
 
         .quick-bets {
@@ -515,12 +508,7 @@
             background: gold;
             color: #2c3e50;
             transform: translateY(-3px);
-            box-shadow: 0 8px 0 #b7950b, 0 8px 15px rgba(0,0,0,0.3);
-        }
-
-        .quick-bet:active {
-            transform: translateY(5px);
-            box-shadow: 0 2px 0 #b7950b;
+            box-shadow: 0 8px 0 #b7950b;
         }
 
         .prize-panel {
@@ -530,7 +518,6 @@
             margin: 30px 0;
             border: 3px solid gold;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 30px rgba(255,215,0,0.2);
-            position: relative;
         }
 
         .prize-panel h3 {
@@ -539,7 +526,6 @@
             margin-bottom: 20px;
             font-size: 24px;
             text-shadow: 2px 2px 0 #000, 0 0 20px gold;
-            letter-spacing: 2px;
         }
 
         .prize-table {
@@ -556,7 +542,6 @@
             border-radius: 50px;
             color: white;
             border: 1px solid gold;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .prize-item .symbol {
@@ -568,7 +553,6 @@
             color: gold;
             font-weight: bold;
             font-size: 20px;
-            text-shadow: 0 0 10px gold;
         }
 
         .result-box {
@@ -581,9 +565,6 @@
             color: white;
             font-size: 24px;
             font-weight: bold;
-            box-shadow: inset 0 0 30px rgba(255,215,0,0.2);
-            position: relative;
-            overflow: hidden;
         }
 
         .result-box.win {
@@ -595,7 +576,6 @@
             to { box-shadow: 0 0 50px gold, inset 0 0 50px gold; }
         }
 
-        /* ESTADÍSTICAS MODIFICADAS - NUEVOS CAMPOS */
         .stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -647,11 +627,6 @@
         .history-item.win {
             color: gold;
             font-weight: bold;
-            text-shadow: 0 0 5px gold;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
         }
 
         .modal-overlay {
@@ -668,7 +643,6 @@
             z-index: 1000;
             padding: 20px 15px;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .modal-content {
@@ -679,20 +653,13 @@
             width: 100%;
             margin: auto;
             border: 4px solid gold;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7), 0 0 50px gold;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
             animation: modalEntrada 0.3s ease-out;
-            position: relative;
         }
 
         @keyframes modalEntrada {
-            from { 
-                opacity: 0; 
-                transform: translateY(-30px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .modal-content h2 {
@@ -726,7 +693,6 @@
             transition: all 0.2s ease;
             color: white;
             box-shadow: 0 5px 0 #1a2632;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .pack:active {
@@ -773,7 +739,6 @@
             transition: all 0.2s;
             margin-top: 8px;
             border: 2px solid white;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-modal:active {
@@ -786,25 +751,10 @@
             box-shadow: 0 5px 0 #2d6a2d;
         }
 
-        .btn-comprar:active {
-            box-shadow: 0 1px 0 #2d6a2d;
-        }
-
         .btn-cerrar {
             background: linear-gradient(135deg, #f44336, #d32f2f);
             color: white;
             box-shadow: 0 5px 0 #8b1e1e;
-        }
-
-        .btn-cerrar:active {
-            box-shadow: 0 1px 0 #8b1e1e;
-        }
-
-        .btn-comprar:disabled, .btn-cerrar:disabled {
-            opacity: 0.5;
-            transform: none;
-            box-shadow: 0 3px 0 #666;
-            cursor: not-allowed;
         }
 
         .info-pago {
@@ -838,10 +788,6 @@
         ::-webkit-scrollbar-thumb {
             background: gold;
             border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #f39c12;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
@@ -926,26 +872,34 @@
                 <div class="reel" id="reel2">🍒</div>
                 <div class="reel" id="reel3">🍒</div>
             </div>
+        </div>
+
+        <!-- Panel de control estilo tragamonedas latino -->
+        <div class="control-panel">
+            <div class="stop-buttons">
+                <button class="stop-btn" onclick="detenerRodillo(1)" id="stop1" disabled>■ 1</button>
+                <button class="stop-btn" onclick="detenerRodillo(2)" id="stop2" disabled>■ 2</button>
+                <button class="stop-btn" onclick="detenerRodillo(3)" id="stop3" disabled>■ 3</button>
+            </div>
+
+            <button class="spin-all-btn" onclick="girarTodos()" id="spin-all-btn">
+                🎰 GIRAR TODOS
+            </button>
 
             <div class="bet-control">
                 <button class="bet-btn" onclick="cambiarApuesta(-1000)" id="btn-menos">-</button>
                 <div class="bet-display">
-                    <span id="apuesta">1000</span> <small>
+                    <span id="apuesta">1000</span> <small>🪙</small>
                 </div>
                 <button class="bet-btn" onclick="cambiarApuesta(1000)" id="btn-mas">+</button>
             </div>
 
-            <!-- Modo Turbo -->
             <div class="turbo-container">
                 <button class="turbo-btn" id="turbo-btn" onclick="toggleTurbo()">
                     <span>⚡</span> MODO TURBO <span>⚡</span>
                 </button>
                 <div class="turbo-multiplier" id="turbo-multiplier">x1</div>
             </div>
-
-            <button class="btn-play" onclick="jugar()" id="btn-jugar">
-                🎰 JUGAR
-            </button>
 
             <div class="quick-bets">
                 <div class="quick-bet" onclick="setApuesta(1000)">🪙 1.000</div>
@@ -968,10 +922,9 @@
         </div>
 
         <div class="result-box" id="resultado">
-            🎰 Listo para jugar
+            🎰 Presioná GIRAR TODOS para empezar
         </div>
 
-        <!-- ESTADÍSTICAS MODIFICADAS -->
         <div class="stats">
             <div class="stat">
                 <div class="stat-label">Veces jugadas</div>
@@ -982,7 +935,7 @@
                 <div class="stat-value" id="mayor-premio">0</div>
             </div>
             <div class="stat">
-                <div class="stat-label">💵 Recaudado</div>
+                <div class="stat-label">💵 A Pagar</div>
                 <div class="stat-value" id="a-pagar">0</div>
             </div>
             <div class="stat">
@@ -1009,6 +962,13 @@
         let packSeleccionado = null;
         let modoTurbo = false;
         
+        // Estado de los rodillos
+        let rodillos = [
+            { spinning: false, intervalo: null, valor: '🍒', detenido: false },
+            { spinning: false, intervalo: null, valor: '🍒', detenido: false },
+            { spinning: false, intervalo: null, valor: '🍒', detenido: false }
+        ];
+        
         let stats = { jugadas: 0, mayorPremio: 0, gananciasTotales: 0, historial: [] };
         const simbolos = ['🍒', '💎', '7', '🍋', '🍊'];
         const premios = { '🍒🍒🍒':50, '💎💎💎':30, '777':20, '🍋🍋🍋':10, '🍊🍊🍊':5, '2iguales':1 };
@@ -1030,7 +990,7 @@
         }
         crearParticulas();
 
-        function actualizarSaldoYPagar() {
+        function actualizarAPagar() {
             const inversion = usuarioActual.total_recargado || 0;
             const aPagar = fichas > inversion ? fichas - inversion : 0;
             document.getElementById('a-pagar').textContent = formatoNumero(aPagar);
@@ -1059,7 +1019,7 @@
 
         function actualizarFichas() {
             document.getElementById('fichas').textContent = formatoNumero(fichas);
-            actualizarSaldoYPagar();
+            actualizarAPagar();
             actualizarBotonesApuesta();
         }
 
@@ -1067,19 +1027,19 @@
             if (jugando) return;
             modoTurbo = !modoTurbo;
             const turboBtn = document.getElementById('turbo-btn');
+            const turboMult = document.getElementById('turbo-multiplier');
+            
             if (modoTurbo) {
                 turboBtn.classList.add('active');
-                let maxApuestaTurbo = Math.min(30000, Math.floor(fichas / 3));
-                if (apuesta > maxApuestaTurbo) apuesta = maxApuestaTurbo;
-                document.getElementById('apuesta').textContent = apuesta;
+                turboMult.textContent = 'x3';
             } else {
                 turboBtn.classList.remove('active');
+                turboMult.textContent = 'x1';
             }
-            actualizarBotonesApuesta();
         }
 
         function actualizarBotonesApuesta() {
-            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(fichas / 3)) : Math.min(50000, fichas);
+            let maxApuesta = Math.min(50000, fichas);
             document.getElementById('btn-menos').disabled = apuesta <= 1000;
             document.getElementById('btn-mas').disabled = apuesta >= maxApuesta;
         }
@@ -1087,7 +1047,7 @@
         function cambiarApuesta(delta) {
             if (jugando) return;
             let nuevaApuesta = apuesta + delta;
-            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(fichas / 3)) : Math.min(50000, fichas);
+            let maxApuesta = Math.min(50000, fichas);
             if (nuevaApuesta >= 1000 && nuevaApuesta <= maxApuesta) {
                 apuesta = nuevaApuesta;
                 document.getElementById('apuesta').textContent = apuesta;
@@ -1097,7 +1057,7 @@
 
         function setApuesta(valor) {
             if (jugando) return;
-            let maxApuesta = modoTurbo ? Math.min(30000, Math.floor(fichas / 3)) : Math.min(50000, fichas);
+            let maxApuesta = Math.min(50000, fichas);
             if (valor <= fichas && valor <= maxApuesta && valor >= 1000) {
                 apuesta = valor;
                 document.getElementById('apuesta').textContent = apuesta;
@@ -1120,98 +1080,140 @@
             return 0;
         }
 
-        function animarRodillo(elemento, simboloFinal, callback) {
-            let frames = 0;
-            const maxFrames = 15;
-            const intervalo = setInterval(() => {
-                if (frames < maxFrames) {
-                    elemento.textContent = getRandomSimbolo();
-                    frames++;
-                } else {
-                    clearInterval(intervalo);
-                    elemento.textContent = simboloFinal;
-                    if (callback) callback();
+        function iniciarRodillo(index) {
+            if (!jugando) return;
+            if (rodillos[index].detenido) return;
+            
+            rodillos[index].spinning = true;
+            const reelElement = document.getElementById(`reel${index+1}`);
+            
+            rodillos[index].intervalo = setInterval(() => {
+                if (rodillos[index].spinning) {
+                    const nuevoSimbolo = getRandomSimbolo();
+                    rodillos[index].valor = nuevoSimbolo;
+                    reelElement.textContent = nuevoSimbolo;
                 }
-            }, 60);
+            }, modoTurbo ? 40 : 70);
         }
 
-        async function jugar() {
+        function detenerRodillo(numero) {
+            const index = numero - 1;
+            if (!jugando) return;
+            if (rodillos[index].detenido) return;
+            
+            clearInterval(rodillos[index].intervalo);
+            rodillos[index].spinning = false;
+            rodillos[index].detenido = true;
+            
+            // Verificar si todos los rodillos están detenidos
+            if (rodillos.every(r => r.detenido === true)) {
+                evaluarResultado();
+            }
+        }
+
+        function detenerTodos() {
+            if (!jugando) return;
+            for (let i = 0; i < 3; i++) {
+                if (rodillos[i].spinning) {
+                    clearInterval(rodillos[i].intervalo);
+                    rodillos[i].spinning = false;
+                    rodillos[i].detenido = true;
+                }
+            }
+            evaluarResultado();
+        }
+
+        async function girarTodos() {
             if (jugando) return;
-            let costoApuesta = modoTurbo ? apuesta * 3 : apuesta;
+            
+            let costoApuesta = apuesta;
+            if (modoTurbo) costoApuesta = apuesta * 3;
+            
             if (fichas < costoApuesta) {
                 mostrarResultado('❌ No tenés suficientes fichas', 'error');
                 abrirModalRecarga();
                 return;
             }
 
-            const resultado = [
-                getRandomSimbolo(),
-                getRandomSimbolo(),
-                getRandomSimbolo()
-            ];
-            
-            const multiplicador = calcularPremio(resultado[0], resultado[1], resultado[2], apuesta) / apuesta;
-            const ganancia = calcularPremio(resultado[0], resultado[1], resultado[2], apuesta) * (modoTurbo ? 3 : 1);
-
             jugando = true;
-            document.getElementById('btn-jugar').disabled = true;
+            document.getElementById('spin-all-btn').disabled = true;
+            document.getElementById('stop1').disabled = false;
+            document.getElementById('stop2').disabled = false;
+            document.getElementById('stop3').disabled = false;
             
+            // Restar apuesta
             fichas -= costoApuesta;
             actualizarFichas();
             
-            const reels = [
-                document.getElementById('reel1'),
-                document.getElementById('reel2'),
-                document.getElementById('reel3')
-            ];
+            // Reiniciar estado de rodillos
+            rodillos = rodillos.map(r => ({ ...r, spinning: false, detenido: false, intervalo: null }));
             
-            animarRodillo(reels[0], resultado[0], () => {
-                animarRodillo(reels[1], resultado[1], () => {
-                    animarRodillo(reels[2], resultado[2], async () => {
-                        try {
-                            const res = await fetch(`${API_URL}/jugar`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                                body: JSON.stringify({
-                                    apuesta: costoApuesta,
-                                    ganancia: ganancia,
-                                    combinacion: `${resultado[0]}${resultado[1]}${resultado[2]}`
-                                })
-                            });
-                            const data = await res.json();
-                            fichas = data.nuevas_fichas;
-                            actualizarFichas();
-                        } catch (error) {
-                            console.error('Error guardando:', error);
-                            fichas += ganancia;
-                            actualizarFichas();
-                        }
-                        
-                        const resultadoDiv = document.getElementById('resultado');
-                        if (ganancia > 0) {
-                            stats.jugadas++;
-                            stats.gananciasTotales += ganancia;
-                            if (ganancia > stats.mayorPremio) stats.mayorPremio = ganancia;
-                            stats.historial.unshift({ combinacion: `${resultado[0]}${resultado[1]}${resultado[2]}`, ganancia });
-                            if (stats.historial.length > 10) stats.historial.pop();
-                            resultadoDiv.textContent = `🎉 GANASTE 🪙 ${formatoNumero(ganancia)}! (x${multiplicador * (modoTurbo ? 3 : 1)})`;
-                            resultadoDiv.classList.add('win');
-                            if (ganancia >= 50000) confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
-                        } else {
-                            stats.jugadas++;
-                            resultadoDiv.textContent = '😢 Mejor suerte la próxima';
-                            resultadoDiv.classList.remove('win');
-                        }
-                        
-                        actualizarFichas();
-                        actualizarEstadisticas();
-                        guardarEstadisticas();
-                        actualizarBotonesApuesta();
-                        jugando = false;
-                        document.getElementById('btn-jugar').disabled = false;
-                    });
+            // Iniciar giro de los 3 rodillos
+            for (let i = 0; i < 3; i++) {
+                iniciarRodillo(i);
+            }
+            
+            // Auto-detener después de 5 segundos (por si el usuario no detiene)
+            setTimeout(() => {
+                if (jugando) {
+                    detenerTodos();
+                }
+            }, 5000);
+        }
+
+        async function evaluarResultado() {
+            const s1 = rodillos[0].valor;
+            const s2 = rodillos[1].valor;
+            const s3 = rodillos[2].valor;
+            
+            const multiplicador = calcularPremio(s1, s2, s3, apuesta) / apuesta;
+            const ganancia = calcularPremio(s1, s2, s3, apuesta) * (modoTurbo ? 3 : 1);
+            
+            try {
+                const res = await fetch(`${API_URL}/jugar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({
+                        apuesta: modoTurbo ? apuesta * 3 : apuesta,
+                        ganancia: ganancia,
+                        combinacion: `${s1}${s2}${s3}`
+                    })
                 });
-            });
+                const data = await res.json();
+                fichas = data.nuevas_fichas;
+                actualizarFichas();
+            } catch (error) {
+                console.error('Error guardando:', error);
+                fichas += ganancia;
+                actualizarFichas();
+            }
+            
+            const resultadoDiv = document.getElementById('resultado');
+            if (ganancia > 0) {
+                stats.jugadas++;
+                stats.gananciasTotales += ganancia;
+                if (ganancia > stats.mayorPremio) stats.mayorPremio = ganancia;
+                stats.historial.unshift({ combinacion: `${s1}${s2}${s3}`, ganancia });
+                if (stats.historial.length > 10) stats.historial.pop();
+                resultadoDiv.textContent = `🎉 GANASTE 🪙 ${formatoNumero(ganancia)}! (x${multiplicador * (modoTurbo ? 3 : 1)})`;
+                resultadoDiv.classList.add('win');
+                if (ganancia >= 50000) confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+            } else {
+                stats.jugadas++;
+                resultadoDiv.textContent = '😢 Mejor suerte la próxima';
+                resultadoDiv.classList.remove('win');
+            }
+            
+            actualizarFichas();
+            actualizarEstadisticas();
+            guardarEstadisticas();
+            actualizarBotonesApuesta();
+            
+            jugando = false;
+            document.getElementById('spin-all-btn').disabled = false;
+            document.getElementById('stop1').disabled = true;
+            document.getElementById('stop2').disabled = true;
+            document.getElementById('stop3').disabled = true;
         }
 
         function mostrarResultado(mensaje, tipo) {
@@ -1249,7 +1251,7 @@
                 usuarioActual.total_recargado = data.usuario.total_recargado || 0;
                 
                 if (nuevoSaldo !== fichas) {
-                    console.log(`🔄 Sincronización silenciosa: ${formatoNumero(fichas)} → ${formatoNumero(nuevoSaldo)}`);
+                    console.log(`🔄 Sincronización: ${formatoNumero(fichas)} → ${formatoNumero(nuevoSaldo)}`);
                     fichas = nuevoSaldo;
                     actualizarFichas();
                     actualizarBotonesApuesta();
@@ -1280,14 +1282,18 @@
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             document.body.style.overflow = 'hidden';
         }
-        function seleccionarPack(fichas, precio) {
-            packSeleccionado = { fichas, precio };
+        
+        function seleccionarPack(fichasPack, precio) {
+            packSeleccionado = { fichas: fichasPack, precio };
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
             document.getElementById('btn-comprar').disabled = false;
         }
+        
         function copiarAlias() { navigator.clipboard.writeText("6018795"); const btn = event.currentTarget; const texto = btn.textContent; btn.textContent = "✅ COPIADO!"; setTimeout(() => btn.textContent = texto, 2000); }
+        
         function cerrarModal() { document.getElementById('modal-recarga').style.display = 'none'; document.body.style.overflow = 'auto'; }
+        
         async function confirmarCompra() {
             if (!packSeleccionado) { alert('Seleccioná un pack'); return; }
             const btn = document.getElementById('btn-comprar');
@@ -1307,6 +1313,7 @@
             } catch (error) { alert('Error de conexión'); }
             finally { btn.disabled = false; btn.textContent = "✅ SOLICITAR RECARGA"; }
         }
+        
         function cerrarSesion() { 
             sessionStorage.removeItem('token'); 
             sessionStorage.removeItem('usuario'); 
