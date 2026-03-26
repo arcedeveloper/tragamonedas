@@ -188,6 +188,22 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
 
+        .btn-actualizar {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-actualizar:active {
+            transform: scale(0.95);
+        }
+
         .logout-btn {
             background: linear-gradient(135deg, #f44336, #d32f2f);
             color: white;
@@ -571,7 +587,7 @@
 <body>
     <script src="config.js"></script>
 
-    <!-- BURBUJA FLOTANTE (único mensaje de resultado) -->
+    <!-- BURBUJA FLOTANTE -->
     <div id="floatingMessage" class="floating-message"></div>
 
     <!-- Modal Recarga -->
@@ -599,6 +615,7 @@
             </div>
         </div>
         <div>
+            <button class="btn-actualizar" onclick="actualizarSaldoManual()">🔄 ACTUALIZAR</button>
             <button class="btn-recargar" onclick="abrirModalRecarga()">RECARGAR</button>
             <button class="logout-btn" onclick="cerrarSesion()">SALIR</button>
         </div>
@@ -702,7 +719,46 @@
             setTimeout(() => burbuja.classList.remove('show'), 2500);
         }
 
-        function formatoNumero(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+        function formatoNumero(n) { 
+            if (n === null || n === undefined) return '0';
+            let entero = Math.floor(Number(n));
+            return entero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+        }
+
+        // ✅ NUEVA FUNCIÓN: Actualizar saldo manualmente
+        async function actualizarSaldoManual() {
+            if (jugando) {
+                mostrarBurbuja('⏳ Esperá a que termine el juego', 'error');
+                return;
+            }
+            
+            mostrarBurbuja('🔄 Actualizando saldo...', 'win');
+            
+            try {
+                const res = await fetch(`${API_URL}/usuario`, { 
+                    headers: { 'Authorization': token },
+                    cache: 'no-cache'
+                });
+                const data = await res.json();
+                const nuevoSaldo = data.usuario.fichas || 0;
+                const diferencia = nuevoSaldo - fichas;
+                
+                fichas = nuevoSaldo;
+                usuarioActual.total_recargado = data.usuario.total_recargado || 0;
+                actualizarFichas();
+                
+                if (diferencia > 0) {
+                    mostrarBurbuja(`💰 +${formatoNumero(diferencia)} CRÉDITOS`, 'win');
+                } else if (diferencia < 0) {
+                    mostrarBurbuja(`📉 ${formatoNumero(Math.abs(diferencia))} CRÉDITOS menos`, 'lose');
+                } else {
+                    mostrarBurbuja('✅ Saldo actualizado', 'win');
+                }
+            } catch (error) {
+                console.error('Error actualizando saldo:', error);
+                mostrarBurbuja('❌ Error al actualizar saldo', 'error');
+            }
+        }
 
         async function cargarUsuario() {
             try {
@@ -850,8 +906,14 @@
                 });
                 const data = await res.json();
                 fichas = data.nuevas_fichas;
+                usuarioActual.total_recargado = data.total_recargado || usuarioActual.total_recargado;
                 actualizarFichas();
-            } catch(e) { fichas += ganancia; actualizarFichas(); }
+            } catch(e) { 
+                console.error('Error en jugada:', e);
+                fichas += ganancia; 
+                actualizarFichas();
+                mostrarBurbuja('⚠️ Error de conexión, saldo local ajustado', 'error');
+            }
             
             if (ganancia > 0) {
                 stats.jugadas++;
@@ -889,19 +951,7 @@
 
         function guardarEstadisticas() { localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats)); }
 
-        setInterval(async () => {
-            try {
-                const res = await fetch(`${API_URL}/usuario`, { headers: { 'Authorization': token }, cache: 'no-cache' });
-                const data = await res.json();
-                const nuevoSaldo = data.usuario.fichas || 0;
-                if (nuevoSaldo !== fichas) {
-                    const diferencia = nuevoSaldo - fichas;
-                    fichas = nuevoSaldo;
-                    actualizarFichas();
-                    if (diferencia > 0 && !jugando) mostrarBurbuja(`💰 +${formatoNumero(diferencia)} CRÉDITOS`, 'win');
-                }
-            } catch(e) {}
-        }, 5000);
+        // ✅ ELIMINADO: setInterval que consultaba /usuario cada 15 segundos
 
         function abrirModalRecarga() {
             packSeleccionado = null;
@@ -909,14 +959,17 @@
             document.getElementById('btn-comprar').disabled = true;
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
         }
+        
         function seleccionarPack(fichasPack, precio) {
             packSeleccionado = { fichas: fichasPack, precio };
             document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
             document.getElementById('btn-comprar').disabled = false;
         }
+        
         function copiarAlias() { navigator.clipboard.writeText("6018795"); alert('✅ Alias copiado: 6018795'); }
         function cerrarModal() { document.getElementById('modal-recarga').style.display = 'none'; }
+        
         async function confirmarCompra() {
             if (!packSeleccionado) return;
             const btn = document.getElementById('btn-comprar');
@@ -936,6 +989,7 @@
             } catch(e) { alert('Error de conexión'); }
             btn.disabled = false; btn.textContent = "✅ SOLICITAR";
         }
+        
         function cerrarSesion() { sessionStorage.removeItem('token'); window.location.href = 'login.html'; }
 
         cargarUsuario();
