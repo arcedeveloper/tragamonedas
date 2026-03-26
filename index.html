@@ -126,11 +126,12 @@
             }
         }
 
+        /* ========= BARRA SUPERIOR RESPONSIVE ========= */
         .user-bar {
             max-width: 700px;
             margin: 0 auto 20px auto;
             background: linear-gradient(135deg, #1e2a3a, #2a3a4a);
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 50px;
             display: flex;
             justify-content: space-between;
@@ -141,78 +142,126 @@
             position: relative;
             z-index: 10;
             backdrop-filter: blur(5px);
+            gap: 12px;
             flex-wrap: wrap;
-            gap: 10px;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
             flex-wrap: wrap;
+            flex: 1;
         }
 
         .user-name {
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            white-space: nowrap;
         }
 
         .fichas-display {
             background: linear-gradient(135deg, #2a3a4a, #1e2a3a);
-            padding: 8px 20px;
+            padding: 6px 16px;
             border-radius: 30px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 20px;
+            gap: 8px;
+            font-size: 18px;
             font-weight: bold;
             border: 2px solid gold;
             box-shadow: 0 0 15px rgba(255,215,0,0.3);
+            white-space: nowrap;
         }
 
-        .fichas-display span {
+        .fichas-display span:first-child {
             color: gold;
-            font-size: 24px;
+            font-size: 20px;
         }
 
-        .btn-recargar {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
+        .fichas-display span:last-child {
+            font-size: 18px;
+        }
+
+        /* Grupo de botones */
+        .botones-acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .btn-actualizar, .btn-recargar, .logout-btn {
             border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
+            padding: 8px 16px;
+            border-radius: 30px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
             transition: all 0.3s;
+            white-space: nowrap;
             border: 1px solid rgba(255,255,255,0.3);
         }
 
         .btn-actualizar {
             background: linear-gradient(135deg, #2196F3, #1976D2);
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        .btn-actualizar:active {
-            transform: scale(0.95);
+        .btn-recargar {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
         }
 
         .logout-btn {
             background: linear-gradient(135deg, #f44336, #d32f2f);
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
+        }
+
+        /* Responsive móvil */
+        @media (max-width: 550px) {
+            .user-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 15px;
+                border-radius: 35px;
+            }
+            
+            .user-info {
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .user-name {
+                font-size: 14px;
+            }
+            
+            .fichas-display {
+                padding: 5px 12px;
+            }
+            
+            .fichas-display span:first-child {
+                font-size: 18px;
+            }
+            
+            .fichas-display span:last-child {
+                font-size: 16px;
+            }
+            
+            .botones-acciones {
+                width: 100%;
+                justify-content: center;
+                gap: 10px;
+                margin-top: 5px;
+            }
+            
+            .btn-actualizar, .btn-recargar, .logout-btn {
+                flex: 1;
+                text-align: center;
+                padding: 10px 12px;
+                font-size: 14px;
+            }
         }
 
         .game-container {
@@ -605,7 +654,7 @@
         </div>
     </div>
 
-    <!-- Barra superior -->
+    <!-- Barra superior RESPONSIVE corregida -->
     <div class="user-bar">
         <div class="user-info">
             <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
@@ -614,7 +663,7 @@
                 <span id="fichas">0</span>
             </div>
         </div>
-        <div>
+        <div class="botones-acciones">
             <button class="btn-actualizar" onclick="actualizarSaldoManual()">🔄 ACTUALIZAR</button>
             <button class="btn-recargar" onclick="abrirModalRecarga()">RECARGAR</button>
             <button class="logout-btn" onclick="cerrarSesion()">SALIR</button>
@@ -722,10 +771,11 @@
         function formatoNumero(n) { 
             if (n === null || n === undefined) return '0';
             let entero = Math.floor(Number(n));
+            if (isNaN(entero)) return '0';
             return entero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
         }
 
-        // ✅ NUEVA FUNCIÓN: Actualizar saldo manualmente
+        // ✅ Función para actualizar saldo manualmente
         async function actualizarSaldoManual() {
             if (jugando) {
                 mostrarBurbuja('⏳ Esperá a que termine el juego', 'error');
@@ -950,8 +1000,6 @@
         }
 
         function guardarEstadisticas() { localStorage.setItem(`stats_${usuarioActual.id}`, JSON.stringify(stats)); }
-
-        // ✅ ELIMINADO: setInterval que consultaba /usuario cada 15 segundos
 
         function abrirModalRecarga() {
             packSeleccionado = null;
