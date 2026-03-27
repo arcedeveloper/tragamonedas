@@ -1015,7 +1015,7 @@
             document.getElementById('modal-recarga').style.display = 'none'; 
         }
         
-      async function confirmarCompra() {
+    async function confirmarCompra() {
     if (!packSeleccionado) return;
     const btn = document.getElementById('btn-comprar');
     btn.disabled = true; 
@@ -1030,7 +1030,11 @@
         const data = await res.json();
         
         if (data.success) {
-            const msg = encodeURIComponent(`💰 RECARGA\nUsuario: ${usuarioActual.usuario}\nPack: ${packSeleccionado.fichas} créditos\nMonto: ₲${packSeleccionado.precio}\n\nYa transferí, por favor acreditar. Gracias!`);
+            // ✅ AHORA SÍ: usa formatoNumero() para ambos
+            const fichasFormateadas = formatoNumero(packSeleccionado.fichas);
+            const montoFormateado = formatoNumero(packSeleccionado.precio);
+            
+            const msg = encodeURIComponent(`💰 RECARGA\nUsuario: ${usuarioActual.usuario}\nPack: ${fichasFormateadas} créditos\nMonto: ₲${montoFormateado}\n\nYa transferí, por favor acreditar. Gracias!`);
             const whatsappUrl = `https://wa.me/595983775018?text=${msg}`;
             
             window.location.href = whatsappUrl;
