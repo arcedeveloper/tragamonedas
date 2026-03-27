@@ -636,10 +636,7 @@
 <body>
     <script src="config.js"></script>
 
-    <!-- BURBUJA FLOTANTE -->
     <div id="floatingMessage" class="floating-message"></div>
-
-    <!-- Modal Recarga -->
     <div class="modal-overlay" id="modal-recarga">
         <div class="modal-content">
             <h2>💰 COMPRAR FICHAS</h2>
@@ -653,8 +650,6 @@
             <button onclick="cerrarModal()" class="btn-modal" style="background:#f44336; color:white;">❌ CERRAR</button>
         </div>
     </div>
-
-    <!-- Barra superior RESPONSIVE corregida -->
     <div class="user-bar">
         <div class="user-info">
             <span class="user-name">👤 <span id="user-nombre">Cargando...</span></span>
@@ -669,8 +664,6 @@
             <button class="logout-btn" onclick="cerrarSesion()">SALIR</button>
         </div>
     </div>
-
-    <!-- Juego -->
     <div class="game-container">
         <div class="machine">
             <div class="machine-header">
@@ -774,8 +767,6 @@
             if (isNaN(entero)) return '0';
             return entero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
         }
-
-        // ✅ Función para actualizar saldo manualmente
         async function actualizarSaldoManual() {
             if (jugando) {
                 mostrarBurbuja('⏳ Esperá a que termine el juego', 'error');
@@ -1024,44 +1015,41 @@
             document.getElementById('modal-recarga').style.display = 'none'; 
         }
         
-        // ✅ FUNCIÓN CORREGIDA - WhatsApp se abre correctamente en móvil
-        async function confirmarCompra() {
-            if (!packSeleccionado) return;
-            const btn = document.getElementById('btn-comprar');
-            btn.disabled = true; 
-            btn.textContent = "⏳...";
+      async function confirmarCompra() {
+    if (!packSeleccionado) return;
+    const btn = document.getElementById('btn-comprar');
+    btn.disabled = true; 
+    btn.textContent = "⏳...";
+    
+    try {
+        const res = await fetch(`${API_URL}/recargas/solicitar`, {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', 'Authorization': token },
+            body: JSON.stringify({ fichas: packSeleccionado.fichas, monto: packSeleccionado.precio })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            const msg = encodeURIComponent(`💰 RECARGA\nUsuario: ${usuarioActual.usuario}\nPack: ${packSeleccionado.fichas} créditos\nMonto: ₲${packSeleccionado.precio}\n\nYa transferí, por favor acreditar. Gracias!`);
+            const whatsappUrl = `https://wa.me/595983775018?text=${msg}`;
             
-            try {
-                const res = await fetch(`${API_URL}/recargas/solicitar`, {
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                    body: JSON.stringify({ fichas: packSeleccionado.fichas, monto: packSeleccionado.precio })
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    const msg = encodeURIComponent(`💰 RECARGA\nUsuario: ${usuarioActual.usuario}\nPack: ${packSeleccionado.fichas} créditos\nMonto: ₲${packSeleccionado.precio}\nAlias: 6018795 - Ya transferí.`);
-                    const whatsappUrl = `https://wa.me/595983775018?text=${msg}`;
-                    
-                    // ✅ Para móviles: usar location.href en lugar de window.open
-                    // Funciona mejor en iOS y Android
-                    window.location.href = whatsappUrl;
-                    
-                    mostrarBurbuja('📱 Abriendo WhatsApp...', 'win');
-                    cerrarModal();
-                } else {
-                    alert('Error: ' + (data.error || 'Error al enviar'));
-                }
-            } catch(e) { 
-                alert('Error de conexión'); 
-                console.error(e);
-            }
+            window.location.href = whatsappUrl;
             
-            setTimeout(() => {
-                btn.disabled = false; 
-                btn.textContent = "✅ SOLICITAR";
-            }, 2000);
+            mostrarBurbuja('📱 Abriendo WhatsApp...', 'win');
+            cerrarModal();
+        } else {
+            alert('Error: ' + (data.error || 'Error al enviar'));
         }
+    } catch(e) { 
+        alert('Error de conexión'); 
+        console.error(e);
+    }
+    
+    setTimeout(() => {
+        btn.disabled = false; 
+        btn.textContent = "✅ SOLICITAR";
+    }, 2000);
+}
         
         function cerrarSesion() { 
             sessionStorage.removeItem('token'); 
