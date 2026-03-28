@@ -3,6 +3,24 @@ const router = express.Router();
 const db = require('../config/database');
 const { verificarToken } = require('../middleware/auth');
 
+// OBTENER USUARIO ACTUAL
+router.get('/usuario', verificarToken, async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT id, usuario, fichas, total_recargado, ganancias_congeladas 
+             FROM usuarios WHERE id = $1`,
+            [req.usuario.id]
+        );
+        
+        res.json({ 
+            usuario: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
 // JUGAR
 router.post('/jugar', verificarToken, async (req, res) => {
     const client = await db.connect();
@@ -15,7 +33,7 @@ router.post('/jugar', verificarToken, async (req, res) => {
 
         // Verificar fichas suficientes
         const usuario = await client.query(
-            'SELECT fichas FROM usuarios WHERE id = $1 FOR UPDATE',
+            'SELECT fichas, total_recargado, ganancias_congeladas FROM usuarios WHERE id = $1 FOR UPDATE',
             [usuarioId]
         );
 
@@ -28,32 +46,7 @@ router.post('/jugar', verificarToken, async (req, res) => {
             return res.status(400).json({ error: 'Fichas insuficientes' });
         }
 
-        // Si es solo una apuesta sin ganancia (primer paso)
-        if (ganancia === 0 && combinacion === 'pendiente') {
-            // Solo restar apuesta
-            await client.query(
-                `UPDATE usuarios 
-                 SET fichas = fichas - $1,
-                     veces_jugadas = veces_jugadas + 1
-                 WHERE id = $2`,
-                [apuesta, usuarioId]
-            );
-
-            await client.query('COMMIT');
-            
-            const nuevoSaldo = await db.query(
-                'SELECT fichas FROM usuarios WHERE id = $1',
-                [usuarioId]
-            );
-
-            return res.json({
-                success: true,
-                nuevas_fichas: nuevoSaldo.rows[0].fichas,
-                ganancia: 0
-            });
-        }
-
-        // Registrar jugada completa (con ganancia)
+        // Registrar jugada completa
         await client.query(
             `INSERT INTO historial_juego 
              (usuario_id, apuesta, ganancia, combinacion) 
@@ -64,7 +57,8 @@ router.post('/jugar', verificarToken, async (req, res) => {
         // Actualizar fichas
         await client.query(
             `UPDATE usuarios 
-             SET fichas = fichas - $1 + $2
+             SET fichas = fichas - $1 + $2,
+                 veces_jugadas = veces_jugadas + 1
              WHERE id = $3`,
             [apuesta, ganancia, usuarioId]
         );
@@ -90,15 +84,17 @@ router.post('/jugar', verificarToken, async (req, res) => {
 
         await client.query('COMMIT');
 
-        // Obtener nuevo saldo
-        const nuevoSaldo = await db.query(
-            'SELECT fichas FROM usuarios WHERE id = $1',
+        // Obtener nuevo saldo y datos
+        const nuevoUsuario = await db.query(
+            'SELECT fichas, total_recargado, ganancias_congeladas FROM usuarios WHERE id = $1',
             [usuarioId]
         );
 
         res.json({
             success: true,
-            nuevas_fichas: nuevoSaldo.rows[0].fichas,
+            nuevas_fichas: nuevoUsuario.rows[0].fichas,
+            total_recargado: nuevoUsuario.rows[0].total_recargado,
+            ganancias_congeladas: nuevoUsuario.rows[0].ganancias_congeladas,
             ganancia
         });
 
@@ -108,6 +104,41 @@ router.post('/jugar', verificarToken, async (req, res) => {
         res.status(500).json({ error: error.message || 'Error en el servidor' });
     } finally {
         client.release();
+    }
+});
+
+// SOLICITAR COBRO
+router.post('/solicitar-cobro', verificarToken, async (req, res) => {
+    const { monto } = req.body;
+    const usuarioId = req.usuario.id;
+    
+    try {
+        // Obtener datos del usuario
+        const usuario = await db.query(
+            'SELECT fichas, total_recargado, ganancias_congeladas FROM usuarios WHERE id = $1',
+            [usuarioId]
+        );
+        
+        const inversion = usuario.rows[0].total_recargado || 0;
+        const gananciasSesion = usuario.rows[0].fichas > inversion ? usuario.rows[0].fichas - inversion : 0;
+        const aPagar = (usuario.rows[0].ganancias_congeladas || 0) + gananciasSesion;
+        
+        if (aPagar <= 0) {
+            return res.status(400).json({ error: 'No tenés ganancias para cobrar' });
+        }
+        
+        // Crear solicitud de cobro
+        await db.query(
+            `INSERT INTO solicitudes_cobro (usuario_id, monto, estado, fecha_solicitud) 
+             VALUES ($1, $2, 'pendiente', NOW())`,
+            [usuarioId, aPagar]
+        );
+        
+        res.json({ success: true, mensaje: 'Solicitud enviada' });
+        
+    } catch (error) {
+        console.error('Error al solicitar cobro:', error);
+        res.status(500).json({ error: 'Error al solicitar cobro' });
     }
 });
 
