@@ -52,7 +52,13 @@ router.get('/usuarios', async (req, res) => {
              ORDER BY u.id DESC`
         );
 
-        res.json(result.rows);
+        // Asegurar que ganancias_congeladas exista (default 0)
+        const usuarios = result.rows.map(u => ({
+            ...u,
+            ganancias_congeladas: u.ganancias_congeladas || 0
+        }));
+
+        res.json(usuarios);
 
     } catch (error) {
         console.error('Error:', error);
@@ -60,7 +66,7 @@ router.get('/usuarios', async (req, res) => {
     }
 });
 
-// OBTENER SOLICITUDES PENDIENTES
+// OBTENER SOLICITUDES DE RECARGA PENDIENTES
 router.get('/solicitudes-recarga', async (req, res) => {
     try {
         const result = await db.query(
@@ -111,8 +117,23 @@ router.post('/aprobar-recarga', async (req, res) => {
             throw new Error(`Datos inválidos: fichas=${fichas}, monto=${monto}, usuarioId=${usuarioId}`);
         }
 
+        // Obtener datos actuales del usuario para congelar ganancias
+        const usuario = await client.query(
+            'SELECT fichas, total_recargado, ganancias_congeladas FROM usuarios WHERE id = $1 FOR UPDATE',
+            [usuarioId]
+        );
+
+        const inversion = usuario.rows[0].total_recargado || 0;
+        const gananciasSesion = usuario.rows[0].fichas > inversion ? usuario.rows[0].fichas - inversion : 0;
+        
+        // Sumar ganancias de la sesión actual a las congeladas
+        const nuevasGananciasCongeladas = (usuario.rows[0].ganancias_congeladas || 0) + gananciasSesion;
+
+        console.log(`💰 Congelando ganancias: sesión=${gananciasSesion}, total congelado=${nuevasGananciasCongeladas}`);
+
         console.log(`💰 Agregando ${fichas} monedas a usuario ${usuarioId}`);
 
+        // Marcar solicitud como aprobada
         await client.query(
             `UPDATE solicitudes_recarga 
              SET estado = 'aprobada', fecha_resolucion = CURRENT_TIMESTAMP 
@@ -120,12 +141,14 @@ router.post('/aprobar-recarga', async (req, res) => {
             [solicitud_id]
         );
 
+        // Actualizar usuario: agregar fichas, actualizar inversión, y actualizar ganancias congeladas
         await client.query(
             `UPDATE usuarios 
              SET fichas = fichas + $1, 
-                 total_recargado = COALESCE(total_recargado, 0) + $2 
-             WHERE id = $3`,
-            [fichas, monto, usuarioId]
+                 total_recargado = COALESCE(total_recargado, 0) + $2,
+                 ganancias_congeladas = $3
+             WHERE id = $4`,
+            [fichas, monto, nuevasGananciasCongeladas, usuarioId]
         );
 
         try {
@@ -185,9 +208,24 @@ router.post('/agregar-fichas', async (req, res) => {
 
         const { usuario_id, fichas } = req.body;
 
+        // Obtener datos actuales del usuario para congelar ganancias
+        const usuario = await client.query(
+            'SELECT fichas, total_recargado, ganancias_congeladas FROM usuarios WHERE id = $1 FOR UPDATE',
+            [usuario_id]
+        );
+
+        const inversion = usuario.rows[0].total_recargado || 0;
+        const gananciasSesion = usuario.rows[0].fichas > inversion ? usuario.rows[0].fichas - inversion : 0;
+        
+        // Sumar ganancias de la sesión actual a las congeladas
+        const nuevasGananciasCongeladas = (usuario.rows[0].ganancias_congeladas || 0) + gananciasSesion;
+
         await client.query(
-            `UPDATE usuarios SET fichas = fichas + $1 WHERE id = $2`,
-            [fichas, usuario_id]
+            `UPDATE usuarios 
+             SET fichas = fichas + $1, 
+                 ganancias_congeladas = $2
+             WHERE id = $3`,
+            [fichas, nuevasGananciasCongeladas, usuario_id]
         );
 
         await client.query(
@@ -271,7 +309,8 @@ router.get('/stats-tragamonedas', async (req, res) => {
                 (SELECT COUNT(*) FROM usuarios WHERE fichas > 0) as usuarios_activos,
                 (SELECT COALESCE(SUM(fichas), 0) FROM usuarios) as fichas_totales,
                 (SELECT COALESCE(SUM(total_recargado), 0) FROM usuarios) as total_recargas,
-                (SELECT COUNT(*) FROM solicitudes_recarga WHERE estado = 'pendiente') as solicitudes_pendientes`
+                (SELECT COUNT(*) FROM solicitudes_recarga WHERE estado = 'pendiente') as solicitudes_pendientes,
+                (SELECT COUNT(*) FROM solicitudes_cobro WHERE estado = 'pendiente') as cobros_pendientes`
         );
 
         res.json(result.rows[0]);
@@ -398,12 +437,17 @@ router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, asyn
         
         // Obtener datos del usuario (inversión y saldo actual)
         const usuario = await db.query(
-            `SELECT total_recargado, fichas FROM usuarios WHERE id = $1`,
+            `SELECT total_recargado, fichas, ganancias_congeladas FROM usuarios WHERE id = $1`,
             [usuarioId]
         );
         
         const inversionTotal = usuario.rows[0]?.total_recargado || 0;
         const saldoActual = usuario.rows[0]?.fichas || 0;
+        const gananciasCongeladas = usuario.rows[0]?.ganancias_congeladas || 0;
+        
+        // Calcular ganancias de sesión
+        const gananciasSesion = saldoActual > inversionTotal ? saldoActual - inversionTotal : 0;
+        const aPagar = gananciasCongeladas + gananciasSesion;
         
         // Obtener historial de jugadas
         const historial = await db.query(
@@ -431,7 +475,9 @@ router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, asyn
             stats: {
                 ...stats.rows[0],
                 inversion_total: inversionTotal,
-                saldo_actual: saldoActual
+                saldo_actual: saldoActual,
+                ganancias_congeladas: gananciasCongeladas,
+                a_pagar: aPagar
             }
         });
         
@@ -440,7 +486,13 @@ router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, asyn
         res.status(500).json({ error: 'Error al obtener historial' });
     }
 });
-router.get('/solicitudes-cobro', verificarToken, verificarAdmin, async (req, res) => {
+
+// ============================================
+// SOLICITUDES DE COBRO
+// ============================================
+
+// OBTENER SOLICITUDES DE COBRO PENDIENTES
+router.get('/solicitudes-cobro', async (req, res) => {
     try {
         const result = await db.query(
             `SELECT sc.*, u.usuario 
@@ -459,13 +511,15 @@ router.get('/solicitudes-cobro', verificarToken, verificarAdmin, async (req, res
 });
 
 // APROBAR COBRO
-router.post('/aprobar-cobro', verificarToken, verificarAdmin, async (req, res) => {
+router.post('/aprobar-cobro', async (req, res) => {
     const client = await db.connect();
     
     try {
         await client.query('BEGIN');
 
         const { solicitud_id } = req.body;
+
+        console.log('💰 Aprobando cobro ID:', solicitud_id);
 
         // Obtener solicitud
         const solicitud = await client.query(
@@ -494,16 +548,22 @@ router.post('/aprobar-cobro', verificarToken, verificarAdmin, async (req, res) =
         let nuevasGananciasCongeladas = (usuario.rows[0].ganancias_congeladas || 0) + gananciasSesion;
         let nuevoSaldo = usuario.rows[0].fichas;
 
+        console.log(`💰 Usuario: saldo=${nuevoSaldo}, inversion=${inversion}, congeladas=${usuario.rows[0].ganancias_congeladas}, sesion=${gananciasSesion}, totalCongelado=${nuevasGananciasCongeladas}`);
+
         // Descontar el monto cobrado
         if (nuevasGananciasCongeladas >= montoCobro) {
             nuevasGananciasCongeladas -= montoCobro;
+            console.log(`✅ Descontado de congeladas: nuevas congeladas=${nuevasGananciasCongeladas}`);
         } else {
             // Si no alcanza con las congeladas, descontar del saldo
-            nuevoSaldo = nuevoSaldo - (montoCobro - nuevasGananciasCongeladas);
+            const resto = montoCobro - nuevasGananciasCongeladas;
+            nuevoSaldo = nuevoSaldo - resto;
             nuevasGananciasCongeladas = 0;
             
             // Asegurar que el saldo no sea negativo
             if (nuevoSaldo < 0) nuevoSaldo = 0;
+            
+            console.log(`⚠️ No alcanzaban congeladas, descontando ${resto} del saldo. Nuevo saldo=${nuevoSaldo}`);
             
             await client.query(
                 'UPDATE usuarios SET fichas = $1 WHERE id = $2',
@@ -554,7 +614,7 @@ router.post('/aprobar-cobro', verificarToken, verificarAdmin, async (req, res) =
 });
 
 // RECHAZAR COBRO
-router.post('/rechazar-cobro', verificarToken, verificarAdmin, async (req, res) => {
+router.post('/rechazar-cobro', async (req, res) => {
     try {
         const { solicitud_id } = req.body;
 
@@ -572,4 +632,5 @@ router.post('/rechazar-cobro', verificarToken, verificarAdmin, async (req, res) 
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
 module.exports = router;
