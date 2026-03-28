@@ -440,5 +440,136 @@ router.get('/historial-usuario/:usuarioId', verificarToken, verificarAdmin, asyn
         res.status(500).json({ error: 'Error al obtener historial' });
     }
 });
+router.get('/solicitudes-cobro', verificarToken, verificarAdmin, async (req, res) => {
+    try {
+        const result = await db.query(
+            `SELECT sc.*, u.usuario 
+             FROM solicitudes_cobro sc
+             JOIN usuarios u ON sc.usuario_id = u.id
+             WHERE sc.estado = 'pendiente'
+             ORDER BY sc.fecha_solicitud DESC`
+        );
 
+        res.json(result.rows);
+
+    } catch (error) {
+        console.error('Error cargando solicitudes de cobro:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
+// APROBAR COBRO
+router.post('/aprobar-cobro', verificarToken, verificarAdmin, async (req, res) => {
+    const client = await db.connect();
+    
+    try {
+        await client.query('BEGIN');
+
+        const { solicitud_id } = req.body;
+
+        // Obtener solicitud
+        const solicitud = await client.query(
+            `SELECT * FROM solicitudes_cobro 
+             WHERE id = $1 AND estado = 'pendiente' 
+             FOR UPDATE`,
+            [solicitud_id]
+        );
+
+        if (solicitud.rows.length === 0) {
+            throw new Error('Solicitud no encontrada o ya procesada');
+        }
+
+        const solicitudData = solicitud.rows[0];
+        const montoCobro = Number(solicitudData.monto);
+        const usuarioId = Number(solicitudData.usuario_id);
+
+        // Obtener datos del usuario
+        const usuario = await client.query(
+            'SELECT fichas, total_recargado, ganancias_congeladas FROM usuarios WHERE id = $1 FOR UPDATE',
+            [usuarioId]
+        );
+
+        const inversion = usuario.rows[0].total_recargado || 0;
+        const gananciasSesion = usuario.rows[0].fichas > inversion ? usuario.rows[0].fichas - inversion : 0;
+        let nuevasGananciasCongeladas = (usuario.rows[0].ganancias_congeladas || 0) + gananciasSesion;
+        let nuevoSaldo = usuario.rows[0].fichas;
+
+        // Descontar el monto cobrado
+        if (nuevasGananciasCongeladas >= montoCobro) {
+            nuevasGananciasCongeladas -= montoCobro;
+        } else {
+            // Si no alcanza con las congeladas, descontar del saldo
+            nuevoSaldo = nuevoSaldo - (montoCobro - nuevasGananciasCongeladas);
+            nuevasGananciasCongeladas = 0;
+            
+            // Asegurar que el saldo no sea negativo
+            if (nuevoSaldo < 0) nuevoSaldo = 0;
+            
+            await client.query(
+                'UPDATE usuarios SET fichas = $1 WHERE id = $2',
+                [nuevoSaldo, usuarioId]
+            );
+        }
+
+        // Actualizar ganancias congeladas
+        await client.query(
+            'UPDATE usuarios SET ganancias_congeladas = $1 WHERE id = $2',
+            [nuevasGananciasCongeladas, usuarioId]
+        );
+
+        // Marcar solicitud como aprobada
+        await client.query(
+            `UPDATE solicitudes_cobro 
+             SET estado = 'aprobado', fecha_procesado = NOW() 
+             WHERE id = $1`,
+            [solicitud_id]
+        );
+
+        // Registrar transacción de cobro
+        try {
+            await client.query(
+                `INSERT INTO transacciones (usuario_id, tipo, fichas, descripcion) 
+                 VALUES ($1, 'cobro', $2, $3)`,
+                [usuarioId, -montoCobro, `Cobro de ₲${montoCobro} aprobado por admin`]
+            );
+        } catch (transError) {
+            console.log('⚠️ Tabla transacciones no existe, continuando...');
+        }
+
+        await client.query('COMMIT');
+        
+        console.log(`✅ Cobro de ₲${montoCobro} aprobado para usuario ${usuarioId}`);
+        res.json({ success: true, message: `Cobro de ₲${montoCobro} aprobado` });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('❌ Error aprobando cobro:', error.message);
+        res.status(500).json({ 
+            success: false,
+            error: error.message 
+        });
+    } finally {
+        client.release();
+    }
+});
+
+// RECHAZAR COBRO
+router.post('/rechazar-cobro', verificarToken, verificarAdmin, async (req, res) => {
+    try {
+        const { solicitud_id } = req.body;
+
+        await db.query(
+            `UPDATE solicitudes_cobro 
+             SET estado = 'rechazado', fecha_procesado = NOW() 
+             WHERE id = $1 AND estado = 'pendiente'`,
+            [solicitud_id]
+        );
+
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error('Error rechazando cobro:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
 module.exports = router;
