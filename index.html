@@ -192,7 +192,7 @@
             justify-content: flex-end;
         }
 
-        .btn-actualizar, .btn-recargar, .logout-btn {
+        .btn-actualizar, .btn-recargar, .logout-btn, .btn-cobrar {
             border: none;
             padding: 8px 16px;
             border-radius: 30px;
@@ -212,6 +212,16 @@
         .btn-recargar {
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
+        }
+
+        .btn-cobrar {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+        }
+
+        .btn-cobrar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .logout-btn {
@@ -256,7 +266,7 @@
                 margin-top: 5px;
             }
             
-            .btn-actualizar, .btn-recargar, .logout-btn {
+            .btn-actualizar, .btn-recargar, .logout-btn, .btn-cobrar {
                 flex: 1;
                 text-align: center;
                 padding: 10px 12px;
@@ -660,6 +670,7 @@
         </div>
         <div class="botones-acciones">
             <button class="btn-actualizar" onclick="actualizarSaldoManual()">🔄 ACTUALIZAR</button>
+            <button class="btn-cobrar" id="btn-cobrar" onclick="solicitarCobro()">💰 COBRAR</button>
             <button class="btn-recargar" onclick="abrirModalRecarga()">RECARGAR</button>
             <button class="logout-btn" onclick="cerrarSesion()">SALIR</button>
         </div>
@@ -767,6 +778,14 @@
             if (isNaN(entero)) return '0';
             return entero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
         }
+
+        function calcularAPagar() {
+            const inversion = usuarioActual.total_recargado || 0;
+            const gananciasCongeladas = usuarioActual.ganancias_congeladas || 0;
+            const gananciasSesion = fichas > inversion ? fichas - inversion : 0;
+            return gananciasCongeladas + gananciasSesion;
+        }
+
         async function actualizarSaldoManual() {
             if (jugando) {
                 mostrarBurbuja('⏳ Esperá a que termine el juego', 'error');
@@ -786,6 +805,7 @@
                 
                 fichas = nuevoSaldo;
                 usuarioActual.total_recargado = data.usuario.total_recargado || 0;
+                usuarioActual.ganancias_congeladas = data.usuario.ganancias_congeladas || 0;
                 actualizarFichas();
                 
                 if (diferencia > 0) {
@@ -808,6 +828,7 @@
                 usuarioActual = data.usuario;
                 fichas = data.usuario.fichas || 0;
                 usuarioActual.total_recargado = data.usuario.total_recargado || 0;
+                usuarioActual.ganancias_congeladas = data.usuario.ganancias_congeladas || 0;
                 document.getElementById('user-nombre').textContent = usuarioActual.usuario;
                 actualizarFichas();
                 const statsGuardadas = localStorage.getItem(`stats_${usuarioActual.id}`);
@@ -818,10 +839,51 @@
 
         function actualizarFichas() {
             document.getElementById('fichas').textContent = formatoNumero(fichas);
-            const inversion = usuarioActual.total_recargado || 0;
-            const aPagar = fichas > inversion ? fichas - inversion : 0;
+            const aPagar = calcularAPagar();
             document.getElementById('a-pagar').textContent = formatoNumero(aPagar);
+            
+            // Habilitar/deshabilitar botón COBRAR
+            const btnCobrar = document.getElementById('btn-cobrar');
+            if (btnCobrar) {
+                btnCobrar.disabled = aPagar <= 0 || jugando;
+            }
             actualizarBotonesApuesta();
+        }
+
+        async function solicitarCobro() {
+            if (jugando) {
+                mostrarBurbuja('⏳ Esperá a que termine el juego', 'error');
+                return;
+            }
+            
+            const aPagar = calcularAPagar();
+            if (aPagar <= 0) {
+                mostrarBurbuja('❌ No tenés ganancias para cobrar', 'error');
+                return;
+            }
+            
+            mostrarBurbuja('📤 Enviando solicitud de cobro...', 'win');
+            
+            try {
+                const res = await fetch(`${API_URL}/solicitar-cobro`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ monto: aPagar })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    mostrarBurbuja(`✅ Solicitud de ₲${formatoNumero(aPagar)} enviada. Esperá aprobación.`, 'win');
+                    // Actualizar datos
+                    await actualizarSaldoManual();
+                } else {
+                    mostrarBurbuja('❌ ' + (data.error || 'Error al solicitar cobro'), 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarBurbuja('❌ Error de conexión', 'error');
+            }
         }
 
         function toggleTurbo() {
@@ -927,6 +989,7 @@
             document.getElementById('stop1').disabled = false;
             document.getElementById('stop2').disabled = false;
             document.getElementById('stop3').disabled = false;
+            document.getElementById('btn-cobrar').disabled = true;
             
             fichas -= costo;
             actualizarFichas();
@@ -948,6 +1011,7 @@
                 const data = await res.json();
                 fichas = data.nuevas_fichas;
                 usuarioActual.total_recargado = data.total_recargado || usuarioActual.total_recargado;
+                usuarioActual.ganancias_congeladas = data.ganancias_congeladas || 0;
                 actualizarFichas();
             } catch(e) { 
                 console.error('Error en jugada:', e);
@@ -978,6 +1042,7 @@
             document.getElementById('stop1').disabled = true;
             document.getElementById('stop2').disabled = true;
             document.getElementById('stop3').disabled = true;
+            document.getElementById('btn-cobrar').disabled = calcularAPagar() <= 0;
         }
 
         function actualizarEstadisticas() {
@@ -1015,45 +1080,44 @@
             document.getElementById('modal-recarga').style.display = 'none'; 
         }
         
-    async function confirmarCompra() {
-    if (!packSeleccionado) return;
-    const btn = document.getElementById('btn-comprar');
-    btn.disabled = true; 
-    btn.textContent = "⏳...";
-    
-    try {
-        const res = await fetch(`${API_URL}/recargas/solicitar`, {
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json', 'Authorization': token },
-            body: JSON.stringify({ fichas: packSeleccionado.fichas, monto: packSeleccionado.precio })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            // ✅ AHORA SÍ: usa formatoNumero() para ambos
-            const fichasFormateadas = formatoNumero(packSeleccionado.fichas);
-            const montoFormateado = formatoNumero(packSeleccionado.precio);
+        async function confirmarCompra() {
+            if (!packSeleccionado) return;
+            const btn = document.getElementById('btn-comprar');
+            btn.disabled = true; 
+            btn.textContent = "⏳...";
             
-            const msg = encodeURIComponent(`💰 RECARGA\nUsuario: ${usuarioActual.usuario}\nPack: ${fichasFormateadas} créditos\nMonto: ₲${montoFormateado}\n\nYa transferí, por favor acreditar. Gracias!`);
-            const whatsappUrl = `https://wa.me/595983775018?text=${msg}`;
+            try {
+                const res = await fetch(`${API_URL}/recargas/solicitar`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ fichas: packSeleccionado.fichas, monto: packSeleccionado.precio })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    const fichasFormateadas = formatoNumero(packSeleccionado.fichas);
+                    const montoFormateado = formatoNumero(packSeleccionado.precio);
+                    
+                    const msg = encodeURIComponent(`💰 RECARGA\nUsuario: ${usuarioActual.usuario}\nPack: ${fichasFormateadas} créditos\nMonto: ₲${montoFormateado}\n\nYa transferí, por favor acreditar. Gracias!`);
+                    const whatsappUrl = `https://wa.me/595983775018?text=${msg}`;
+                    
+                    window.location.href = whatsappUrl;
+                    
+                    mostrarBurbuja('📱 Abriendo WhatsApp...', 'win');
+                    cerrarModal();
+                } else {
+                    alert('Error: ' + (data.error || 'Error al enviar'));
+                }
+            } catch(e) { 
+                alert('Error de conexión'); 
+                console.error(e);
+            }
             
-            window.location.href = whatsappUrl;
-            
-            mostrarBurbuja('📱 Abriendo WhatsApp...', 'win');
-            cerrarModal();
-        } else {
-            alert('Error: ' + (data.error || 'Error al enviar'));
+            setTimeout(() => {
+                btn.disabled = false; 
+                btn.textContent = "✅ SOLICITAR";
+            }, 2000);
         }
-    } catch(e) { 
-        alert('Error de conexión'); 
-        console.error(e);
-    }
-    
-    setTimeout(() => {
-        btn.disabled = false; 
-        btn.textContent = "✅ SOLICITAR";
-    }, 2000);
-}
         
         function cerrarSesion() { 
             sessionStorage.removeItem('token'); 
