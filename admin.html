@@ -121,6 +121,21 @@
             color: white;
         }
 
+        .badge-pendiente {
+            background: #ff9800;
+            color: white;
+        }
+
+        .badge-aprobado {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .badge-rechazado {
+            background: #f44336;
+            color: white;
+        }
+
         .btn {
             padding: 8px 12px;
             border: none;
@@ -141,6 +156,16 @@
         }
 
         .btn-block {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-danger {
             background: #f44336;
             color: white;
         }
@@ -539,6 +564,18 @@
             width: 100%;
             border: 2px solid gold;
         }
+
+        .cobros-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .cobro-monto {
+            font-weight: bold;
+            color: #4CAF50;
+        }
     </style>
 </head>
 <body>
@@ -567,6 +604,28 @@
                 <div class="stat-value" id="total-recargas">0 ₲</div>
                 <div>💰 Total Recargado (₲)</div>
             </div>
+        </div>
+
+        <!-- Solicitudes de Cobro -->
+        <div class="cobros-container">
+            <h2 style="margin-bottom: 20px;">💰 Solicitudes de Cobro</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>💰 Monto a Cobrar (₲)</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="cobros-body">
+                    <tr>
+                        <td colspan="6" style="text-align: center;">Cargando...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="solicitudes-container">
@@ -770,8 +829,7 @@
                             <th>Ganancia</th>
                             <th>Combinación</th>
                             <th>Resultado</th>
-                        </tr>
-                    </thead>
+                         </thead>
                     <tbody>
             `;
             
@@ -783,18 +841,18 @@
                 
                 html += `
                     <tr>
-                        <td>${fecha}</td>
-                        <td>🪙 ${formatoNumero(j.apuesta)}</td>
-                        <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
-                        <td style="font-size: 20px;">${j.combinacion}</td>
-                        <td class="${resultadoClass}">${resultadoText}</td>
-                    </tr>
+                        <td>${fecha} 72
+                        72🪙 ${formatoNumero(j.apuesta)} 72
+                        <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)} 72
+                        <td style="font-size: 20px;">${j.combinacion} 72
+                        <td class="${resultadoClass}">${resultadoText} 72
+                     </tr>
                 `;
             });
             
             html += `
                     </tbody>
-                </table>
+                 </table>
             `;
             
             contentDiv.innerHTML = html;
@@ -883,6 +941,7 @@
                 await Promise.all([
                     cargarUsuarios(),
                     cargarSolicitudes(),
+                    cargarSolicitudesCobro(),
                     cargarEstadisticas()
                 ]);
             } catch (error) {
@@ -891,6 +950,101 @@
                     alert('⛔ Sesión expirada');
                     cerrarSesion();
                 }
+            }
+        }
+
+        async function cargarSolicitudesCobro() {
+            try {
+                const res = await fetch(`${API_URL}/admin/solicitudes-cobro`, {
+                    headers: { 'Authorization': token }
+                });
+
+                if (res.status === 401 || res.status === 403) throw new Error('401');
+                if (!res.ok) throw new Error(`Error ${res.status}`);
+
+                const solicitudes = await res.json();
+                const tbody = document.getElementById('cobros-body');
+                
+                if (!solicitudes || solicitudes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes de cobro pendientes</td></tr>';
+                } else {
+                    tbody.innerHTML = '';
+                    solicitudes.forEach(s => {
+                        const estadoClass = s.estado === 'pendiente' ? 'badge-pendiente' : (s.estado === 'aprobado' ? 'badge-aprobado' : 'badge-rechazado');
+                        const estadoText = s.estado === 'pendiente' ? '⏳ Pendiente' : (s.estado === 'aprobado' ? '✅ Aprobado' : '❌ Rechazado');
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${s.id}</td>
+                            <td><strong>${s.usuario}</strong></td>
+                            <td class="cobro-monto">₲ ${formatoNumero(s.monto)}</td>
+                            <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+                            <td><span class="badge ${estadoClass}">${estadoText}</span></td>
+                            <td>
+                                ${s.estado === 'pendiente' ? `
+                                    <button class="btn btn-success" onclick="aprobarCobro(${s.id}, ${s.usuario_id}, ${s.monto})">✅ Aprobar</button>
+                                    <button class="btn btn-danger" onclick="rechazarCobro(${s.id})">❌ Rechazar</button>
+                                ` : '-'}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (error) {
+                console.error('Error cargando solicitudes de cobro:', error);
+                if (error.message === '401') cerrarSesion();
+            }
+        }
+
+        async function aprobarCobro(solicitudId, usuarioId, monto) {
+            if (!confirm(`¿Aprobar cobro de ₲${formatoNumero(monto)}?`)) return;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/aprobar-cobro`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ solicitud_id: solicitudId })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert(`✅ Cobro de ₲${formatoNumero(monto)} aprobado. Se descontaron las fichas.`);
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function rechazarCobro(solicitudId) {
+            if (!confirm('¿Rechazar esta solicitud de cobro?')) return;
+
+            try {
+                const res = await fetch(`${API_URL}/admin/rechazar-cobro`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ solicitud_id: solicitudId })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('✅ Solicitud de cobro rechazada');
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
             }
         }
 
@@ -1253,6 +1407,7 @@
             cargarLimiteDesdeBackend();
             
             let ultimaCantidadSolicitudes = 0;
+            let ultimaCantidadCobros = 0;
 
             async function verificarSolicitudesNuevas() {
                 try {
@@ -1275,7 +1430,29 @@
                 }
             }
 
+            async function verificarCobrosNuevos() {
+                try {
+                    const res = await fetch(`${API_URL}/admin/solicitudes-cobro`, {
+                        headers: { 'Authorization': token }
+                    });
+                    
+                    if (!res.ok) return;
+                    
+                    const cobros = await res.json();
+                    const cantidadActual = cobros.length;
+                    
+                    if (cantidadActual !== ultimaCantidadCobros) {
+                        console.log(`💰 Nuevos cobros: ${ultimaCantidadCobros} → ${cantidadActual}`);
+                        await cargarSolicitudesCobro();
+                        ultimaCantidadCobros = cantidadActual;
+                    }
+                } catch (error) {
+                    console.error('Error verificando cobros:', error);
+                }
+            }
+
             setInterval(verificarSolicitudesNuevas, 5000);
+            setInterval(verificarCobrosNuevos, 5000);
             setInterval(cargarEstadisticasVentas, 30000);
         }
     </script>
