@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -15,6 +16,15 @@ app.use(cors({
 
 // Middleware para JSON
 app.use(express.json());
+
+// ✅ SERVIR ARCHIVOS ESTÁTICOS (HTML, CSS, JS)
+// Esto hace que todos tus archivos (index.html, login.html, etc.) sean accesibles
+app.use(express.static(__dirname));
+
+// ✅ RUTA PRINCIPAL - sirve index.html cuando alguien entra a la raíz
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Importar rutas
 const authRoutes = require('./routes/auth');
@@ -42,5 +52,7 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+    console.log(`✅ Frontend disponible en: http://localhost:${PORT}`);
+    console.log(`✅ API disponible en: http://localhost:${PORT}/api`);
     console.log('✅ Base de datos conectada');
 });
