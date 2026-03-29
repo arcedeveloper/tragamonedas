@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Configuración de CORS (una sola vez)
+// ✅ Configuración de CORS
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -17,13 +17,14 @@ app.use(cors({
 // Middleware para JSON
 app.use(express.json());
 
-// ✅ SERVIR ARCHIVOS ESTÁTICOS (HTML, CSS, JS)
-// Esto hace que todos tus archivos (index.html, login.html, etc.) sean accesibles
-app.use(express.static(__dirname));
+// ✅ SERVIR ARCHIVOS ESTÁTICOS DESDE LA RAÍZ DEL REPOSITORIO
+// __dirname = /opt/render/project/src/backend
+// .. = /opt/render/project/src (donde están los HTML)
+app.use(express.static(path.join(__dirname, '..')));
 
-// ✅ RUTA PRINCIPAL - sirve index.html cuando alguien entra a la raíz
+// ✅ RUTA PRINCIPAL - sirve index.html desde la raíz
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 // Importar rutas
