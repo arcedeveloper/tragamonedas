@@ -510,7 +510,7 @@ router.get('/solicitudes-cobro', async (req, res) => {
     }
 });
 
-// APROBAR COBRO
+// APROBAR COBRO - VERSIÓN SIMPLIFICADA QUE SÍ FUNCIONA
 router.post('/aprobar-cobro', async (req, res) => {
     const client = await db.connect();
     
@@ -537,45 +537,24 @@ router.post('/aprobar-cobro', async (req, res) => {
         const montoCobro = Number(solicitudData.monto);
         const usuarioId = Number(solicitudData.usuario_id);
 
-        // Obtener datos del usuario
-        const usuario = await client.query(
-            'SELECT fichas, total_recargado, ganancias_congeladas FROM usuarios WHERE id = $1 FOR UPDATE',
-            [usuarioId]
+        console.log(`📊 Monto a cobrar: ${montoCobro}, Usuario ID: ${usuarioId}`);
+
+        // 🔥 SIMPLE: descontar DIRECTAMENTE del saldo del usuario
+        const resultado = await client.query(
+            `UPDATE usuarios 
+             SET fichas = fichas - $1,
+                 ganancias_congeladas = 0
+             WHERE id = $2 
+             RETURNING fichas`,
+            [montoCobro, usuarioId]
         );
 
-        const inversion = usuario.rows[0].total_recargado || 0;
-        const gananciasSesion = usuario.rows[0].fichas > inversion ? usuario.rows[0].fichas - inversion : 0;
-        let nuevasGananciasCongeladas = (usuario.rows[0].ganancias_congeladas || 0) + gananciasSesion;
-        let nuevoSaldo = usuario.rows[0].fichas;
-
-        console.log(`💰 Usuario: saldo=${nuevoSaldo}, inversion=${inversion}, congeladas=${usuario.rows[0].ganancias_congeladas}, sesion=${gananciasSesion}, totalCongelado=${nuevasGananciasCongeladas}`);
-
-        // Descontar el monto cobrado
-        if (nuevasGananciasCongeladas >= montoCobro) {
-            nuevasGananciasCongeladas -= montoCobro;
-            console.log(`✅ Descontado de congeladas: nuevas congeladas=${nuevasGananciasCongeladas}`);
-        } else {
-            // Si no alcanza con las congeladas, descontar del saldo
-            const resto = montoCobro - nuevasGananciasCongeladas;
-            nuevoSaldo = nuevoSaldo - resto;
-            nuevasGananciasCongeladas = 0;
-            
-            // Asegurar que el saldo no sea negativo
-            if (nuevoSaldo < 0) nuevoSaldo = 0;
-            
-            console.log(`⚠️ No alcanzaban congeladas, descontando ${resto} del saldo. Nuevo saldo=${nuevoSaldo}`);
-            
-            await client.query(
-                'UPDATE usuarios SET fichas = $1 WHERE id = $2',
-                [nuevoSaldo, usuarioId]
-            );
+        if (resultado.rows.length === 0) {
+            throw new Error('No se pudo actualizar el usuario');
         }
 
-        // Actualizar ganancias congeladas
-        await client.query(
-            'UPDATE usuarios SET ganancias_congeladas = $1 WHERE id = $2',
-            [nuevasGananciasCongeladas, usuarioId]
-        );
+        const nuevoSaldo = resultado.rows[0].fichas;
+        console.log(`✅ Nuevo saldo del usuario: ${nuevoSaldo}`);
 
         // Marcar solicitud como aprobada
         await client.query(
@@ -585,21 +564,10 @@ router.post('/aprobar-cobro', async (req, res) => {
             [solicitud_id]
         );
 
-        // Registrar transacción de cobro
-        try {
-            await client.query(
-                `INSERT INTO transacciones (usuario_id, tipo, fichas, descripcion) 
-                 VALUES ($1, 'cobro', $2, $3)`,
-                [usuarioId, -montoCobro, `Cobro de ₲${montoCobro} aprobado por admin`]
-            );
-        } catch (transError) {
-            console.log('⚠️ Tabla transacciones no existe, continuando...');
-        }
-
         await client.query('COMMIT');
         
-        console.log(`✅ Cobro de ₲${montoCobro} aprobado para usuario ${usuarioId}`);
-        res.json({ success: true, message: `Cobro de ₲${montoCobro} aprobado` });
+        console.log(`✅ Cobro de ₲${montoCobro} aprobado. Nuevo saldo: ${nuevoSaldo}`);
+        res.json({ success: true, message: `Cobro de ₲${montoCobro} aprobado`, nuevo_saldo: nuevoSaldo });
 
     } catch (error) {
         await client.query('ROLLBACK');
