@@ -538,16 +538,15 @@ router.post('/aprobar-cobro', async (req, res) => {
         const usuarioId = Number(solicitudData.usuario_id);
 
         console.log(`📊 Monto a cobrar: ${montoCobro}, Usuario ID: ${usuarioId}`);
-
-        // 🔥 SIMPLE: descontar DIRECTAMENTE del saldo del usuario
         const resultado = await client.query(
-            `UPDATE usuarios 
-             SET fichas = fichas - $1,
-                 ganancias_congeladas = 0
-             WHERE id = $2 
-             RETURNING fichas`,
-            [montoCobro, usuarioId]
-        );
+    `UPDATE usuarios 
+     SET fichas = fichas - $1,
+         ganancias_congeladas = 0,
+         total_recargado = 0
+     WHERE id = $2 
+     RETURNING fichas`,
+    [montoCobro, usuarioId]
+);
 
         if (resultado.rows.length === 0) {
             throw new Error('No se pudo actualizar el usuario');
