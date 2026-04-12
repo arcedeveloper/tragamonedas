@@ -217,19 +217,14 @@ router.post('/rechazar-recarga', async (req, res) => {
         res.status(500).json({ error: 'Error servidor' });
     }
 });
-
-/* ==================================================
-   FICHAS MANUALES
-================================================== */
-
-// AGREGAR FICHAS
 router.post('/agregar-fichas', async (req, res) => {
     try {
         const { usuario_id, fichas } = req.body;
-
+        
         await db.query(`
             UPDATE usuarios
-            SET fichas = fichas + $1
+            SET fichas = fichas + $1,
+                total_recargado = total_recargado + $1
             WHERE id = $2
         `, [fichas, usuario_id]);
 
@@ -240,8 +235,6 @@ router.post('/agregar-fichas', async (req, res) => {
         res.status(500).json({ error: 'Error servidor' });
     }
 });
-
-// QUITAR FICHAS
 router.post('/quitar-fichas', async (req, res) => {
     try {
         const { usuario_id, fichas } = req.body;
