@@ -1048,21 +1048,34 @@ function abrirModalFichas(userId, usuario) {
     const input = document.getElementById('fichas-agregar');
     const montoSpan = document.getElementById('monto-formateado');
     
-    // Función para formatear mientras escribe
     function formatearMonto() {
-        let valor = input.value.replace(/\./g, ''); // sacar puntos existentes
-        valor = valor.replace(/[^0-9]/g, ''); // solo números
-        if (valor === '') valor = '0';
-        let numero = parseInt(valor);
+        // Obtener el valor actual, eliminar cualquier carácter que no sea número
+        let valorLimpio = input.value.replace(/[^0-9]/g, '');
+        
+        // Si está vacío, mostrar 0
+        if (valorLimpio === '') {
+            input.value = '';
+            montoSpan.textContent = '₲ 0';
+            return;
+        }
+        
+        // Convertir a número
+        let numero = parseInt(valorLimpio, 10);
         if (isNaN(numero)) numero = 0;
+        
+        // Formatear con puntos como separador de miles
         let formateado = numero.toLocaleString('es-ES');
+        
+        // Actualizar el input y el span
         input.value = formateado;
         montoSpan.textContent = '₲ ' + formateado;
     }
     
+    // Inicializar con 50.000
     input.value = '50.000';
     formatearMonto();
     
+    // Escuchar eventos de escritura
     input.oninput = formatearMonto;
     
     document.getElementById('modal-fichas').style.display = 'flex';
