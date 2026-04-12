@@ -675,7 +675,7 @@
             }
         }
 
-   function mostrarHistorial(data, usuarioNombre) {
+  function mostrarHistorial(data, usuarioNombre) {
     const contentDiv = document.getElementById('historial-content');
     const historial = data.historial || [];
     const stats = data.stats || {};
@@ -707,8 +707,8 @@
         const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
         const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
         
-        // ✅ CORREGIDO: separar los símbolos con espacios en blanco
-        const combinacionConEspacios = j.combinacion.split('').join(' ');
+        // ✅ CORREGIDO: usar Array.from() para separar correctamente emojis y números
+        const combinacionConEspacios = Array.from(j.combinacion).join(' ');
         
         html += `<tr>
             <td>${fecha}</td>
