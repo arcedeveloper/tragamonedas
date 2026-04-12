@@ -165,22 +165,17 @@
         /* CLASES DE COLORES PARA LAS CELDAS */
         .monedas-cell {
             font-weight: bold;
-            color: #f39c12;  /* Naranja */
+            color: #f39c12;
         }
 
         .guarani-cell {
             font-weight: bold;
-            color: #4CAF50;  /* Verde */
-        }
-
-        .ganancias-cell {
-            font-weight: bold;
-            color: #f39c12;  /* Naranja */
+            color: #4CAF50;
         }
 
         .pagar-cell {
             font-weight: bold;
-            color: #4CAF50;  /* Verde */
+            color: #4CAF50;
         }
 
         /* BOTONES */
@@ -574,12 +569,12 @@
             <div style="overflow-x: auto;">
                 <table>
                     <thead><tr><th>ID</th><th>Usuario</th><th>💰 Monto</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-                    <tbody id="cobros-body"><tr><td colspan="6">Cargando...<\/td></tr></tbody>
+                    <tbody id="cobros-body"><tr><td colspan="6">Cargando...</td></tr></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Solicitudes de Recarga - CORREGIDO -->
+        <!-- Solicitudes de Recarga -->
         <div class="solicitudes-container">
             <h2>⏳ Solicitudes de Recarga</h2>
             <div style="overflow-x: auto;">
@@ -595,7 +590,7 @@
                         </tr>
                     </thead>
                     <tbody id="solicitudes-body">
-                        <tr><td colspan="6" style="text-align: center;">Cargando...<\/td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -651,22 +646,40 @@
         </div>
     </div>
 
-<div id="modal-fichas" class="modal"><div class="modal-content">
-    <h3>🪙 Agregar Monedas</h3>
-    <div class="input-group"><label>Usuario: <span id="modal-usuario"></span></label></div>
-    <div class="input-group">
-        <label>🪙 Cantidad de monedas (1 moneda = ₲1):</label>
-        <input type="text" id="fichas-agregar" value="50.000" style="font-size: 18px; padding: 10px;">
-        <div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 16px; font-weight: bold;">
-            💰 Monto a cobrar al usuario: <span id="monto-formateado" style="color: #4CAF50;">₲ 50.000</span>
+    <!-- Modal Agregar Monedas -->
+    <div id="modal-fichas" class="modal"><div class="modal-content">
+        <h3>🪙 Agregar Monedas</h3>
+        <div class="input-group"><label>Usuario: <span id="modal-usuario"></span></label></div>
+        <div class="input-group">
+            <label>🪙 Cantidad de monedas (1 moneda = ₲1):</label>
+            <input type="text" id="fichas-agregar" value="50.000" style="font-size: 18px; padding: 10px;">
+            <div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 16px; font-weight: bold;">
+                💰 Monto a cobrar al usuario: <span id="monto-formateado" style="color: #4CAF50;">₲ 50.000</span>
+            </div>
         </div>
-        <div style="margin-top: 5px; font-size: 11px; color: #666;">
-        </div>
-    </div>
-    <button class="btn-modal" onclick="confirmarAgregarFichas()">Agregar Monedas</button>
-    <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">Cancelar</button>
-</div></div>
+        <button class="btn-modal" onclick="confirmarAgregarFichas()">Agregar Monedas</button>
+        <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">Cancelar</button>
+    </div></div>
 
+    <!-- Modal Quitar Monedas (NUEVO) -->
+    <div id="modal-quitar-fichas" class="modal"><div class="modal-content">
+        <h3>➖ Quitar Monedas</h3>
+        <div class="input-group"><label>Usuario: <span id="modal-usuario-quitar"></span></label></div>
+        <div class="input-group">
+            <label>🪙 Cantidad de monedas a quitar:</label>
+            <input type="text" id="fichas-quitar" value="10.000" style="font-size: 18px; padding: 10px;">
+            <div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 16px; font-weight: bold;">
+                💰 Monto a descontar: <span id="monto-quitar-formateado" style="color: #f44336;">₲ 10.000</span>
+            </div>
+            <div style="margin-top: 5px; font-size: 11px; color: #666;">
+                ⚠️ Se restarán de su saldo e inversión
+            </div>
+        </div>
+        <button class="btn-modal" onclick="confirmarQuitarFichas()" style="background: #ff9800;">➖ Quitar Monedas</button>
+        <button class="btn-modal" onclick="cerrarModalQuitar()" style="background: #666;">Cancelar</button>
+    </div></div>
+
+    <!-- Modal Historial -->
     <div id="modal-historial" class="modal-historial"><div class="modal-historial-content">
         <div class="modal-historial-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50; padding-bottom: 15px; margin-bottom: 20px;">
             <h2>📜 Historial de Jugadas</h2>
@@ -680,6 +693,7 @@
         
         let token = sessionStorage.getItem('token') || sessionStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
+        let usuarioSeleccionadoQuitar = null;
 
         function formatoNumero(num) {
             if (num === null || num === undefined) return '0';
@@ -753,16 +767,15 @@
             historial.forEach(j => {
                 const fecha = new Date(j.fecha).toLocaleString();
                 const esGanancia = j.ganancia > 0;
-                const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
                 const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
                 const combinacionConEspacios = Array.from(j.combinacion).join(' ');
                 
                 html += `<tr>
                     <td>${fecha}</td>
                     <td>🪙 ${formatoNumero(j.apuesta)}</td>
-                    <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
+                    <td>🪙 ${formatoNumero(j.ganancia)}</td>
                     <td style="font-size: 20px; font-family: monospace;">${combinacionConEspacios}</td>
-                    <td class="${resultadoClass}">${resultadoText}</td>
+                    <td>${resultadoText}</td>
                 </tr>`;
             });
             
@@ -846,7 +859,7 @@
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('cobros-body');
                 if (!solicitudes.length) {
-                    tbody.innerHTML = '<td><td colspan="6" style="text-align: center;">No hay solicitudes de cobro pendientes<\/td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes de cobro pendientes</td></tr>';
                     return;
                 }
                 tbody.innerHTML = '';
@@ -855,13 +868,13 @@
                     const estadoText = s.estado === 'pendiente' ? '⏳ Pendiente' : (s.estado === 'aprobado' ? '✅ Aprobado' : '❌ Rechazado');
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${s.id}<\/td>
-                        <td><strong>${s.usuario}</strong><\/td>
-                        <td class="cobro-monto">₲ ${formatoNumero(s.monto)}<\/td>
-                        <td>${new Date(s.fecha_solicitud).toLocaleString()}<\/td>
-                        <td><span class="badge ${estadoClass}">${estadoText}</span><\/td>
+                        <td>${s.id}</td>
+                        <td><strong>${s.usuario}</strong></td>
+                        <td class="cobro-monto">₲ ${formatoNumero(s.monto)}</td>
+                        <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+                        <td><span class="badge ${estadoClass}">${estadoText}</span></td>
                         <td>${s.estado === 'pendiente' ? `<button class="btn btn-success" onclick="aprobarCobro(${s.id}, ${s.usuario_id}, ${s.monto})">✅ Aprobar</button>
-                                <button class="btn btn-danger" onclick="rechazarCobro(${s.id})">❌ Rechazar</button>` : '-'}<\/td>
+                                <button class="btn btn-danger" onclick="rechazarCobro(${s.id})">❌ Rechazar</button>` : '-'}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -958,7 +971,6 @@
             container.innerHTML = html;
         }
 
-        // FUNCIÓN CORREGIDA - Solicitudes de Recarga
         async function cargarSolicitudes() {
             try {
                 const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, { headers: { 'Authorization': token } });
@@ -966,7 +978,7 @@
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('solicitudes-body');
                 if (!solicitudes.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td></tr>';
+                    tbody.innerHTML = '<td><td colspan="6" style="text-align: center;">No hay solicitudes pendientes<\/td></tr>';
                     return;
                 }
                 tbody.innerHTML = '';
@@ -1001,24 +1013,23 @@
                     if (u.role === 'admin') return;
                     const saldo = Math.floor(u.fichas || 0);
                     const inversion = Math.floor(u.total_recargado || 0);
-                    const ganancias = saldo - inversion;
-                    const aPagar = ganancias > 0 ? ganancias : 0;
+                    const aPagar = saldo > inversion ? saldo - inversion : 0;
                     const tr = document.createElement('tr');
-                   tr.innerHTML = `
-    <td>${u.id}</td>
-    <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
-    <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
-    <td class="guarani-cell">₲ ${formatoNumero(inversion)}</td>
-    <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
-    <td>${u.veces_jugadas || 0}</td>
-    <td>🪙 ${formatoNumero(u.mayor_premio || 0)}</td>
-    <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
-    <td>
-        <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
-        <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖</button>
-        ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}
-    </td>
-`;
+                    tr.innerHTML = `
+                        <td>${u.id}</td>
+                        <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
+                        <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
+                        <td class="guarani-cell">₲ ${formatoNumero(inversion)}</td>
+                        <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
+                        <td>${u.veces_jugadas || 0}</td>
+                        <td>🪙 ${formatoNumero(u.mayor_premio || 0)}</td>
+                        <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
+                        <td>
+                            <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
+                            <button class="btn btn-remove" onclick="abrirModalQuitarFichas(${u.id}, '${u.usuario}')">➖</button>
+                            ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}
+                        </td>
+                    `;
                     tbody.appendChild(tr);
                 });
             } catch (error) {
@@ -1038,109 +1049,128 @@
             } catch (error) {}
         }
 
-function abrirModalFichas(userId, usuario) {
-    usuarioSeleccionado = userId;
-    document.getElementById('modal-usuario').textContent = usuario;
-    
-    const input = document.getElementById('fichas-agregar');
-    const montoSpan = document.getElementById('monto-formateado');
-    
-    function formatearMonto() {
-        let valorLimpio = input.value.replace(/[^0-9]/g, '');
-        
-        if (valorLimpio === '') {
-            input.value = '';
-            montoSpan.textContent = '₲ 0';
-            return;
+        // Modal Agregar Fichas
+        function abrirModalFichas(userId, usuario) {
+            usuarioSeleccionado = userId;
+            document.getElementById('modal-usuario').textContent = usuario;
+            
+            const input = document.getElementById('fichas-agregar');
+            const montoSpan = document.getElementById('monto-formateado');
+            
+            function formatearMonto() {
+                let valorLimpio = input.value.replace(/[^0-9]/g, '');
+                if (valorLimpio === '') {
+                    input.value = '';
+                    montoSpan.textContent = '₲ 0';
+                    return;
+                }
+                let numero = parseInt(valorLimpio, 10);
+                if (isNaN(numero)) numero = 0;
+                let formateado = numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                input.value = formateado;
+                montoSpan.textContent = '₲ ' + formateado;
+            }
+            
+            input.value = '50.000';
+            formatearMonto();
+            input.oninput = formatearMonto;
+            document.getElementById('modal-fichas').style.display = 'flex';
         }
-        
-        // Convertir a número
-        let numero = parseInt(valorLimpio, 10);
-        if (isNaN(numero)) numero = 0;
-        
-        let formateado = numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        
-        input.value = formateado;
-        montoSpan.textContent = '₲ ' + formateado;
-    }
-    
-    input.value = '50.000';
-    formatearMonto();
-    input.oninput = formatearMonto;
-    
-    document.getElementById('modal-fichas').style.display = 'flex';
-}
 
         function cerrarModal() {
             document.getElementById('modal-fichas').style.display = 'none';
         }
 
-async function confirmarAgregarFichas() {
-    // Obtener el valor sin puntos
-    const input = document.getElementById('fichas-agregar');
-    let valorTexto = input.value.replace(/\./g, '');
-    const fichas = parseInt(valorTexto);
-    
-    if (isNaN(fichas) || fichas < 1000) {
-        alert('❌ El mínimo es 1.000 monedas');
-        return;
-    }
-    
-    try {
-        const res = await fetch(`${API_URL}/admin/agregar-fichas`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
-            body: JSON.stringify({ usuario_id: usuarioSeleccionado, fichas: fichas })
-        });
-        const data = await res.json();
-        if (data.success) {
-            alert(`✅ 🪙 ${formatoNumero(fichas)} monedas agregadas (₲ ${formatoNumero(fichas)})`);
-            cerrarModal();
-            cargarDatos();
-        } else {
-            alert('Error: ' + (data.error || 'desconocido'));
+        async function confirmarAgregarFichas() {
+            const input = document.getElementById('fichas-agregar');
+            let valorTexto = input.value.replace(/\./g, '');
+            const fichas = parseInt(valorTexto);
+            
+            if (isNaN(fichas) || fichas < 1000) {
+                alert('❌ El mínimo es 1.000 monedas');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/admin/agregar-fichas`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ usuario_id: usuarioSeleccionado, fichas: fichas })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`✅ 🪙 ${formatoNumero(fichas)} monedas agregadas (₲ ${formatoNumero(fichas)})`);
+                    cerrarModal();
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
         }
-    } catch (error) {
-        alert('Error de conexión');
-    }
-}
 
-async function quitarFichas(userId) {
-    // Usar prompt con valor formateado por defecto
-    const cantidadPorDefecto = '10.000';
-    
-    const cantidad = prompt('¿Cuántas monedas querés quitar?', cantidadPorDefecto);
-    if (!cantidad) return;
-    
-    // Eliminar puntos y convertir a número
-    let cantidadLimpia = cantidad.replace(/\./g, '');
-    let cantidadNumero = parseInt(cantidadLimpia);
-    
-    if (isNaN(cantidadNumero) || cantidadNumero <= 0) {
-        alert('❌ Ingrese una cantidad válida');
-        return;
-    }
-    
-    // Confirmar con formato
-    const cantidadFormateada = formatoNumero(cantidadNumero);
-    if (!confirm(`¿Quitar 🪙 ${cantidadFormateada} monedas al usuario?`)) return;
-    
-    try {
-        const res = await fetch(`${API_URL}/admin/quitar-fichas`, {
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json', 'Authorization': token },
-            body: JSON.stringify({ usuario_id: userId, fichas: cantidadNumero })
-        });
-        const data = await res.json();
-        if (data.success) {
-            alert(`✅ 🪙 ${cantidadFormateada} monedas quitadas`);
-            cargarDatos();
-        } else {
-            alert('Error: ' + (data.error || 'desconocido'));
+        // Modal Quitar Fichas (NUEVO)
+        function abrirModalQuitarFichas(userId, usuario) {
+            usuarioSeleccionadoQuitar = userId;
+            document.getElementById('modal-usuario-quitar').textContent = usuario;
+            
+            const input = document.getElementById('fichas-quitar');
+            const montoSpan = document.getElementById('monto-quitar-formateado');
+            
+            function formatearMonto() {
+                let valorLimpio = input.value.replace(/[^0-9]/g, '');
+                if (valorLimpio === '') {
+                    input.value = '';
+                    montoSpan.textContent = '₲ 0';
+                    return;
+                }
+                let numero = parseInt(valorLimpio, 10);
+                if (isNaN(numero)) numero = 0;
+                let formateado = numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                input.value = formateado;
+                montoSpan.textContent = '₲ ' + formateado;
+            }
+            
+            input.value = '10.000';
+            formatearMonto();
+            input.oninput = formatearMonto;
+            document.getElementById('modal-quitar-fichas').style.display = 'flex';
         }
-    } catch (error) {
-        alert('Error de conexión');
-    }
-}
+
+        function cerrarModalQuitar() {
+            document.getElementById('modal-quitar-fichas').style.display = 'none';
+        }
+
+        async function confirmarQuitarFichas() {
+            const input = document.getElementById('fichas-quitar');
+            let valorTexto = input.value.replace(/\./g, '');
+            const fichas = parseInt(valorTexto);
+            
+            if (isNaN(fichas) || fichas < 1000) {
+                alert('❌ El mínimo es 1.000 monedas');
+                return;
+            }
+            
+            if (!confirm(`¿Quitar 🪙 ${formatoNumero(fichas)} monedas?`)) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/admin/quitar-fichas`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ usuario_id: usuarioSeleccionadoQuitar, fichas: fichas })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`✅ 🪙 ${formatoNumero(fichas)} monedas quitadas`);
+                    cerrarModalQuitar();
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
 
         async function aprobarSolicitud(solicitudId, usuarioId, fichas) {
             try {
