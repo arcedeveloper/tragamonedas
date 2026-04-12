@@ -1104,25 +1104,43 @@ async function confirmarAgregarFichas() {
     }
 }
 
-        async function quitarFichas(userId) {
-            const cantidad = prompt('¿Cuántas monedas querés quitar?', '10000');
-            if (!cantidad) return;
-            try {
-                const res = await fetch(`${API_URL}/admin/quitar-fichas`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                    body: JSON.stringify({ usuario_id: userId, fichas: parseInt(cantidad) })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    alert(`✅ Monedas quitadas`);
-                    cargarDatos();
-                } else {
-                    alert('Error');
-                }
-            } catch (error) {
-                alert('Error de conexión');
-            }
+async function quitarFichas(userId) {
+    // Usar prompt con valor formateado por defecto
+    const cantidadPorDefecto = '10.000';
+    
+    const cantidad = prompt('¿Cuántas monedas querés quitar?', cantidadPorDefecto);
+    if (!cantidad) return;
+    
+    // Eliminar puntos y convertir a número
+    let cantidadLimpia = cantidad.replace(/\./g, '');
+    let cantidadNumero = parseInt(cantidadLimpia);
+    
+    if (isNaN(cantidadNumero) || cantidadNumero <= 0) {
+        alert('❌ Ingrese una cantidad válida');
+        return;
+    }
+    
+    // Confirmar con formato
+    const cantidadFormateada = formatoNumero(cantidadNumero);
+    if (!confirm(`¿Quitar 🪙 ${cantidadFormateada} monedas al usuario?`)) return;
+    
+    try {
+        const res = await fetch(`${API_URL}/admin/quitar-fichas`, {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', 'Authorization': token },
+            body: JSON.stringify({ usuario_id: userId, fichas: cantidadNumero })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`✅ 🪙 ${cantidadFormateada} monedas quitadas`);
+            cargarDatos();
+        } else {
+            alert('Error: ' + (data.error || 'desconocido'));
         }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
 
         async function aprobarSolicitud(solicitudId, usuarioId, fichas) {
             try {
