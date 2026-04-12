@@ -652,14 +652,19 @@
         </div>
     </div>
 
-    <!-- Modales -->
-    <div id="modal-fichas" class="modal"><div class="modal-content">
-        <h3>🪙 Agregar Monedas</h3>
-        <div class="input-group"><label>Usuario: <span id="modal-usuario"></span></label></div>
-        <div class="input-group"><label>🪙 Monedas a agregar:</label><input type="number" id="fichas-agregar" min="1000" value="50000" step="1000"></div>
-        <button class="btn-modal" onclick="confirmarAgregarFichas()">Agregar Monedas</button>
-        <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">Cancelar</button>
-    </div></div>
+   <div id="modal-fichas" class="modal"><div class="modal-content">
+    <h3>🪙 Agregar Monedas</h3>
+    <div class="input-group"><label>Usuario: <span id="modal-usuario"></span></label></div>
+    <div class="input-group">
+        <label>🪙 Cantidad de monedas (1 moneda = ₲1):</label>
+        <input type="number" id="fichas-agregar" min="1000" value="50000" step="1000">
+        <div style="margin-top: 8px; font-size: 12px; color: #4CAF50;" id="monto-mostrar">
+            💰 Monto a cobrar al usuario: ₲ <span id="monto-formateado">50.000</span>
+        </div>
+    </div>
+    <button class="btn-modal" onclick="confirmarAgregarFichas()">✅ Agregar Monedas</button>
+    <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">❌ Cancelar</button>
+</div></div>
 
     <div id="modal-historial" class="modal-historial"><div class="modal-historial-content">
         <div class="modal-historial-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50; padding-bottom: 15px; margin-bottom: 20px;">
@@ -1034,10 +1039,20 @@
         }
 
         function abrirModalFichas(userId, usuario) {
-            usuarioSeleccionado = userId;
-            document.getElementById('modal-usuario').textContent = usuario;
-            document.getElementById('modal-fichas').style.display = 'flex';
-        }
+    usuarioSeleccionado = userId;
+    document.getElementById('modal-usuario').textContent = usuario;
+    
+    const fichasInput = document.getElementById('fichas-agregar');
+    const montoSpan = document.getElementById('monto-formateado');
+    const valorInicial = parseInt(fichasInput.value) || 0;
+    montoSpan.textContent = formatoNumero(valorInicial);
+        fichasInput.oninput = function() {
+        const valor = parseInt(this.value) || 0;
+        montoSpan.textContent = formatoNumero(valor);
+    };
+    
+    document.getElementById('modal-fichas').style.display = 'flex';
+}
 
         function cerrarModal() {
             document.getElementById('modal-fichas').style.display = 'none';
