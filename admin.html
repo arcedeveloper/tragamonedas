@@ -675,7 +675,7 @@
             }
         }
 
-       function mostrarHistorial(data, usuarioNombre) {
+   function mostrarHistorial(data, usuarioNombre) {
     const contentDiv = document.getElementById('historial-content');
     const historial = data.historial || [];
     const stats = data.stats || {};
@@ -706,13 +706,15 @@
         const esGanancia = j.ganancia > 0;
         const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
         const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
+        
+        // ✅ CORREGIDO: separar los símbolos con espacios en blanco
         const combinacionConEspacios = j.combinacion.split('').join(' ');
         
         html += `<tr>
             <td>${fecha}</td>
             <td>🪙 ${formatoNumero(j.apuesta)}</td>
             <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
-            <td style="font-size: 20px; letter-spacing: 2px;">${combinacionConEspacios}</td>
+            <td style="font-size: 20px; font-family: monospace;">${combinacionConEspacios}</td>
             <td class="${resultadoClass}">${resultadoText}</td>
         </tr>`;
     });
