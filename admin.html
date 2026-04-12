@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Tragamonedas - Admin</title>
     <style>
         * {
@@ -15,7 +15,7 @@
         body {
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container {
@@ -23,19 +23,23 @@
             margin: 0 auto;
         }
 
+        /* HEADER RESPONSIVE */
         .header {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
-            padding: 20px;
+            padding: 15px 20px;
             border-radius: 15px;
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -45,23 +49,35 @@
             background: #f44336;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
         }
 
+        @media (max-width: 550px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header h1 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* STATS GRID RESPONSIVE */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
         }
 
         .stat-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             color: white;
             text-align: center;
@@ -69,142 +85,303 @@
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             color: gold;
             margin: 10px 0;
         }
 
-        .table-container {
+        .stat-card div:last-child {
+            font-size: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .stat-value {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* TABLAS RESPONSIVE */
+        .table-container, .solicitudes-container, .cobros-container {
             background: rgba(255,255,255,0.95);
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             overflow-x: auto;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+
+        .table-container h2, .solicitudes-container h2, .cobros-container h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        @media (max-width: 550px) {
+            .table-container, .solicitudes-container, .cobros-container {
+                padding: 12px;
+            }
+            .table-container h2, .solicitudes-container h2, .cobros-container h2 {
+                font-size: 1.1rem;
+            }
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 14px;
         }
 
         th {
             background: #4CAF50;
             color: white;
-            padding: 12px;
+            padding: 10px 8px;
             text-align: left;
+            font-size: 13px;
         }
 
         td {
-            padding: 12px;
+            padding: 10px 8px;
             border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background: #f5f5f5;
-        }
-
-        .badge {
-            padding: 5px 10px;
-            border-radius: 15px;
             font-size: 12px;
-            font-weight: bold;
         }
 
-        .badge-active {
-            background: #4CAF50;
-            color: white;
+        @media (max-width: 600px) {
+            th, td {
+                padding: 8px 5px;
+                font-size: 11px;
+            }
         }
 
-        .badge-inactive {
-            background: #f44336;
-            color: white;
-        }
-
-        .badge-pendiente {
-            background: #ff9800;
-            color: white;
-        }
-
-        .badge-aprobado {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .badge-rechazado {
-            background: #f44336;
-            color: white;
-        }
-
+        /* BOTONES */
         .btn {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin: 2px;
-            font-size: 12px;
+            font-size: 11px;
+            display: inline-block;
         }
 
-        .btn-add {
-            background: #4CAF50;
-            color: white;
-        }
+        .btn-add { background: #4CAF50; color: white; }
+        .btn-remove { background: #ff9800; color: white; }
+        .btn-block { background: #f44336; color: white; }
+        .btn-success { background: #4CAF50; color: white; }
+        .btn-danger { background: #f44336; color: white; }
 
-        .btn-remove {
-            background: #ff9800;
-            color: white;
+        /* BADGES */
+        .badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            display: inline-block;
         }
+        .badge-active { background: #4CAF50; color: white; }
+        .badge-inactive { background: #f44336; color: white; }
+        .badge-pendiente { background: #ff9800; color: white; }
+        .badge-aprobado { background: #4CAF50; color: white; }
+        .badge-rechazado { background: #f44336; color: white; }
 
-        .btn-block {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn-success {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #f44336;
-            color: white;
-        }
-
-        .solicitudes-container {
+        /* ESTADÍSTICAS DE VENTAS RESPONSIVE */
+        .estadisticas-avanzadas {
             background: white;
             border-radius: 15px;
             padding: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        .monedas-cell {
-            font-weight: bold;
-            color: #f39c12;
+        .estadisticas-titulo {
+            color: #2E7D32;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4CAF50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .guarani-cell {
-            font-weight: bold;
-            color: #4CAF50;
-        }
-
-        .ganancias-cell {
-            font-weight: bold;
-            color: #f39c12;
-        }
-
-        .pagar-cell {
-            font-weight: bold;
-            color: #4CAF50;
-        }
-
-        .usuario-link {
-            color: #2196F3;
+        .actualizar-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            text-decoration: underline;
+            font-size: 13px;
         }
 
-        .usuario-link:hover {
-            color: #0b5e9e;
+        .estadisticas-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .estadisticas-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .estadisticas-card h3 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .estadisticas-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .estadisticas-tabla th {
+            background: #4CAF50;
+            color: white;
+            padding: 8px;
+            font-size: 11px;
+        }
+
+        .estadisticas-tabla td {
+            padding: 8px;
+            font-size: 11px;
+        }
+
+        @media (max-width: 800px) {
+            .estadisticas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* PANEL LÍMITE RESPONSIVE */
+        .panel-limite {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 3px solid gold;
+        }
+
+        .panel-limite h2 {
+            color: gold;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .limite-control {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .limite-input-group {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .limite-input-group label {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .limite-input-group input {
+            width: 100%;
+            padding: 12px;
+            font-size: 20px;
+            border: 2px solid gold;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            color: gold;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .btn-limite {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            border: 2px solid gold;
+        }
+
+        .limite-actual {
+            background: gold;
+            color: #1e3c72;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .limite-actual .valor {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        @media (max-width: 700px) {
+            .limite-control {
+                grid-template-columns: 1fr;
+            }
+            .panel-limite h2 {
+                font-size: 1.1rem;
+            }
+            .limite-input-group input {
+                font-size: 18px;
+                padding: 10px;
+            }
+            .limite-actual .valor {
+                font-size: 24px;
+            }
+        }
+
+        /* MODALES RESPONSIVE */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 90%;
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 15px;
         }
 
         .modal-historial {
@@ -223,244 +400,28 @@
         .modal-historial-content {
             background: white;
             border-radius: 20px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
+            max-width: 95%;
+            width: 800px;
+            max-height: 85vh;
             overflow-y: auto;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-
-        .modal-historial-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .modal-historial-header h2 {
-            color: #2E7D32;
-        }
-
-        .modal-historial-header button {
-            background: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .historial-tabla {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .historial-tabla th {
-            background: #4CAF50;
-            color: white;
-            padding: 10px;
-            font-size: 14px;
-        }
-
-        .historial-tabla td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            font-size: 13px;
-        }
-
-        .historial-ganancia {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-
-        .historial-perdida {
-            color: #f44336;
-        }
-
-        .resumen-simple {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-
-        .resumen-item {
-            text-align: center;
-        }
-
-        .resumen-item .label {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .resumen-item .value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2E7D32;
-        }
-
-        .estadisticas-avanzadas {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-
-        .estadisticas-titulo {
-            color: #2E7D32;
-            font-size: 24px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #4CAF50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .estadisticas-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
-        @media (max-width: 768px) {
-            .estadisticas-grid {
-                grid-template-columns: 1fr;
-            }
-            .resumen-simple {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .estadisticas-card {
-            background: #f8f9fa;
-            border-radius: 12px;
             padding: 20px;
-            border: 1px solid #e9ecef;
         }
 
-        .estadisticas-card h3 {
-            color: #495057;
-            font-size: 18px;
-            margin-bottom: 15px;
-        }
-
-        .estadisticas-tabla {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .estadisticas-tabla th {
-            background: #4CAF50;
-            color: white;
-            padding: 10px;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        .estadisticas-tabla td {
-            padding: 10px;
-            border-bottom: 1px solid #dee2e6;
-            font-size: 14px;
-        }
-
-        .barra-progreso-container {
-            background: #e9ecef;
-            border-radius: 20px;
-            height: 20px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-
-        .barra-progreso {
-            background: #4CAF50;
-            height: 100%;
-            border-radius: 20px;
-            color: white;
-            font-size: 11px;
-            line-height: 20px;
-            padding-left: 8px;
-        }
-
-        .resumen-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px dashed #dee2e6;
-        }
-
-        .resumen-valor {
-            font-size: 28px;
-            font-weight: bold;
-            color: #4CAF50;
-            margin: 5px 0;
-        }
-
-        .actualizar-btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: auto;
-        }
-
-        .insights-box {
-            background: #e8f5e9;
-            border-left: 4px solid #4CAF50;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .loading-stats {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 30px;
-            color: #999;
-            font-style: italic;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: white;
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            border-radius: 15px;
+        @media (max-width: 600px) {
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            .modal-historial-content {
+                padding: 15px;
+            }
+            .modal-historial-header h2 {
+                font-size: 1.2rem;
+            }
         }
 
         .input-group {
-            margin: 15px 0;
+            margin: 12px 0;
         }
 
         .input-group label {
@@ -478,7 +439,7 @@
 
         .btn-modal {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background: #4CAF50;
             color: white;
             border: none;
@@ -487,94 +448,74 @@
             margin-top: 10px;
         }
 
-        .panel-limite {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            border-radius: 20px;
-            padding: 30px;
-            margin-top: 30px;
-            border: 3px solid gold;
-        }
-
-        .panel-limite h2 {
-            color: gold;
-            font-size: 28px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 2px solid gold;
-            padding-bottom: 10px;
-        }
-
-        .limite-control {
+        /* RESÚMENES */
+        .resumen-simple {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
 
-        .limite-input-group {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
+        .resumen-item .label {
+            font-size: 10px;
+            color: #666;
         }
 
-        .limite-input-group label {
-            color: white;
+        .resumen-item .value {
             font-size: 16px;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .limite-input-group input {
-            width: 100%;
-            padding: 15px;
-            font-size: 24px;
-            border: 2px solid gold;
-            border-radius: 10px;
-            background: rgba(0,0,0,0.3);
-            color: gold;
             font-weight: bold;
-            margin-bottom: 10px;
+            color: #2E7D32;
         }
 
-        .limite-actual {
-            background: gold;
-            color: #1e3c72;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
+        @media (max-width: 550px) {
+            .resumen-simple {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        .limite-actual .valor {
-            font-size: 36px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .btn-limite {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
+        .usuario-link {
+            color: #2196F3;
             cursor: pointer;
-            width: 100%;
-            border: 2px solid gold;
+            text-decoration: underline;
         }
 
-        .cobros-container {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
+        .loading-stats {
+            text-align: center;
+            padding: 30px;
+            color: #666;
         }
 
-        .cobro-monto {
-            font-weight: bold;
-            color: #4CAF50;
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .insights-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4CAF50;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -583,7 +524,7 @@
 
     <div class="container">
         <div class="header">
-            <h1>🎰 Panel de Administración - Tragamonedas</h1>
+            <h1>🎰 Panel de Administración</h1>
             <button class="logout-btn" onclick="cerrarSesion()">Cerrar Sesión</button>
         </div>
 
@@ -602,134 +543,88 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="total-recargas">0 ₲</div>
-                <div>💰 Total Recargado (₲)</div>
+                <div>💰 Total Recargado</div>
             </div>
         </div>
 
         <!-- Solicitudes de Cobro -->
         <div class="cobros-container">
-            <h2 style="margin-bottom: 20px;">💰 Solicitudes de Cobro</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Usuario</th>
-                        <th>💰 Monto a Cobrar (₲)</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="cobros-body">
-                    <tr>
-                        <td colspan="6" style="text-align: center;">Cargando...</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2>💰 Solicitudes de Cobro</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>ID</th><th>Usuario</th><th>💰 Monto</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+                    <tbody id="cobros-body"><td><td colspan="6">Cargando...<\/td></tr></tbody>
+                </table>
+            </div>
         </div>
 
+        <!-- Solicitudes de Recarga -->
         <div class="solicitudes-container">
-            <h2 style="margin-bottom: 20px;">⏳ Solicitudes de Recarga</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Usuario</th>
-                        <th>🪙 Monedas</th>
-                        <th>💰 Monto a Pagar (₲)</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="solicitudes-body">
-                    <tr>
-                        <td colspan="6" style="text-align: center;">Cargando...</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2>⏳ Solicitudes de Recarga</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead><tr><th>ID</th><th>Usuario</th><th>🪙 Monedas</th><th>💰 Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                    <tbody id="solicitudes-body"><tr><td colspan="6">Cargando...<\/td></tr></tbody>
+                </table>
+            </div>
         </div>
 
+        <!-- Usuarios Registrados -->
         <div class="table-container">
-            <h2 style="margin-bottom: 20px;">👥 Usuarios Registrados</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Usuario</th>
-                        <th>🪙 Saldo Actual</th>
-                        <th>💰 Inversión Total (₲)</th>
-                        <th>🏆 Ganancias (🪙)</th>
-                        <th>💵 A Pagar (₲)</th>
-                        <th>Veces Jugadas</th>
-                        <th>🏆 Mayor Premio</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="usuarios-body"></tbody>
-            </table>
+            <h2>👥 Usuarios Registrados</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Usuario</th><th>🪙 Saldo</th><th>💰 Inversión</th><th>🪙 Ganancias</th><th>💵 A Pagar</th><th>Jugadas</th><th>🏆 Mayor</th><th>Estado</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="usuarios-body"></tbody>
+                </table>
+            </div>
         </div>
 
+        <!-- Estadísticas de Ventas -->
         <div class="estadisticas-avanzadas" id="estadisticas-ventas">
             <div class="estadisticas-titulo">
                 📈 Estadísticas de Ventas
-                <button class="actualizar-btn" onclick="cargarEstadisticasVentas()">
-                    🔄 Actualizar
-                </button>
+                <button class="actualizar-btn" onclick="cargarEstadisticasVentas()">🔄 Actualizar</button>
             </div>
-            <div id="estadisticas-content">
-                <div class="loading-stats">Cargando estadísticas...</div>
-            </div>
+            <div id="estadisticas-content"><div class="loading-stats">Cargando estadísticas...</div></div>
         </div>
 
+        <!-- Panel Límite -->
         <div class="panel-limite">
-            <h2>
-                <span>🔒</span>
-                CONTROL DE LÍMITE DE PREMIOS
-            </h2>
+            <h2>🔒 CONTROL DE LÍMITE DE PREMIOS</h2>
             <div class="limite-control">
                 <div class="limite-input-group">
-                    <label>💰 LÍMITE MÁXIMO POR JUGADA (🪙 monedas):</label>
+                    <label>💰 LÍMITE MÁXIMO POR JUGADA (🪙):</label>
                     <input type="number" id="limite-premios" value="50000" min="1000" max="1000000" step="1000">
-                    <button class="btn-limite" onclick="actualizarLimite()">
-                        💾 ACTUALIZAR LÍMITE
-                    </button>
+                    <button class="btn-limite" onclick="actualizarLimite()">💾 ACTUALIZAR LÍMITE</button>
                 </div>
                 <div class="limite-actual">
                     <div>LÍMITE ACTUAL</div>
                     <div class="valor" id="limite-actual-valor">🪙 50.000</div>
-                    <small>Máximo de monedas que se puede ganar por jugada</small>
+                    <small>Máximo de monedas por jugada</small>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modal-fichas" class="modal">
-        <div class="modal-content">
-            <h3>🪙 Agregar Monedas</h3>
-            <div class="input-group">
-                <label>Usuario: <span id="modal-usuario"></span></label>
-            </div>
-            <div class="input-group">
-                <label>🪙 Monedas a agregar:</label>
-                <input type="number" id="fichas-agregar" min="1000" value="50000" step="1000">
-            </div>
-            <button class="btn-modal" onclick="confirmarAgregarFichas()">Agregar Monedas</button>
-            <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">Cancelar</button>
-        </div>
-    </div>
+    <!-- Modales -->
+    <div id="modal-fichas" class="modal"><div class="modal-content">
+        <h3>🪙 Agregar Monedas</h3>
+        <div class="input-group"><label>Usuario: <span id="modal-usuario"></span></label></div>
+        <div class="input-group"><label>🪙 Monedas a agregar:</label><input type="number" id="fichas-agregar" min="1000" value="50000" step="1000"></div>
+        <button class="btn-modal" onclick="confirmarAgregarFichas()">Agregar Monedas</button>
+        <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">Cancelar</button>
+    </div></div>
 
-    <div id="modal-historial" class="modal-historial">
-        <div class="modal-historial-content">
-            <div class="modal-historial-header">
-                <h2>📜 Historial de Jugadas</h2>
-                <button onclick="cerrarModalHistorial()">✖ Cerrar</button>
-            </div>
-            <div id="historial-content">
-                <div class="loading-stats">Cargando historial...</div>
-            </div>
+    <div id="modal-historial" class="modal-historial"><div class="modal-historial-content">
+        <div class="modal-historial-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50; padding-bottom: 15px; margin-bottom: 20px;">
+            <h2>📜 Historial de Jugadas</h2>
+            <button onclick="cerrarModalHistorial()" style="background: #f44336; color: white; border: none; padding: 8px 15px; border-radius: 8px;">✖ Cerrar</button>
         </div>
-    </div>
+        <div id="historial-content"><div class="loading-stats">Cargando historial...</div></div>
+    </div></div>
 
     <script>
         const API_URL = window.API_URL || 'http://localhost:3000/api';
@@ -749,11 +644,10 @@
                 window.location.href = 'login.html';
                 return false;
             }
-
             try {
                 const usuario = JSON.parse(sessionStorage.getItem('usuario') || '{}');
                 if (usuario.role !== 'admin') {
-                    alert('⛔ Acceso denegado. No tenés permisos de administrador.');
+                    alert('⛔ Acceso denegado.');
                     window.location.href = 'index.html';
                     return false;
                 }
@@ -767,173 +661,111 @@
         async function verHistorialUsuario(usuarioId, usuarioNombre) {
             const modal = document.getElementById('modal-historial');
             const contentDiv = document.getElementById('historial-content');
-            
             modal.style.display = 'flex';
             contentDiv.innerHTML = '<div class="loading-stats">Cargando historial...</div>';
-            
             try {
                 const res = await fetch(`${API_URL}/admin/historial-usuario/${usuarioId}`, {
                     headers: { 'Authorization': token }
                 });
-                
-                if (!res.ok) throw new Error('Error al cargar historial');
-                
+                if (!res.ok) throw new Error('Error');
                 const data = await res.json();
                 mostrarHistorial(data, usuarioNombre);
-                
             } catch (error) {
-                console.error('Error:', error);
-                contentDiv.innerHTML = `<div class="no-data">❌ Error al cargar historial<br><small>${error.message}</small></div>`;
+                contentDiv.innerHTML = `<div class="no-data">❌ Error al cargar historial</div>`;
             }
         }
-        
+
         function mostrarHistorial(data, usuarioNombre) {
             const contentDiv = document.getElementById('historial-content');
             const historial = data.historial || [];
             const stats = data.stats || {};
-            
             const inversionTotal = Math.floor(stats.inversion_total || 0);
             const saldoActual = Math.floor(stats.saldo_actual || 0);
             const aPagar = saldoActual > inversionTotal ? saldoActual - inversionTotal : 0;
             
             if (historial.length === 0) {
-                contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas para este usuario</div>`;
+                contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas</div>`;
                 return;
             }
             
             let html = `
                 <div class="resumen-simple">
-                    <div class="resumen-item">
-                        <div class="label">👤 Usuario</div>
-                        <div class="value">${usuarioNombre}</div>
-                    </div>
-                    <div class="resumen-item">
-                        <div class="label">💰 Inversión Total</div>
-                        <div class="value">₲ ${formatoNumero(inversionTotal)}</div>
-                    </div>
-                    <div class="resumen-item">
-                        <div class="label">🪙 Saldo Actual</div>
-                        <div class="value">🪙 ${formatoNumero(saldoActual)}</div>
-                    </div>
-                    <div class="resumen-item">
-                        <div class="label">💵 A PAGAR</div>
-                        <div class="value" style="color: #4CAF50;">₲ ${formatoNumero(aPagar)}</div>
-                    </div>
+                    <div class="resumen-item"><div class="label">👤 Usuario</div><div class="value">${usuarioNombre}</div></div>
+                    <div class="resumen-item"><div class="label">💰 Inversión Total</div><div class="value">₲ ${formatoNumero(inversionTotal)}</div></div>
+                    <div class="resumen-item"><div class="label">🪙 Saldo Actual</div><div class="value">🪙 ${formatoNumero(saldoActual)}</div></div>
+                    <div class="resumen-item"><div class="label">💵 A PAGAR</div><div class="value" style="color: #4CAF50;">₲ ${formatoNumero(aPagar)}</div></div>
                 </div>
-                
-                <table class="historial-tabla">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Apuesta</th>
-                            <th>Ganancia</th>
-                            <th>Combinación</th>
-                            <th>Resultado</th>
-                         </thead>
-                    <tbody>
+                <div style="overflow-x: auto;">
+                    <table class="historial-tabla" style="width:100%; border-collapse: collapse;">
+                        <thead><tr><th>Fecha</th><th>Apuesta</th><th>Ganancia</th><th>Combinación</th><th>Resultado</th></tr></thead>
+                        <tbody>
             `;
-            
             historial.forEach(j => {
                 const fecha = new Date(j.fecha).toLocaleString();
                 const esGanancia = j.ganancia > 0;
                 const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
                 const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
-                
-                html += `
-                    <tr>
-                        <td>${fecha} 72
-                        72🪙 ${formatoNumero(j.apuesta)} 72
-                        <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)} 72
-                        <td style="font-size: 20px;">${j.combinacion} 72
-                        <td class="${resultadoClass}">${resultadoText} 72
-                     </tr>
-                `;
+                html += `<tr>
+                    <td>${fecha}</td>
+                    <td>🪙 ${formatoNumero(j.apuesta)}</td>
+                    <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
+                    <td style="font-size: 20px;">${j.combinacion}</td>
+                    <td class="${resultadoClass}">${resultadoText}</td>
+                </tr>`;
             });
-            
-            html += `
-                    </tbody>
-                 </table>
-            `;
-            
+            html += `</tbody></table></div>`;
             contentDiv.innerHTML = html;
         }
-        
+
         function cerrarModalHistorial() {
             document.getElementById('modal-historial').style.display = 'none';
         }
 
         document.getElementById('modal-historial').addEventListener('click', function(e) {
-            if (e.target === this) {
-                cerrarModalHistorial();
-            }
+            if (e.target === this) cerrarModalHistorial();
         });
 
         async function cargarLimiteDesdeBackend() {
             try {
-                const res = await fetch(`${API_URL}/admin/obtener-limite`, {
-                    headers: { 'Authorization': token }
-                });
-                
+                const res = await fetch(`${API_URL}/admin/obtener-limite`, { headers: { 'Authorization': token } });
                 if (res.ok) {
                     const data = await res.json();
                     if (data.limite) {
                         document.getElementById('limite-premios').value = data.limite;
                         document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(data.limite);
                     }
-                } else {
-                    const limiteGuardado = localStorage.getItem('limite_secreto_admin');
-                    if (limiteGuardado) {
-                        document.getElementById('limite-premios').value = limiteGuardado;
-                        document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
-                    }
                 }
-            } catch (error) {
-                const limiteGuardado = localStorage.getItem('limite_secreto_admin');
-                if (limiteGuardado) {
-                    document.getElementById('limite-premios').value = limiteGuardado;
-                    document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(parseInt(limiteGuardado));
-                }
-            }
+            } catch (error) {}
         }
 
         async function actualizarLimite() {
             const nuevoLimite = parseInt(document.getElementById('limite-premios').value);
-            
             if (nuevoLimite < 1000 || nuevoLimite > 1000000) {
-                alert('❌ Límite inválido (mínimo 1.000, máximo 1.000.000)');
+                alert('❌ Límite inválido');
                 return;
             }
-            
             const btn = document.querySelector('.btn-limite');
-            const textoOriginal = btn.textContent;
             btn.disabled = true;
             btn.textContent = '⏳ GUARDANDO...';
-            
             try {
                 const res = await fetch(`${API_URL}/admin/configurar-limite`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
                     body: JSON.stringify({ limite: nuevoLimite })
                 });
-                
                 const data = await res.json();
-                
                 if (data.success) {
                     localStorage.setItem('limite_secreto_admin', nuevoLimite);
                     document.getElementById('limite-actual-valor').textContent = '🪙 ' + formatoNumero(nuevoLimite);
                     alert(`✅ Límite actualizado a 🪙 ${formatoNumero(nuevoLimite)}`);
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('Error');
                 }
             } catch (error) {
                 alert('Error de conexión');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = textoOriginal;
             }
+            btn.disabled = false;
+            btn.textContent = '💾 ACTUALIZAR LÍMITE';
         }
 
         async function cargarDatos() {
@@ -945,74 +777,52 @@
                     cargarEstadisticas()
                 ]);
             } catch (error) {
-                console.error('Error cargando datos:', error);
-                if (error.message.includes('403') || error.message.includes('401')) {
-                    alert('⛔ Sesión expirada');
-                    cerrarSesion();
-                }
+                if (error.message.includes('401')) cerrarSesion();
             }
         }
 
         async function cargarSolicitudesCobro() {
             try {
-                const res = await fetch(`${API_URL}/admin/solicitudes-cobro`, {
-                    headers: { 'Authorization': token }
-                });
-
-                if (res.status === 401 || res.status === 403) throw new Error('401');
-                if (!res.ok) throw new Error(`Error ${res.status}`);
-
+                const res = await fetch(`${API_URL}/admin/solicitudes-cobro`, { headers: { 'Authorization': token } });
+                if (!res.ok) throw new Error('Error');
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('cobros-body');
-                
-                if (!solicitudes || solicitudes.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes de cobro pendientes</td></tr>';
-                } else {
-                    tbody.innerHTML = '';
-                    solicitudes.forEach(s => {
-                        const estadoClass = s.estado === 'pendiente' ? 'badge-pendiente' : (s.estado === 'aprobado' ? 'badge-aprobado' : 'badge-rechazado');
-                        const estadoText = s.estado === 'pendiente' ? '⏳ Pendiente' : (s.estado === 'aprobado' ? '✅ Aprobado' : '❌ Rechazado');
-                        
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${s.id}</td>
-                            <td><strong>${s.usuario}</strong></td>
-                            <td class="cobro-monto">₲ ${formatoNumero(s.monto)}</td>
-                            <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
-                            <td><span class="badge ${estadoClass}">${estadoText}</span></td>
-                            <td>
-                                ${s.estado === 'pendiente' ? `
-                                    <button class="btn btn-success" onclick="aprobarCobro(${s.id}, ${s.usuario_id}, ${s.monto})">✅ Aprobar</button>
-                                    <button class="btn btn-danger" onclick="rechazarCobro(${s.id})">❌ Rechazar</button>
-                                ` : '-'}
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
+                if (!solicitudes.length) {
+                    tbody.innerHTML = '<tr><td colspan="6">No hay solicitudes de cobro pendientes</td></tr>';
+                    return;
                 }
+                tbody.innerHTML = '';
+                solicitudes.forEach(s => {
+                    const estadoClass = s.estado === 'pendiente' ? 'badge-pendiente' : (s.estado === 'aprobado' ? 'badge-aprobado' : 'badge-rechazado');
+                    const estadoText = s.estado === 'pendiente' ? '⏳ Pendiente' : (s.estado === 'aprobado' ? '✅ Aprobado' : '❌ Rechazado');
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${s.id}</td>
+                        <td><strong>${s.usuario}</strong></td>
+                        <td class="cobro-monto">₲ ${formatoNumero(s.monto)}</td>
+                        <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+                        <td><span class="badge ${estadoClass}">${estadoText}</span></td>
+                        <td>${s.estado === 'pendiente' ? `<button class="btn btn-success" onclick="aprobarCobro(${s.id}, ${s.usuario_id}, ${s.monto})">✅ Aprobar</button>
+                                <button class="btn btn-danger" onclick="rechazarCobro(${s.id})">❌ Rechazar</button>` : '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             } catch (error) {
-                console.error('Error cargando solicitudes de cobro:', error);
-                if (error.message === '401') cerrarSesion();
+                console.error(error);
             }
         }
 
         async function aprobarCobro(solicitudId, usuarioId, monto) {
             if (!confirm(`¿Aprobar cobro de ₲${formatoNumero(monto)}?`)) return;
-
             try {
                 const res = await fetch(`${API_URL}/admin/aprobar-cobro`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
                     body: JSON.stringify({ solicitud_id: solicitudId })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
-                    alert(`✅ Cobro de ₲${formatoNumero(monto)} aprobado. Se descontaron las fichas.`);
+                    alert(`✅ Cobro de ₲${formatoNumero(monto)} aprobado`);
                     cargarDatos();
                 } else {
                     alert('Error: ' + (data.error || 'desconocido'));
@@ -1023,262 +833,151 @@
         }
 
         async function rechazarCobro(solicitudId) {
-            if (!confirm('¿Rechazar esta solicitud de cobro?')) return;
-
+            if (!confirm('¿Rechazar esta solicitud?')) return;
             try {
                 const res = await fetch(`${API_URL}/admin/rechazar-cobro`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
                     body: JSON.stringify({ solicitud_id: solicitudId })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
-                    alert('✅ Solicitud de cobro rechazada');
+                    alert('✅ Solicitud rechazada');
                     cargarDatos();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('Error');
                 }
             } catch (error) {
                 alert('Error de conexión');
             }
         }
 
-async function cargarEstadisticasVentas() {
-    console.log('🔄 Cargando estadísticas...');
-    
-    // ✅ Usar el token correcto (puede estar en admin_token)
-    let tokenActual = sessionStorage.getItem('token') || sessionStorage.getItem('admin_token');
-    
-    if (!tokenActual) {
-        console.error('❌ No hay token');
-        document.getElementById('estadisticas-content').innerHTML = `
-            <div class="no-data">❌ Sesión expirada. Recargá la página.</div>
-        `;
-        return;
-    }
-    
-    try {
-        const res = await fetch(`${API_URL}/admin/estadisticas-ventas`, {
-            headers: { 
-                'Authorization': tokenActual,
-                'Content-Type': 'application/json'
+        async function cargarEstadisticasVentas() {
+            console.log('🔄 Cargando estadísticas...');
+            let tokenActual = sessionStorage.getItem('token') || sessionStorage.getItem('admin_token');
+            if (!tokenActual) {
+                document.getElementById('estadisticas-content').innerHTML = '<div class="no-data">❌ Sesión expirada</div>';
+                return;
             }
-        });
-
-        console.log('📊 Status:', res.status);
-
-        if (res.status === 401 || res.status === 403) {
-            document.getElementById('estadisticas-content').innerHTML = `
-                <div class="no-data">❌ Sesión expirada. <a href="login.html">Iniciá sesión de nuevo</a></div>
-            `;
-            return;
+            try {
+                const res = await fetch(`${API_URL}/admin/estadisticas-ventas`, {
+                    headers: { 'Authorization': tokenActual, 'Content-Type': 'application/json' }
+                });
+                if (!res.ok) throw new Error(`Error ${res.status}`);
+                const data = await res.json();
+                mostrarEstadisticasVentas(data);
+            } catch (error) {
+                document.getElementById('estadisticas-content').innerHTML = `<div class="no-data">❌ Error al cargar estadísticas</div>`;
+            }
         }
-
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-
-        const data = await res.json();
-        console.log('📈 Datos:', data);
-        mostrarEstadisticasVentas(data);
-        
-    } catch (error) {
-        console.error('❌ Error:', error);
-        document.getElementById('estadisticas-content').innerHTML = `
-            <div class="no-data">❌ Error al cargar estadísticas<br><small>${error.message}</small></div>
-        `;
-    }
-}
 
         function mostrarEstadisticasVentas(data) {
             const container = document.getElementById('estadisticas-content');
-            
             if (!data.por_dia || data.por_dia.length === 0) {
-                container.innerHTML = `<div class="no-data">📊 No hay suficientes datos</div>`;
+                container.innerHTML = '<div class="no-data">📊 No hay suficientes datos</div>';
                 return;
             }
-
-            const maxComprasDia = Math.max(...data.por_dia.map(d => d.total_compras));
-            const maxComprasHora = Math.max(...data.por_hora.map(h => h.total_compras));
-
-            let html = '';
-
-            if (data.insights) {
-                html += `<div class="insights-box"><strong>🎯 Insight:</strong> Mejor día: <strong>${data.insights.dia_pico}</strong> - Mejor hora: <strong>${data.insights.hora_pico}:00hs</strong></div>`;
-            }
-
-            html += '<div class="estadisticas-grid">';
-            
-            html += `
-                <div class="estadisticas-card">
-                    <h3>📅 Ventas por día</h3>
-                    <table class="estadisticas-tabla">
-                        <thead><tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th></tr></thead>
-                        <tbody>
-            `;
-
+            let html = `<div class="insights-box"><strong>🎯 Insight:</strong> Mejor día: <strong>${data.insights?.dia_pico || '-'}</strong> - Mejor hora: <strong>${data.insights?.hora_pico || '-'}:00hs</strong></div>
+                        <div class="estadisticas-grid">`;
+            html += `<div class="estadisticas-card"><h3>📅 Ventas por día</h3>
+                    <div style="overflow-x: auto;"><table class="estadisticas-tabla"><thead><tr><th>Día</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th></tr></thead><tbody>`;
             data.por_dia.forEach(d => {
-                const porcentaje = (d.total_compras / maxComprasDia) * 100;
-                html += `
-                    <tr>
-                        <td><strong>${d.dia_esp}</strong></td>
-                        <td>${d.total_compras}<div class="barra-progreso-container"><div class="barra-progreso" style="width: ${porcentaje}%"></div></div></td>
-                        <td>🪙 ${formatoNumero(Math.floor(d.total_fichas))}</td>
-                        <td>₲ ${formatoNumero(Math.round(d.total_monto))}</td>
-                    </tr>
-                `;
+                html += `<tr><td><strong>${d.dia_esp || d.dia}</strong></td><td>${d.total_compras}</td><td>🪙 ${formatoNumero(d.total_fichas)}</td><td>₲ ${formatoNumero(Math.round(d.total_monto))}</td></tr>`;
             });
-
-            html += `</tbody></table></div>`;
-
-            html += `
-                <div class="estadisticas-card">
-                    <h3>⏰ Ventas por hora</h3>
-                    <table class="estadisticas-tabla">
-                        <thead><tr><th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th></tr></thead>
-                        <tbody>
-            `;
-
+            html += `</tbody></table></div></div>`;
+            html += `<div class="estadisticas-card"><h3>⏰ Ventas por hora</h3>
+                    <div style="overflow-x: auto;"><table class="estadisticas-tabla"><thead><tr><th>Hora</th><th>Recargas</th><th>🪙 Monedas</th><th>💰 Monto</th></tr></thead><tbody>`;
             data.por_hora.forEach(h => {
-                const porcentaje = (h.total_compras / maxComprasHora) * 100;
                 const horaFormateada = h.hora < 10 ? `0${h.hora}:00` : `${h.hora}:00`;
-                html += `
-                    <tr>
-                        <td><strong>${horaFormateada}</strong></td>
-                        <td>${h.total_compras}<div class="barra-progreso-container"><div class="barra-progreso" style="width: ${porcentaje}%"></div></div></td>
-                        <td>🪙 ${formatoNumero(Math.floor(h.total_fichas))}</td>
-                        <td>₲ ${formatoNumero(Math.round(h.total_monto))}</td>
-                    </tr>
-                `;
+                html += `<tr><td><strong>${horaFormateada}</strong></td><td>${h.total_compras}</td><td>🪙 ${formatoNumero(h.total_fichas)}</td><td>₲ ${formatoNumero(Math.round(h.total_monto))}</td></tr>`;
             });
-
-            html += `</tbody></table></div>`;
-
-            html += '</div>';
-
-            html += `
-                <div class="resumen-stats">
-                    <div class="resumen-item"><div class="resumen-label">Total Recargas</div><div class="resumen-valor">${data.totales?.total_recargas || 0}</div></div>
-                    <div class="resumen-item"><div class="resumen-label">Total 🪙 Monedas</div><div class="resumen-valor">${formatoNumero(Math.floor(data.totales?.total_fichas || 0))}</div></div>
-                    <div class="resumen-item"><div class="resumen-label">Total ₲</div><div class="resumen-valor">₲ ${formatoNumero(Math.round(data.totales?.total_monto || 0))}</div></div>
-                </div>
-            `;
-
+            html += `</tbody></table></div></div></div>
+                    <div class="resumen-stats" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:15px; padding-top:15px; border-top:2px dashed #dee2e6;">
+                        <div class="resumen-item" style="text-align:center;"><div class="resumen-label">Total Recargas</div><div class="resumen-valor" style="font-size:24px; font-weight:bold; color:#4CAF50;">${data.totales?.total_recargas || 0}</div></div>
+                        <div class="resumen-item" style="text-align:center;"><div class="resumen-label">Total 🪙 Monedas</div><div class="resumen-valor" style="font-size:24px; font-weight:bold; color:#4CAF50;">${formatoNumero(data.totales?.total_fichas || 0)}</div></div>
+                        <div class="resumen-item" style="text-align:center;"><div class="resumen-label">Total ₲</div><div class="resumen-valor" style="font-size:24px; font-weight:bold; color:#4CAF50;">₲ ${formatoNumero(data.totales?.total_monto || 0)}</div></div>
+                    </div>`;
             container.innerHTML = html;
         }
 
         async function cargarUsuarios() {
             try {
-                const res = await fetch(`${API_URL}/admin/usuarios`, {
-                    headers: { 'Authorization': token }
-                });
-
-                if (res.status === 401 || res.status === 403) throw new Error('401');
-                if (!res.ok) throw new Error(`Error ${res.status}`);
-
+                const res = await fetch(`${API_URL}/admin/usuarios`, { headers: { 'Authorization': token } });
+                if (!res.ok) throw new Error('Error');
                 const usuarios = await res.json();
                 const tbody = document.getElementById('usuarios-body');
                 tbody.innerHTML = '';
-
                 usuarios.forEach(u => {
-                    if (u.role !== 'admin') {
-                        const saldo = Math.floor(u.fichas || 0);
-                        const inversion = Math.floor(u.total_recargado || 0);
-                        const ganancias = saldo - inversion;
-                        const aPagar = ganancias > 0 ? ganancias : 0;
-                        
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${u.id}</td>
-                            <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
-                            <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
-                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(inversion))}</td>
-                            <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}</td>
-                            <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
-                            <td>${u.veces_jugadas || 0}</td>
-                            <td>🪙 ${formatoNumero(Math.round(u.mayor_premio || 0))}</td>
-                            <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
-                            <td>
-                                <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕ Agregar</button>
-                                <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖ Quitar</button>
-                                ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒 Bloquear</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓 Activar</button>`}
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    }
+                    if (u.role === 'admin') return;
+                    const saldo = Math.floor(u.fichas || 0);
+                    const inversion = Math.floor(u.total_recargado || 0);
+                    const ganancias = saldo - inversion;
+                    const aPagar = ganancias > 0 ? ganancias : 0;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${u.id}</td>
+                        <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
+                        <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
+                        <td class="guarani-cell">₲ ${formatoNumero(inversion)}</td>
+                        <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}</td>
+                        <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
+                        <td>${u.veces_jugadas || 0}</td>
+                        <td>🪙 ${formatoNumero(u.mayor_premio || 0)}</td>
+                        <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
+                        <td><button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
+                            <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖</button>
+                            ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}</td>
+                    `;
+                    tbody.appendChild(tr);
                 });
             } catch (error) {
-                console.error('Error cargando usuarios:', error);
                 if (error.message === '401') cerrarSesion();
             }
         }
 
         async function cargarSolicitudes() {
             try {
-                const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, {
-                    headers: { 'Authorization': token }
-                });
-
-                if (res.status === 401 || res.status === 403) throw new Error('401');
-                if (!res.ok) throw new Error(`Error ${res.status}`);
-
+                const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, { headers: { 'Authorization': token } });
+                if (!res.ok) throw new Error('Error');
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('solicitudes-body');
-                
-                if (!solicitudes || solicitudes.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td></tr>';
-                } else {
-                    tbody.innerHTML = '';
-                    solicitudes.forEach(s => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>${s.id}</td>
-                            <td><strong>${s.usuario}</strong></td>
-                            <td class="monedas-cell">🪙 ${formatoNumero(Math.floor(s.fichas))}</td>
-                            <td class="guarani-cell">₲ ${formatoNumero(Math.round(s.monto))}</td>
-                            <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
-                            <td>
-                                <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${Math.floor(s.fichas)})">✅ Aprobar</button>
-                                <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
+                if (!solicitudes.length) {
+                    tbody.innerHTML = '<tr><td colspan="6">No hay solicitudes pendientes</td></tr>';
+                    return;
                 }
-            } catch (error) {
-                console.error('Error cargando solicitudes:', error);
-                if (error.message === '401') cerrarSesion();
-            }
+                tbody.innerHTML = '';
+                solicitudes.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${s.id}</td>
+                        <td><strong>${s.usuario}</strong></td>
+                        <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
+                        <td class="guarani-cell">₲ ${formatoNumero(s.monto)}</td>
+                        <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+                        <td><button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
+                            <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {}
         }
 
         async function cargarEstadisticas() {
             try {
-                const res = await fetch(`${API_URL}/admin/stats-tragamonedas`, {
-                    headers: { 'Authorization': token }
-                });
-
-                if (res.status === 401 || res.status === 403) throw new Error('401');
-                if (!res.ok) throw new Error(`Error ${res.status}`);
-
+                const res = await fetch(`${API_URL}/admin/stats-tragamonedas`, { headers: { 'Authorization': token } });
+                if (!res.ok) throw new Error('Error');
                 const data = await res.json();
-
                 document.getElementById('total-usuarios').textContent = data.total_usuarios || 0;
                 document.getElementById('usuarios-activos').textContent = data.usuarios_activos || 0;
-                document.getElementById('fichas-totales').textContent = '🪙 ' + formatoNumero(Math.floor(data.fichas_totales || 0));
-                document.getElementById('total-recargas').textContent = '₲ ' + formatoNumero(Math.round(data.total_recargas || 0));
-            } catch (error) {
-                console.error('Error cargando estadísticas:', error);
-                if (error.message === '401') cerrarSesion();
-            }
+                document.getElementById('fichas-totales').textContent = '🪙 ' + formatoNumero(data.fichas_totales || 0);
+                document.getElementById('total-recargas').textContent = '₲ ' + formatoNumero(data.total_recargas || 0);
+            } catch (error) {}
         }
 
         function abrirModalFichas(userId, usuario) {
             usuarioSeleccionado = userId;
             document.getElementById('modal-usuario').textContent = usuario;
-            document.getElementById('modal-fichas').style.display = 'block';
+            document.getElementById('modal-fichas').style.display = 'flex';
         }
 
         function cerrarModal() {
@@ -1287,28 +986,18 @@ async function cargarEstadisticasVentas() {
 
         async function confirmarAgregarFichas() {
             const fichas = parseInt(document.getElementById('fichas-agregar').value);
-
             try {
                 const res = await fetch(`${API_URL}/admin/agregar-fichas`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
-                    body: JSON.stringify({
-                        usuario_id: usuarioSeleccionado,
-                        fichas: fichas
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ usuario_id: usuarioSeleccionado, fichas: fichas })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
                     alert(`✅ 🪙 ${formatoNumero(fichas)} monedas agregadas`);
                     cerrarModal();
                     cargarDatos();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('Error');
                 }
             } catch (error) {
                 alert('Error de conexión');
@@ -1318,27 +1007,17 @@ async function cargarEstadisticasVentas() {
         async function quitarFichas(userId) {
             const cantidad = prompt('¿Cuántas monedas querés quitar?', '10000');
             if (!cantidad) return;
-
             try {
                 const res = await fetch(`${API_URL}/admin/quitar-fichas`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
-                    body: JSON.stringify({
-                        usuario_id: userId,
-                        fichas: parseInt(cantidad)
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ usuario_id: userId, fichas: parseInt(cantidad) })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
                     alert(`✅ Monedas quitadas`);
                     cargarDatos();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('Error');
                 }
             } catch (error) {
                 alert('Error de conexión');
@@ -1348,22 +1027,16 @@ async function cargarEstadisticasVentas() {
         async function aprobarSolicitud(solicitudId, usuarioId, fichas) {
             try {
                 const res = await fetch(`${API_URL}/admin/aprobar-recarga`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
                     body: JSON.stringify({ solicitud_id: solicitudId })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
                     alert(`✅ Recarga aprobada: 🪙 ${formatoNumero(fichas)} monedas`);
                     cargarDatos();
                     cargarEstadisticasVentas();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('Error');
                 }
             } catch (error) {
                 alert('Error de conexión');
@@ -1372,24 +1045,17 @@ async function cargarEstadisticasVentas() {
 
         async function rechazarSolicitud(solicitudId) {
             if (!confirm('¿Rechazar esta solicitud?')) return;
-
             try {
                 const res = await fetch(`${API_URL}/admin/rechazar-recarga`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
                     body: JSON.stringify({ solicitud_id: solicitudId })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
                     alert('✅ Solicitud rechazada');
                     cargarDatos();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('Error');
                 }
             } catch (error) {
                 alert('Error de conexión');
@@ -1399,20 +1065,14 @@ async function cargarEstadisticasVentas() {
         async function toggleUsuario(userId, activo) {
             try {
                 const res = await fetch(`${API_URL}/admin/toggle-usuario`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token
-                    },
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
                     body: JSON.stringify({ usuario_id: userId, activo })
                 });
-
                 const data = await res.json();
-
                 if (data.success) {
                     cargarDatos();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    alert('Error');
                 }
             } catch (error) {
                 alert('Error de conexión');
@@ -1426,56 +1086,35 @@ async function cargarEstadisticasVentas() {
             window.location.href = 'login.html';
         }
 
-        if (!verificarAcceso()) {
-            // Redirige
-        } else {
+        if (!verificarAcceso()) {} else {
             cargarDatos();
             cargarEstadisticasVentas();
             cargarLimiteDesdeBackend();
             
-            let ultimaCantidadSolicitudes = 0;
-            let ultimaCantidadCobros = 0;
+            let ultimaCantidadSolicitudes = 0, ultimaCantidadCobros = 0;
 
             async function verificarSolicitudesNuevas() {
                 try {
-                    const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, {
-                        headers: { 'Authorization': token }
-                    });
-                    
+                    const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, { headers: { 'Authorization': token } });
                     if (!res.ok) return;
-                    
                     const solicitudes = await res.json();
-                    const cantidadActual = solicitudes.length;
-                    
-                    if (cantidadActual !== ultimaCantidadSolicitudes) {
-                        console.log(`📢 Nuevas solicitudes: ${ultimaCantidadSolicitudes} → ${cantidadActual}`);
+                    if (solicitudes.length !== ultimaCantidadSolicitudes) {
                         await cargarSolicitudes();
-                        ultimaCantidadSolicitudes = cantidadActual;
+                        ultimaCantidadSolicitudes = solicitudes.length;
                     }
-                } catch (error) {
-                    console.error('Error verificando solicitudes:', error);
-                }
+                } catch(e) {}
             }
 
             async function verificarCobrosNuevos() {
                 try {
-                    const res = await fetch(`${API_URL}/admin/solicitudes-cobro`, {
-                        headers: { 'Authorization': token }
-                    });
-                    
+                    const res = await fetch(`${API_URL}/admin/solicitudes-cobro`, { headers: { 'Authorization': token } });
                     if (!res.ok) return;
-                    
                     const cobros = await res.json();
-                    const cantidadActual = cobros.length;
-                    
-                    if (cantidadActual !== ultimaCantidadCobros) {
-                        console.log(`💰 Nuevos cobros: ${ultimaCantidadCobros} → ${cantidadActual}`);
+                    if (cobros.length !== ultimaCantidadCobros) {
                         await cargarSolicitudesCobro();
-                        ultimaCantidadCobros = cantidadActual;
+                        ultimaCantidadCobros = cobros.length;
                     }
-                } catch (error) {
-                    console.error('Error verificando cobros:', error);
-                }
+                } catch(e) {}
             }
 
             setInterval(verificarSolicitudesNuevas, 5000);
