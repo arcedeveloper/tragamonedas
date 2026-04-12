@@ -238,10 +238,12 @@ router.post('/agregar-fichas', async (req, res) => {
 router.post('/quitar-fichas', async (req, res) => {
     try {
         const { usuario_id, fichas } = req.body;
-
+        
+        // ✅ Restar tanto de fichas como de total_recargado
         await db.query(`
             UPDATE usuarios
-            SET fichas = GREATEST(fichas - $1, 0)
+            SET fichas = GREATEST(fichas - $1, 0),
+                total_recargado = GREATEST(total_recargado - $1, 0)
             WHERE id = $2
         `, [fichas, usuario_id]);
 
@@ -252,10 +254,6 @@ router.post('/quitar-fichas', async (req, res) => {
         res.status(500).json({ error: 'Error servidor' });
     }
 });
-
-/* ==================================================
-   COBROS
-================================================== */
 
 // VER COBROS
 router.get('/solicitudes-cobro', async (req, res) => {
