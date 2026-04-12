@@ -192,6 +192,7 @@
         .btn-add { background: #4CAF50; color: white; }
         .btn-remove { background: #ff9800; color: white; }
         .btn-block { background: #f44336; color: white; }
+        .btn-reset { background: #9C27B0; color: white; }
         .btn-success { background: #4CAF50; color: white; }
         .btn-danger { background: #f44336; color: white; }
 
@@ -569,7 +570,7 @@
             <div style="overflow-x: auto;">
                 <table>
                     <thead><tr><th>ID</th><th>Usuario</th><th>💰 Monto</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-                    <tbody id="cobros-body"><tr><td colspan="6">Cargando...</td></tr></tbody>
+                    <tbody id="cobros-body"><tr><td colspan="6">Cargando...<\/td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -578,7 +579,7 @@
         <div class="solicitudes-container">
             <h2>⏳ Solicitudes de Recarga</h2>
             <div style="overflow-x: auto;">
-                <table>
+                </table>
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -590,7 +591,7 @@
                         </tr>
                     </thead>
                     <tbody id="solicitudes-body">
-                        <tr><td colspan="6" style="text-align: center;">Cargando...</td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Cargando...<\/td></tr>
                     </tbody>
                 </table>
             </div>
@@ -661,7 +662,7 @@
         <button class="btn-modal" onclick="cerrarModal()" style="background: #666;">Cancelar</button>
     </div></div>
 
-    <!-- Modal Quitar Monedas (NUEVO) -->
+    <!-- Modal Quitar Monedas -->
     <div id="modal-quitar-fichas" class="modal"><div class="modal-content">
         <h3>➖ Quitar Monedas</h3>
         <div class="input-group"><label>Usuario: <span id="modal-usuario-quitar"></span></label></div>
@@ -679,6 +680,29 @@
         <button class="btn-modal" onclick="cerrarModalQuitar()" style="background: #666;">Cancelar</button>
     </div></div>
 
+    <!-- Modal Reset Usuario -->
+    <div id="modal-reset" class="modal"><div class="modal-content" style="width: 350px;">
+        <h3 style="color: #f44336;">⚠️ RESETEAR USUARIO</h3>
+        <div class="input-group">
+            <label>Usuario: <span id="reset-usuario-nombre" style="font-weight: bold;"></span></label>
+        </div>
+        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ff9800;">
+            <p style="margin: 0; color: #856404; font-size: 14px;">
+                ⚠️ <strong>ATENCIÓN:</strong> Esta acción:
+            </p>
+            <ul style="margin: 10px 0 0 20px; color: #856404; font-size: 13px;">
+                <li>Pondrá el SALDO en 0</li>
+                <li>Pondrá la INVERSIÓN en 0</li>
+                <li>Eliminará las GANANCIAS congeladas</li>
+                <li>El usuario empezará desde cero</li>
+            </ul>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-modal" onclick="confirmarReset()" style="background: #f44336;">⚠️ SÍ, RESETEAR</button>
+            <button class="btn-modal" onclick="cerrarModalReset()" style="background: #666;">❌ Cancelar</button>
+        </div>
+    </div></div>
+
     <!-- Modal Historial -->
     <div id="modal-historial" class="modal-historial"><div class="modal-historial-content">
         <div class="modal-historial-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #4CAF50; padding-bottom: 15px; margin-bottom: 20px;">
@@ -694,6 +718,8 @@
         let token = sessionStorage.getItem('token') || sessionStorage.getItem('admin_token');
         let usuarioSeleccionado = null;
         let usuarioSeleccionadoQuitar = null;
+        let usuarioSeleccionadoReset = null;
+        let usuarioNombreReset = null;
 
         function formatoNumero(num) {
             if (num === null || num === undefined) return '0';
@@ -859,7 +885,7 @@
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('cobros-body');
                 if (!solicitudes.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes de cobro pendientes</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes de cobro pendientes<\/td></tr>';
                     return;
                 }
                 tbody.innerHTML = '';
@@ -978,7 +1004,7 @@
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('solicitudes-body');
                 if (!solicitudes.length) {
-                    tbody.innerHTML = '<td><td colspan="6" style="text-align: center;">No hay solicitudes pendientes<\/td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes<\/td></tr>';
                     return;
                 }
                 tbody.innerHTML = '';
@@ -1027,6 +1053,7 @@
                         <td>
                             <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
                             <button class="btn btn-remove" onclick="abrirModalQuitarFichas(${u.id}, '${u.usuario}')">➖</button>
+                            <button class="btn btn-reset" onclick="abrirModalReset(${u.id}, '${u.usuario}')">🔄</button>
                             ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}
                         </td>
                     `;
@@ -1109,7 +1136,7 @@
             }
         }
 
-        // Modal Quitar Fichas (NUEVO)
+        // Modal Quitar Fichas
         function abrirModalQuitarFichas(userId, usuario) {
             usuarioSeleccionadoQuitar = userId;
             document.getElementById('modal-usuario-quitar').textContent = usuario;
@@ -1163,6 +1190,42 @@
                 if (data.success) {
                     alert(`✅ 🪙 ${formatoNumero(fichas)} monedas quitadas`);
                     cerrarModalQuitar();
+                    cargarDatos();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        // Modal Reset Usuario
+        function abrirModalReset(userId, usuario) {
+            usuarioSeleccionadoReset = userId;
+            usuarioNombreReset = usuario;
+            document.getElementById('reset-usuario-nombre').textContent = usuario;
+            document.getElementById('modal-reset').style.display = 'flex';
+        }
+
+        function cerrarModalReset() {
+            document.getElementById('modal-reset').style.display = 'none';
+            usuarioSeleccionadoReset = null;
+            usuarioNombreReset = null;
+        }
+
+        async function confirmarReset() {
+            if (!usuarioSeleccionadoReset) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/admin/resetear-usuario`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
+                    body: JSON.stringify({ usuario_id: usuarioSeleccionadoReset })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`✅ Usuario ${usuarioNombreReset} reseteado correctamente`);
+                    cerrarModalReset();
                     cargarDatos();
                 } else {
                     alert('Error: ' + (data.error || 'desconocido'));
