@@ -576,10 +576,11 @@
         </div>
 
         <!-- Solicitudes de Recarga -->
+             <!-- Solicitudes de Recarga -->
         <div class="solicitudes-container">
             <h2>⏳ Solicitudes de Recarga</h2>
             <div style="overflow-x: auto;">
-                </table>
+                <table>
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -591,7 +592,7 @@
                         </tr>
                     </thead>
                     <tbody id="solicitudes-body">
-                        <tr><td colspan="6" style="text-align: center;">Cargando...<\/td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -997,14 +998,14 @@
             container.innerHTML = html;
         }
 
-        async function cargarSolicitudes() {
+              async function cargarSolicitudes() {
             try {
                 const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, { headers: { 'Authorization': token } });
                 if (!res.ok) throw new Error('Error');
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('solicitudes-body');
                 if (!solicitudes.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes<\/td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td></tr>';
                     return;
                 }
                 tbody.innerHTML = '';
