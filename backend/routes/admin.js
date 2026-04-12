@@ -475,5 +475,51 @@ router.post('/configurar-limite', async (req, res) => {
         res.status(500).json({ error: 'Error servidor' });
     }
 });
+router.get('/estadisticas-ventas', async (req, res) => {
+    try {
+        const porDia = await db.query(`
+            SELECT 
+                TO_CHAR(fecha_solicitud,'Day') as dia,
+                COUNT(*) as total_compras,
+                SUM(fichas) as total_fichas,
+                SUM(monto) as total_monto
+            FROM solicitudes_recarga
+            WHERE estado='aprobada'
+            GROUP BY 1
+            ORDER BY total_compras DESC
+        `);
+
+        const porHora = await db.query(`
+            SELECT 
+                EXTRACT(HOUR FROM fecha_solicitud) as hora,
+                COUNT(*) as total_compras,
+                SUM(fichas) as total_fichas,
+                SUM(monto) as total_monto
+            FROM solicitudes_recarga
+            WHERE estado='aprobada'
+            GROUP BY 1
+            ORDER BY hora
+        `);
+
+        const totales = await db.query(`
+            SELECT
+                COUNT(*) as total_recargas,
+                COALESCE(SUM(fichas),0) as total_fichas,
+                COALESCE(SUM(monto),0) as total_monto
+            FROM solicitudes_recarga
+            WHERE estado='aprobada'
+        `);
+
+        res.json({
+            por_dia: porDia.rows,
+            por_hora: porHora.rows,
+            totales: totales.rows[0]
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error:'Error servidor' });
+    }
+});
 
 module.exports = router;
