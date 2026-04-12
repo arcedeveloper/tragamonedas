@@ -652,14 +652,17 @@
         </div>
     </div>
 
-   <div id="modal-fichas" class="modal"><div class="modal-content">
+<div id="modal-fichas" class="modal"><div class="modal-content">
     <h3>🪙 Agregar Monedas</h3>
     <div class="input-group"><label>Usuario: <span id="modal-usuario"></span></label></div>
     <div class="input-group">
         <label>🪙 Cantidad de monedas (1 moneda = ₲1):</label>
-        <input type="number" id="fichas-agregar" min="1000" value="50000" step="1000">
-        <div style="margin-top: 8px; font-size: 12px; color: #4CAF50;" id="monto-mostrar">
-            💰 Monto a cobrar al usuario: ₲ <span id="monto-formateado">50.000</span>
+        <input type="text" id="fichas-agregar" value="50.000" style="font-size: 18px; padding: 10px;">
+        <div style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 16px; font-weight: bold;">
+            💰 Monto a cobrar al usuario: <span id="monto-formateado" style="color: #4CAF50;">₲ 50.000</span>
+        </div>
+        <div style="margin-top: 5px; font-size: 11px; color: #666;">
+            📌 El usuario deberá pagar ese monto para recibir las monedas
         </div>
     </div>
     <button class="btn-modal" onclick="confirmarAgregarFichas()">✅ Agregar Monedas</button>
@@ -1038,18 +1041,29 @@
             } catch (error) {}
         }
 
-        function abrirModalFichas(userId, usuario) {
+function abrirModalFichas(userId, usuario) {
     usuarioSeleccionado = userId;
     document.getElementById('modal-usuario').textContent = usuario;
     
-    const fichasInput = document.getElementById('fichas-agregar');
+    const input = document.getElementById('fichas-agregar');
     const montoSpan = document.getElementById('monto-formateado');
-    const valorInicial = parseInt(fichasInput.value) || 0;
-    montoSpan.textContent = formatoNumero(valorInicial);
-        fichasInput.oninput = function() {
-        const valor = parseInt(this.value) || 0;
-        montoSpan.textContent = formatoNumero(valor);
-    };
+    
+    // Función para formatear mientras escribe
+    function formatearMonto() {
+        let valor = input.value.replace(/\./g, ''); // sacar puntos existentes
+        valor = valor.replace(/[^0-9]/g, ''); // solo números
+        if (valor === '') valor = '0';
+        let numero = parseInt(valor);
+        if (isNaN(numero)) numero = 0;
+        let formateado = numero.toLocaleString('es-ES');
+        input.value = formateado;
+        montoSpan.textContent = '₲ ' + formateado;
+    }
+    
+    input.value = '50.000';
+    formatearMonto();
+    
+    input.oninput = formatearMonto;
     
     document.getElementById('modal-fichas').style.display = 'flex';
 }
@@ -1058,25 +1072,34 @@
             document.getElementById('modal-fichas').style.display = 'none';
         }
 
-        async function confirmarAgregarFichas() {
-            const fichas = parseInt(document.getElementById('fichas-agregar').value);
-            try {
-                const res = await fetch(`${API_URL}/admin/agregar-fichas`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                    body: JSON.stringify({ usuario_id: usuarioSeleccionado, fichas: fichas })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    alert(`✅ 🪙 ${formatoNumero(fichas)} monedas agregadas`);
-                    cerrarModal();
-                    cargarDatos();
-                } else {
-                    alert('Error');
-                }
-            } catch (error) {
-                alert('Error de conexión');
-            }
+async function confirmarAgregarFichas() {
+    // Obtener el valor sin puntos
+    const input = document.getElementById('fichas-agregar');
+    let valorTexto = input.value.replace(/\./g, '');
+    const fichas = parseInt(valorTexto);
+    
+    if (isNaN(fichas) || fichas < 1000) {
+        alert('❌ El mínimo es 1.000 monedas');
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_URL}/admin/agregar-fichas`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': token },
+            body: JSON.stringify({ usuario_id: usuarioSeleccionado, fichas: fichas })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`✅ 🪙 ${formatoNumero(fichas)} monedas agregadas (₲ ${formatoNumero(fichas)})`);
+            cerrarModal();
+            cargarDatos();
+        } else {
+            alert('Error: ' + (data.error || 'desconocido'));
         }
+    } catch (error) {
+        alert('Error de conexión');
+    }
+}
 
         async function quitarFichas(userId) {
             const cantidad = prompt('¿Cuántas monedas querés quitar?', '10000');
