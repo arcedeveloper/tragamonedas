@@ -475,11 +475,17 @@ router.post('/configurar-limite', async (req, res) => {
         res.status(500).json({ error: 'Error servidor' });
     }
 });
+
+/* ==================================================
+   📈 ESTADÍSTICAS DE VENTAS (CON HORA DE PARAGUAY)
+================================================== */
+
 router.get('/estadisticas-ventas', async (req, res) => {
     try {
+        // ✅ CON ZONA HORARIA DE PARAGUAY
         const porDia = await db.query(`
             SELECT 
-                TO_CHAR(fecha_solicitud,'Day') as dia,
+                TO_CHAR(fecha_solicitud AT TIME ZONE 'America/Asuncion', 'Day') as dia,
                 COUNT(*) as total_compras,
                 SUM(fichas) as total_fichas,
                 SUM(monto) as total_monto
@@ -491,7 +497,7 @@ router.get('/estadisticas-ventas', async (req, res) => {
 
         const porHora = await db.query(`
             SELECT 
-                EXTRACT(HOUR FROM fecha_solicitud) as hora,
+                EXTRACT(HOUR FROM fecha_solicitud AT TIME ZONE 'America/Asuncion') as hora,
                 COUNT(*) as total_compras,
                 SUM(fichas) as total_fichas,
                 SUM(monto) as total_monto
@@ -510,15 +516,39 @@ router.get('/estadisticas-ventas', async (req, res) => {
             WHERE estado='aprobada'
         `);
 
+        // Calcular día y hora pico
+        const diaPico = porDia.rows.reduce((max, item) => 
+            item.total_compras > max.total_compras ? item : max
+        , porDia.rows[0] || { dia: 'Sin datos', total_compras: 0 });
+
+        const horaPico = porHora.rows.reduce((max, item) => 
+            item.total_compras > max.total_compras ? item : max
+        , porHora.rows[0] || { hora: 0, total_compras: 0 });
+
+        // Traducir días al español
+        const traduccionDias = {
+            'Monday': 'Lunes', 'Tuesday': 'Martes', 'Wednesday': 'Miércoles',
+            'Thursday': 'Jueves', 'Friday': 'Viernes', 'Saturday': 'Sábado', 'Sunday': 'Domingo'
+        };
+
+        const porDiaConEsp = porDia.rows.map(d => ({
+            ...d,
+            dia_esp: traduccionDias[d.dia.trim()] || d.dia
+        }));
+
         res.json({
-            por_dia: porDia.rows,
+            por_dia: porDiaConEsp,
             por_hora: porHora.rows,
-            totales: totales.rows[0]
+            totales: totales.rows[0],
+            insights: {
+                dia_pico: traduccionDias[diaPico.dia.trim()] || diaPico.dia,
+                hora_pico: horaPico.hora
+            }
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error:'Error servidor' });
+        console.error('Error en estadísticas de ventas:', error);
+        res.status(500).json({ error: 'Error servidor' });
     }
 });
 
