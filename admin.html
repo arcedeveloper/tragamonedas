@@ -579,13 +579,24 @@
             </div>
         </div>
 
-        <!-- Solicitudes de Recarga -->
+        <!-- Solicitudes de Recarga - CORREGIDO -->
         <div class="solicitudes-container">
             <h2>⏳ Solicitudes de Recarga</h2>
             <div style="overflow-x: auto;">
-                </table>
-                    <thead><tr><th>ID</th><th>Usuario</th><th>🪙 Monedas</th><th>💰 Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
-                    <tbody id="solicitudes-body"><tr><td colspan="6">Cargando...<\/td></tr></tbody>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>🪙 Monedas</th>
+                            <th>💰 Monto</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="solicitudes-body">
+                        <tr><td colspan="6" style="text-align: center;">Cargando...<\/td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -829,7 +840,7 @@
                 const solicitudes = await res.json();
                 const tbody = document.getElementById('cobros-body');
                 if (!solicitudes.length) {
-                    tbody.innerHTML = '<tr><td colspan="6">No hay solicitudes de cobro pendientes</td></tr>';
+                    tbody.innerHTML = '<td><td colspan="6" style="text-align: center;">No hay solicitudes de cobro pendientes<\/td></tr>';
                     return;
                 }
                 tbody.innerHTML = '';
@@ -838,13 +849,13 @@
                     const estadoText = s.estado === 'pendiente' ? '⏳ Pendiente' : (s.estado === 'aprobado' ? '✅ Aprobado' : '❌ Rechazado');
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${s.id}</td>
-                        <td><strong>${s.usuario}</strong></td>
-                        <td class="cobro-monto">₲ ${formatoNumero(s.monto)}</td>
-                        <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
-                        <td><span class="badge ${estadoClass}">${estadoText}</span></td>
+                        <td>${s.id}<\/td>
+                        <td><strong>${s.usuario}</strong><\/td>
+                        <td class="cobro-monto">₲ ${formatoNumero(s.monto)}<\/td>
+                        <td>${new Date(s.fecha_solicitud).toLocaleString()}<\/td>
+                        <td><span class="badge ${estadoClass}">${estadoText}</span><\/td>
                         <td>${s.estado === 'pendiente' ? `<button class="btn btn-success" onclick="aprobarCobro(${s.id}, ${s.usuario_id}, ${s.monto})">✅ Aprobar</button>
-                                <button class="btn btn-danger" onclick="rechazarCobro(${s.id})">❌ Rechazar</button>` : '-'}</td>
+                                <button class="btn btn-danger" onclick="rechazarCobro(${s.id})">❌ Rechazar</button>` : '-'}<\/td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -941,6 +952,38 @@
             container.innerHTML = html;
         }
 
+        // FUNCIÓN CORREGIDA - Solicitudes de Recarga
+        async function cargarSolicitudes() {
+            try {
+                const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, { headers: { 'Authorization': token } });
+                if (!res.ok) throw new Error('Error');
+                const solicitudes = await res.json();
+                const tbody = document.getElementById('solicitudes-body');
+                if (!solicitudes.length) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay solicitudes pendientes</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = '';
+                solicitudes.forEach(s => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${s.id}</td>
+                        <td><strong>${s.usuario}</strong></td>
+                        <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
+                        <td class="guarani-cell">₲ ${formatoNumero(s.monto)}</td>
+                        <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
+                            <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error cargando solicitudes:', error);
+            }
+        }
+
         async function cargarUsuarios() {
             try {
                 const res = await fetch(`${API_URL}/admin/usuarios`, { headers: { 'Authorization': token } });
@@ -964,43 +1007,18 @@
                         <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
                         <td>${u.veces_jugadas || 0}</td>
                         <td>🪙 ${formatoNumero(u.mayor_premio || 0)}</td>
-                        <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'} </td>
-                        <td><button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
+                        <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
+                        <td>
+                            <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
                             <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖</button>
-                            ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}</td>
+                            ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
             } catch (error) {
                 if (error.message === '401') cerrarSesion();
             }
-        }
-
-        async function cargarSolicitudes() {
-            try {
-                const res = await fetch(`${API_URL}/admin/solicitudes-recarga`, { headers: { 'Authorization': token } });
-                if (!res.ok) throw new Error('Error');
-                const solicitudes = await res.json();
-                const tbody = document.getElementById('solicitudes-body');
-                if (!solicitudes.length) {
-                    tbody.innerHTML = '<tr><td colspan="6">No hay solicitudes pendientes</td></tr>';
-                    return;
-                }
-                tbody.innerHTML = '';
-                solicitudes.forEach(s => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${s.id}</td>
-                        <td><strong>${s.usuario}</strong></td>
-                        <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
-                        <td class="guarani-cell">₲ ${formatoNumero(s.monto)}</td>
-                        <td>${new Date(s.fecha_solicitud).toLocaleString()} </td>
-                        <td><button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
-                            <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button></td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (error) {}
         }
 
         async function cargarEstadisticas() {
