@@ -162,6 +162,27 @@
             }
         }
 
+        /* CLASES DE COLORES PARA LAS CELDAS */
+        .monedas-cell {
+            font-weight: bold;
+            color: #f39c12;  /* Naranja */
+        }
+
+        .guarani-cell {
+            font-weight: bold;
+            color: #4CAF50;  /* Verde */
+        }
+
+        .ganancias-cell {
+            font-weight: bold;
+            color: #f39c12;  /* Naranja */
+        }
+
+        .pagar-cell {
+            font-weight: bold;
+            color: #4CAF50;  /* Verde */
+        }
+
         /* BOTONES */
         .btn {
             padding: 6px 10px;
@@ -553,7 +574,7 @@
             <div style="overflow-x: auto;">
                 <table>
                     <thead><tr><th>ID</th><th>Usuario</th><th>💰 Monto</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-                    <tbody id="cobros-body"><td><td colspan="6">Cargando...<\/td></tr></tbody>
+                    <tbody id="cobros-body"><tr><td colspan="6">Cargando...<\/td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -562,7 +583,7 @@
         <div class="solicitudes-container">
             <h2>⏳ Solicitudes de Recarga</h2>
             <div style="overflow-x: auto;">
-                <table>
+                </table>
                     <thead><tr><th>ID</th><th>Usuario</th><th>🪙 Monedas</th><th>💰 Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
                     <tbody id="solicitudes-body"><tr><td colspan="6">Cargando...<\/td></tr></tbody>
                 </table>
@@ -575,7 +596,18 @@
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
-                        <tr><th>ID</th><th>Usuario</th><th>🪙 Saldo</th><th>💰 Inversión</th><th>🪙 Ganancias</th><th>💵 A Pagar</th><th>Jugadas</th><th>🏆 Mayor</th><th>Estado</th><th>Acciones</th></tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>🪙 Saldo</th>
+                            <th>💰 Inversión</th>
+                            <th>🪙 Ganancias</th>
+                            <th>💵 A Pagar</th>
+                            <th>Jugadas</th>
+                            <th>🏆 Mayor</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
                     </thead>
                     <tbody id="usuarios-body"></tbody>
                 </table>
@@ -675,58 +707,56 @@
             }
         }
 
-  function mostrarHistorial(data, usuarioNombre) {
-    const contentDiv = document.getElementById('historial-content');
-    const historial = data.historial || [];
-    const stats = data.stats || {};
-    const inversionTotal = Math.floor(stats.inversion_total || 0);
-    const saldoActual = Math.floor(stats.saldo_actual || 0);
-    const aPagar = saldoActual > inversionTotal ? saldoActual - inversionTotal : 0;
-    
-    if (historial.length === 0) {
-        contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas para este usuario</div>`;
-        return;
-    }
-    
-    let html = `
-        <div class="resumen-simple">
-            <div class="resumen-item"><div class="label">👤 Usuario</div><div class="value">${usuarioNombre}</div></div>
-            <div class="resumen-item"><div class="label">💰 Inversión Total</div><div class="value">₲ ${formatoNumero(inversionTotal)}</div></div>
-            <div class="resumen-item"><div class="label">🪙 Saldo Actual</div><div class="value">🪙 ${formatoNumero(saldoActual)}</div></div>
-            <div class="resumen-item"><div class="label">💵 A PAGAR</div><div class="value" style="color: #4CAF50;">₲ ${formatoNumero(aPagar)}</div></div>
-        </div>
-        <div style="overflow-x: auto;">
-            <table class="historial-tabla" style="width:100%; border-collapse: collapse;">
-                <thead><tr><th>Fecha</th><th>Apuesta</th><th>Ganancia</th><th>Combinación</th><th>Resultado</th></tr></thead>
-                <tbody>
-    `;
-    
-    historial.forEach(j => {
-        const fecha = new Date(j.fecha).toLocaleString();
-        const esGanancia = j.ganancia > 0;
-        const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
-        const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
-        
-        // ✅ CORREGIDO: usar Array.from() para separar correctamente emojis y números
-        const combinacionConEspacios = Array.from(j.combinacion).join(' ');
-        
-        html += `<tr>
-            <td>${fecha}</td>
-            <td>🪙 ${formatoNumero(j.apuesta)}</td>
-            <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
-            <td style="font-size: 20px; font-family: monospace;">${combinacionConEspacios}</td>
-            <td class="${resultadoClass}">${resultadoText}</td>
-        </tr>`;
-    });
-    
-    html += `
-                </tbody>
-            </table>
-        </div>
-    `;
-    
-    contentDiv.innerHTML = html;
-}
+        function mostrarHistorial(data, usuarioNombre) {
+            const contentDiv = document.getElementById('historial-content');
+            const historial = data.historial || [];
+            const stats = data.stats || {};
+            const inversionTotal = Math.floor(stats.inversion_total || 0);
+            const saldoActual = Math.floor(stats.saldo_actual || 0);
+            const aPagar = saldoActual > inversionTotal ? saldoActual - inversionTotal : 0;
+            
+            if (historial.length === 0) {
+                contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas para este usuario</div>`;
+                return;
+            }
+            
+            let html = `
+                <div class="resumen-simple">
+                    <div class="resumen-item"><div class="label">👤 Usuario</div><div class="value">${usuarioNombre}</div></div>
+                    <div class="resumen-item"><div class="label">💰 Inversión Total</div><div class="value">₲ ${formatoNumero(inversionTotal)}</div></div>
+                    <div class="resumen-item"><div class="label">🪙 Saldo Actual</div><div class="value">🪙 ${formatoNumero(saldoActual)}</div></div>
+                    <div class="resumen-item"><div class="label">💵 A PAGAR</div><div class="value" style="color: #4CAF50;">₲ ${formatoNumero(aPagar)}</div></div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="historial-tabla" style="width:100%; border-collapse: collapse;">
+                        <thead><tr><th>Fecha</th><th>Apuesta</th><th>Ganancia</th><th>Combinación</th><th>Resultado</th></tr></thead>
+                        <tbody>
+            `;
+            
+            historial.forEach(j => {
+                const fecha = new Date(j.fecha).toLocaleString();
+                const esGanancia = j.ganancia > 0;
+                const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
+                const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
+                const combinacionConEspacios = Array.from(j.combinacion).join(' ');
+                
+                html += `<tr>
+                    <td>${fecha}</td>
+                    <td>🪙 ${formatoNumero(j.apuesta)}</td>
+                    <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
+                    <td style="font-size: 20px; font-family: monospace;">${combinacionConEspacios}</td>
+                    <td class="${resultadoClass}">${resultadoText}</td>
+                </tr>`;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            contentDiv.innerHTML = html;
+        }
 
         function cerrarModalHistorial() {
             document.getElementById('modal-historial').style.display = 'none';
@@ -934,7 +964,7 @@
                         <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
                         <td>${u.veces_jugadas || 0}</td>
                         <td>🪙 ${formatoNumero(u.mayor_premio || 0)}</td>
-                        <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
+                        <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'} </td>
                         <td><button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
                             <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖</button>
                             ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}</td>
@@ -964,7 +994,7 @@
                         <td><strong>${s.usuario}</strong></td>
                         <td class="monedas-cell">🪙 ${formatoNumero(s.fichas)}</td>
                         <td class="guarani-cell">₲ ${formatoNumero(s.monto)}</td>
-                        <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+                        <td>${new Date(s.fecha_solicitud).toLocaleString()} </td>
                         <td><button class="btn btn-add" onclick="aprobarSolicitud(${s.id}, ${s.usuario_id}, ${s.fichas})">✅ Aprobar</button>
                             <button class="btn btn-block" onclick="rechazarSolicitud(${s.id})">❌ Rechazar</button></td>
                     `;
