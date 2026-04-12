@@ -542,5 +542,24 @@ router.get('/estadisticas-ventas', async (req, res) => {
         res.status(500).json({ error: 'Error servidor' });
     }
 });
+router.post('/resetear-usuario', async (req, res) => {
+    try {
+        const { usuario_id } = req.body;
+        
+        // Resetear TODO a cero
+        await db.query(`
+            UPDATE usuarios
+            SET fichas = 0,
+                total_recargado = 0,
+                ganancias_congeladas = 0
+            WHERE id = $1
+        `, [usuario_id]);
 
+        res.json({ success: true, message: 'Usuario reseteado correctamente' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error servidor' });
+    }
+});
 module.exports = router;
