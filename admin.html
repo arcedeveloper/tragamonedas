@@ -675,47 +675,56 @@
             }
         }
 
-        function mostrarHistorial(data, usuarioNombre) {
-            const contentDiv = document.getElementById('historial-content');
-            const historial = data.historial || [];
-            const stats = data.stats || {};
-            const inversionTotal = Math.floor(stats.inversion_total || 0);
-            const saldoActual = Math.floor(stats.saldo_actual || 0);
-            const aPagar = saldoActual > inversionTotal ? saldoActual - inversionTotal : 0;
-            
-            if (historial.length === 0) {
-                contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas</div>`;
-                return;
-            }
-            
-            let html = `
-                <div class="resumen-simple">
-                    <div class="resumen-item"><div class="label">👤 Usuario</div><div class="value">${usuarioNombre}</div></div>
-                    <div class="resumen-item"><div class="label">💰 Inversión Total</div><div class="value">₲ ${formatoNumero(inversionTotal)}</div></div>
-                    <div class="resumen-item"><div class="label">🪙 Saldo Actual</div><div class="value">🪙 ${formatoNumero(saldoActual)}</div></div>
-                    <div class="resumen-item"><div class="label">💵 A PAGAR</div><div class="value" style="color: #4CAF50;">₲ ${formatoNumero(aPagar)}</div></div>
-                </div>
-                <div style="overflow-x: auto;">
-                    <table class="historial-tabla" style="width:100%; border-collapse: collapse;">
-                        <thead><tr><th>Fecha</th><th>Apuesta</th><th>Ganancia</th><th>Combinación</th><th>Resultado</th></tr></thead>
-                        <tbody>
-            `;
-            historial.forEach(j => {
-                const fecha = new Date(j.fecha).toLocaleString();
-                const esGanancia = j.ganancia > 0;
-                const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
-                const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
-                html += `<tr>
-                    <td>${fecha}</td>
-                    <td>🪙 ${formatoNumero(j.apuesta)}</td>
-                    <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
-                    <td style="font-size: 20px;">${j.combinacion}</td>
-                    <td class="${resultadoClass}">${resultadoText}</td>
-                </tr>`;
-            });
-            html += `</tbody></table></div>`;
-            contentDiv.innerHTML = html;
-        }
+       function mostrarHistorial(data, usuarioNombre) {
+    const contentDiv = document.getElementById('historial-content');
+    const historial = data.historial || [];
+    const stats = data.stats || {};
+    const inversionTotal = Math.floor(stats.inversion_total || 0);
+    const saldoActual = Math.floor(stats.saldo_actual || 0);
+    const aPagar = saldoActual > inversionTotal ? saldoActual - inversionTotal : 0;
+    
+    if (historial.length === 0) {
+        contentDiv.innerHTML = `<div class="no-data">📭 No hay jugadas registradas para este usuario</div>`;
+        return;
+    }
+    
+    let html = `
+        <div class="resumen-simple">
+            <div class="resumen-item"><div class="label">👤 Usuario</div><div class="value">${usuarioNombre}</div></div>
+            <div class="resumen-item"><div class="label">💰 Inversión Total</div><div class="value">₲ ${formatoNumero(inversionTotal)}</div></div>
+            <div class="resumen-item"><div class="label">🪙 Saldo Actual</div><div class="value">🪙 ${formatoNumero(saldoActual)}</div></div>
+            <div class="resumen-item"><div class="label">💵 A PAGAR</div><div class="value" style="color: #4CAF50;">₲ ${formatoNumero(aPagar)}</div></div>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="historial-tabla" style="width:100%; border-collapse: collapse;">
+                <thead><tr><th>Fecha</th><th>Apuesta</th><th>Ganancia</th><th>Combinación</th><th>Resultado</th></tr></thead>
+                <tbody>
+    `;
+    
+    historial.forEach(j => {
+        const fecha = new Date(j.fecha).toLocaleString();
+        const esGanancia = j.ganancia > 0;
+        const resultadoClass = esGanancia ? 'historial-ganancia' : 'historial-perdida';
+        const resultadoText = esGanancia ? `+🪙 ${formatoNumero(j.ganancia)}` : `-🪙 ${formatoNumero(j.apuesta)}`;
+        const combinacionConEspacios = j.combinacion.split('').join(' ');
+        
+        html += `<tr>
+            <td>${fecha}</td>
+            <td>🪙 ${formatoNumero(j.apuesta)}</td>
+            <td class="${resultadoClass}">🪙 ${formatoNumero(j.ganancia)}</td>
+            <td style="font-size: 20px; letter-spacing: 2px;">${combinacionConEspacios}</td>
+            <td class="${resultadoClass}">${resultadoText}</td>
+        </tr>`;
+    });
+    
+    html += `
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    contentDiv.innerHTML = html;
+}
 
         function cerrarModalHistorial() {
             document.getElementById('modal-historial').style.display = 'none';
