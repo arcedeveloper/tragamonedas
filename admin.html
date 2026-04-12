@@ -1048,23 +1048,50 @@
             }
         }
 
-        async function cargarEstadisticasVentas() {
-            try {
-                const res = await fetch(`${API_URL}/admin/estadisticas-ventas`, {
-                    headers: { 'Authorization': token }
-                });
-
-                if (!res.ok) throw new Error('Error al cargar estadísticas');
-
-                const data = await res.json();
-                mostrarEstadisticasVentas(data);
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('estadisticas-content').innerHTML = `
-                    <div class="no-data">❌ Error al cargar estadísticas<br><small>${error.message}</small></div>
-                `;
+async function cargarEstadisticasVentas() {
+    console.log('🔄 Cargando estadísticas...');
+    
+    // ✅ Usar el token correcto (puede estar en admin_token)
+    let tokenActual = sessionStorage.getItem('token') || sessionStorage.getItem('admin_token');
+    
+    if (!tokenActual) {
+        console.error('❌ No hay token');
+        document.getElementById('estadisticas-content').innerHTML = `
+            <div class="no-data">❌ Sesión expirada. Recargá la página.</div>
+        `;
+        return;
+    }
+    
+    try {
+        const res = await fetch(`${API_URL}/admin/estadisticas-ventas`, {
+            headers: { 
+                'Authorization': tokenActual,
+                'Content-Type': 'application/json'
             }
+        });
+
+        console.log('📊 Status:', res.status);
+
+        if (res.status === 401 || res.status === 403) {
+            document.getElementById('estadisticas-content').innerHTML = `
+                <div class="no-data">❌ Sesión expirada. <a href="login.html">Iniciá sesión de nuevo</a></div>
+            `;
+            return;
         }
+
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+
+        const data = await res.json();
+        console.log('📈 Datos:', data);
+        mostrarEstadisticasVentas(data);
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        document.getElementById('estadisticas-content').innerHTML = `
+            <div class="no-data">❌ Error al cargar estadísticas<br><small>${error.message}</small></div>
+        `;
+    }
+}
 
         function mostrarEstadisticasVentas(data) {
             const container = document.getElementById('estadisticas-content');
