@@ -1004,22 +1004,21 @@
                     const ganancias = saldo - inversion;
                     const aPagar = ganancias > 0 ? ganancias : 0;
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${u.id}</td>
-                        <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
-                        <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
-                        <td class="guarani-cell">₲ ${formatoNumero(inversion)}</td>
-                        <td class="ganancias-cell">🪙 ${formatoNumero(ganancias)}</td>
-                        <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
-                        <td>${u.veces_jugadas || 0}</td>
-                        <td>🪙 ${formatoNumero(u.mayor_premio || 0)}</td>
-                        <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
-                        <td>
-                            <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
-                            <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖</button>
-                            ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}
-                        </td>
-                    `;
+                   tr.innerHTML = `
+    <td>${u.id}</td>
+    <td><span class="usuario-link" onclick="verHistorialUsuario(${u.id}, '${u.usuario}')">${u.usuario}</span></td>
+    <td class="monedas-cell">🪙 ${formatoNumero(saldo)}</td>
+    <td class="guarani-cell">₲ ${formatoNumero(inversion)}</td>
+    <td class="pagar-cell">₲ ${formatoNumero(aPagar)}</td>
+    <td>${u.veces_jugadas || 0}</td>
+    <td>🪙 ${formatoNumero(u.mayor_premio || 0)}</td>
+    <td>${u.activo ? '<span class="badge badge-active">Activo</span>' : '<span class="badge badge-inactive">Bloqueado</span>'}</td>
+    <td>
+        <button class="btn btn-add" onclick="abrirModalFichas(${u.id}, '${u.usuario}')">➕</button>
+        <button class="btn btn-remove" onclick="quitarFichas(${u.id})">➖</button>
+        ${u.activo ? `<button class="btn btn-block" onclick="toggleUsuario(${u.id}, false)">🔒</button>` : `<button class="btn btn-add" onclick="toggleUsuario(${u.id}, true)">🔓</button>`}
+    </td>
+`;
                     tbody.appendChild(tr);
                 });
             } catch (error) {
